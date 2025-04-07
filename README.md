@@ -1,4 +1,5 @@
 # Installation Instructions
+
 **Kernel:** Arch Linux\
 **DE:** COSMIC\
 **Internet:** Ethernet\
@@ -10,6 +11,7 @@
 [See Here](https://archlinux.org/download/)
 
 2. Connect to internet
+
 ```bash
 # For wired connection (already connected)
 ping -c 3 archlinux.org
@@ -29,35 +31,35 @@ exit
 timedatectl set-ntp true
 ```
 
-4. Partition Disks
+1. Partition Disks
 
 - Create a new partition:
-    - Type `n` and press Enter.
-    - Select partition type `primary` and press Enter.
-    - Specify the partition number and press Enter.
-    - Specify the first sector (default) and press Enter.
-    - Specify the last sector or size (e.g., `+512M` for EFI) and press Enter.
+  - Type `n` and press Enter.
+  - Select partition type `primary` and press Enter.
+  - Specify the partition number and press Enter.
+  - Specify the first sector (default) and press Enter.
+  - Specify the last sector or size (e.g., `+512M` for EFI) and press Enter.
 
 - Change the partition type to EFI:
-    - Type `t` and press Enter.
-    - Select the partition number and press Enter.
-    - Type `1` (EFI System) and press Enter.
+  - Type `t` and press Enter.
+  - Select the partition number and press Enter.
+  - Type `1` (EFI System) and press Enter.
 
 - Create a swap partition:
-    - Repeat the steps to create a new partition.
-    - Specify the size (e.g., `+<size_of_RAM>M`).
+  - Repeat the steps to create a new partition.
+  - Specify the size (e.g., `+<size_of_RAM>M`).
 
 - Change the partition type to swap:
-    - Type `t` and press Enter.
-    - Select the partition number and press Enter.
-    - Type `19` (Linux swap) and press Enter.
+  - Type `t` and press Enter.
+  - Select the partition number and press Enter.
+  - Type `19` (Linux swap) and press Enter.
 
 - Create a root partition:
-    - Repeat the steps to create a new partition.
-    - Use the remaining space for the root partition.
+  - Repeat the steps to create a new partition.
+  - Use the remaining space for the root partition.
 
 - Write the changes:
-    - Type `w` and press Enter to write the changes and exit `fdisk`.
+  - Type `w` and press Enter to write the changes and exit `fdisk`.
 
 5. Format Partitions
 
@@ -68,20 +70,21 @@ swapon /dev/sda2
 mkfs.ext4 /dev/sda3 # Format Root
 ```
 
-6. Mount Partitions
+1. Mount Partitions
 
 ```bash
-mount /dev/sda3 /mnt
+mount /dev/sda3 /mnt # Mount Root
 mkdir /mnt/boot
-mount /dev/sda1 /mnt/boot
+mount /dev/sda1 /mnt/boot # Mount Linux
 ```
+
 7. Install Base
 
 ```bash
-pacstrap /mnt base linux linux-firmware networkmanager grub efibootmgr sudo base-devel```
-
-
+pacstrap /mnt base linux linux-firmware networkmanager grub efibootmgr sudo base-devel
 ```
+
+```bash
 pacman -S cosmic-session cosmic-panel cosmic-launcher cosmic-settings cosmic-bg cosmic-icon-theme \
 gdm base-devel git vim wget curl htop neofetch firefox pulseaudio pulseaudio-alsa
 ```
