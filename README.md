@@ -1,21 +1,27 @@
 # Installation Instructions
 
-**Kernel:** Arch Linux\
-**DE:** Hyprland\
-**Graphics Card:** NVIDIA RTX
+**Kernel:** Linux  
+**Distribution:** Arch  
+**DE:** Hyprland  
+**Graphics Card:** NVIDIA RTX  
 
 ## Installation
 
 ### Download ISO
-[See Here](https://archlinux.org/download/)
+
+[Download Arch Linux ISO](https://archlinux.org/download/)
 
 ### Connect to Internet
 
-```bash
-# For wired connection (already connected)
-ping -c 3 archlinux.org
+#### Wired Connection
 
-# For wireless connection
+```bash
+ping -c 3 archlinux.org
+```
+
+#### Wireless Connection
+
+```bash
 iwctl
 station wlan0 scan
 station wlan0 get-networks
@@ -32,56 +38,51 @@ timedatectl set-ntp true
 
 ### Partition Disks
 
-#### Create a New Partition
-- Type `n` and press Enter.
-- Select partition type `primary` and press Enter.
-- Specify the partition number and press Enter.
-- Specify the first sector (default) and press Enter.
-- Specify the last sector or size (e.g., `+512M` for EFI) and press Enter.
+#### Create Partitions
 
-#### Change the Partition Type to EFI
-- Type `t` and press Enter.
-- Select the partition number and press Enter.
-- Type `1` (EFI System) and press Enter.
+1. Type `n` and press Enter.
+2. Select partition type `primary` and press Enter.
+3. Specify the partition number and press Enter.
+4. Specify the first sector (default) and press Enter.
+5. Specify the last sector or size (e.g., `+512M` for EFI) and press Enter.
 
-#### Create a Swap Partition
-- Repeat the steps to create a new partition.
-- Specify the size (e.g., `+<size_of_RAM>M`).
+#### Change Partition Types
 
-#### Change the Partition Type to Swap
-- Type `t` and press Enter.
-- Select the partition number and press Enter.
-- Type `19` (Linux swap) and press Enter.
+- **EFI Partition:**  
+    Type `t`, select the partition number, and type `1` (EFI System).  
+- **Swap Partition:**  
+    Repeat the steps to create a new partition, specify the size (e.g., `+<size_of_RAM>M`), then type `t`, select the partition number, and type `19` (Linux swap).  
+- **Root Partition:**  
+    Use the remaining space for the root partition.
 
-#### Create a Root Partition
-- Repeat the steps to create a new partition.
-- Use the remaining space for the root partition.
+#### Write Changes
 
-#### Write the Changes
-- Type `w` and press Enter to write the changes and exit `fdisk`.
+Type `w` and press Enter to write changes and exit `fdisk`.
 
 ### Format Partitions
 
 ```bash
-mkfs.fat -F32 /dev/sda1 # Format EFI
-mkswap /dev/sda2 # Format Swap
-swapon /dev/sda2
-mkfs.ext4 /dev/sda3 # Format Root
+mkfs.fat -F32 /dev/sdX1 # Format EFI
+mkswap /dev/sdX2        # Format Swap
+swapon /dev/sdX2
+mkfs.ext4 /dev/sdX3     # Format Root
 ```
 
 ### Mount Partitions
 
 ```bash
-mount /dev/sda3 /mnt # Mount Root
+mount /dev/sdX3 /mnt       # Mount Root
 mkdir /mnt/boot
-mount /dev/sda1 /mnt/boot # Mount Linux
+mount /dev/sdX1 /mnt/boot  # Mount EFI
+```
 ```
 
-### Install Base
-
+### Install Base System
 ```bash
 pacstrap /mnt base linux linux-firmware linux-headers networkmanager grub efibootmgr sudo base-devel
 ```
+
+### Install Additional Packages
 
 ```bash
 pacman -S hyprland wayland wlroots xorg-xwayland \
@@ -93,7 +94,7 @@ pipewire pipewire-alsa pipewire-pulse wireplumber
 
 ## Installing GRUB
 
-*For UEFI*
+### UEFI Installation
 
 ```bash
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
@@ -101,73 +102,57 @@ grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 
 ### Custom GRUB Theme
 
-Installs Mojave Dark Theme and auto-regenerates the config
-
 ```bash
 git clone https://github.com/vinceliuice/Elegant-grub2-themes
 cd Elegant-grub2-themes
 sudo ./install.sh -b -t mojave -i right
-# cd ..
-# rm Elegant-grub2-themes
 ```
 
 ## Installing Hyprland
 
-Following [this tutorial](https://wiki.hyprland.org/Getting-Started/Master-Tutorial/)
+Follow the [Hyprland Master Tutorial](https://wiki.hyprland.org/Getting-Started/Master-Tutorial/).
+
+### Install Required Packages
 
 ```bash
 sudo pacman -Syu \
 wayland xorg-xwayland xdg-desktop-portal-wlr pipewire wireplumber wl-clipboard wlroots
 ```
 
-### Critical Invidia Drivers
+### NVIDIA Drivers
 
 ```bash
 sudo pacman -S nvidia-dkms nvidia-utils egl-wayland nvidia-settings
 ```
 
-#### Edit GRUB
+#### Edit GRUB Configuration
 
 ```bash
 sudo nano /etc/default/grub
 ```
-
-Find the `GRUB_CMDLINE_LINUX_DEFAULT` line and add:
-
+Add the following to `GRUB_CMDLINE_LINUX_DEFAULT`:
 ```ini
 nvidia_drm.modeset=1
 ```
-
-Save and exit, then rebuild grub:
-
+Save and exit, then rebuild GRUB:
 ```bash
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
-*Note: Strangely Windows Drive was finally detected here*
+### Reboot
 
 ```bash
 sudo reboot
 ```
 
-<!-- ### Install `yay`
-
-```bash
-git clone https://aur.archlinux.org/yay.git
-cd yay
-makepkg -si
-```
-
-```bash
-yay -S hyprland
-``` -->
-
-### Move Default Hyprland Config to User Config
+### Configure Hyprland
 
 ```bash
 mkdir -p ~/.config/hypr
 cp /usr/share/hyprland/hyprland.conf ~/.config/hypr/
 ```
+
+## Additional Setup
 
 ### Install Basic Apps
 
@@ -175,16 +160,16 @@ cp /usr/share/hyprland/hyprland.conf ~/.config/hypr/
 sudo pacman -S \
 kitty \   # Terminal
 waybar \  # Top Bar
-rofi     # App Launcher
+rofi      # App Launcher
 ```
 
-### Install Hypr* Packages
+### Install Hyprland Packages
 
 ```bash
 sudo pacman -S hyprland hyprpaper
 ```
 
-### Screenshot tools
+### Screenshot Tools
 
 ```bash
 sudo pacman -S \
@@ -197,9 +182,9 @@ swappy    # GUI to edit/annotate screenshots
 
 ```bash
 sudo pacman -S \
-brightnessctl \   # control monitor brightness
-pamixer \         # audio volume from terminal
-playerctl         # control media players (Spotify, etc)
+brightnessctl \   # Control monitor brightness
+pamixer \         # Audio volume from terminal
+playerctl         # Control media players (Spotify, etc.)
 ```
 
 ### Fonts
@@ -208,7 +193,7 @@ playerctl         # control media players (Spotify, etc)
 sudo pacman -S ttf-jetbrains-mono ttf-nerd-fonts-symbols ttf-nerd-fonts-symbols-common
 ```
 
-### GTK Tools (for theming apps)
+### GTK Tools (for Theming)
 
 ```bash
 sudo pacman -S nwg-look
