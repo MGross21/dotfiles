@@ -75,9 +75,9 @@ mount /dev/sdX3 /mnt       # Mount Root
 mkdir /mnt/boot
 mount /dev/sdX1 /mnt/boot  # Mount EFI
 ```
-```
 
 ### Install Base System
+
 ```bash
 pacstrap /mnt base linux linux-firmware linux-headers networkmanager grub efibootmgr sudo base-devel
 ```
@@ -101,6 +101,10 @@ grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 ```
 
 ### Custom GRUB Theme
+
+<img src="https://raw.githubusercontent.com/vinceliuice/Elegant-grub2-themes/refs/heads/main/preview-02.jpg"
+     width="840" height="500"
+     style="object-fit: none; object-position: -1020px -1100px;">
 
 ```bash
 git clone https://github.com/vinceliuice/Elegant-grub2-themes
@@ -130,11 +134,15 @@ sudo pacman -S nvidia-dkms nvidia-utils egl-wayland nvidia-settings
 ```bash
 sudo nano /etc/default/grub
 ```
+
 Add the following to `GRUB_CMDLINE_LINUX_DEFAULT`:
+
 ```ini
 nvidia_drm.modeset=1
 ```
+
 Save and exit, then rebuild GRUB:
+
 ```bash
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 ```
