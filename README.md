@@ -24,7 +24,7 @@ Use tool like Rufus to flash `.iso` to boot drive
 ## Installation Script
 
 ```bash
-git clone --separate-git-dir=$HOME/.dotfiles https://github.com/MGross21/dotfiles.git $HOME
+git clone --bare https://github.com/MGross21/dotfiles.git ~/.dotfiles
 ./install.sh
 ```
 
@@ -32,6 +32,8 @@ git clone --separate-git-dir=$HOME/.dotfiles https://github.com/MGross21/dotfile
 
 ```bash
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+dotfiles checkout
+dotfiles config --local status.showUntrackedFiles no
 ```
 
 #### Examples

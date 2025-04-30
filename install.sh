@@ -12,7 +12,7 @@ echo "===> Arch Linux Modular Installer <==="
 STEPS=($(ls setup_scripts | sed 's/\.sh$//' | sort))
 
 for step in "${STEPS[@]}"; do
-    script="scripts/${step}.sh"
+    script="setup_scripts/${step}.sh"
     if [[ -f "$script" ]]; then
         echo "--- Running $step ---"
         bash "$script"
