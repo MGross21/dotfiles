@@ -9,7 +9,7 @@ fi
 echo "===> Arch Linux Modular Installer <==="
 
 # List of steps
-STEPS=($(ls setup_scripts | sed 's/\.sh$//'))
+STEPS=($(ls setup_scripts | sed 's/\.sh$//' | sort))
 
 for step in "${STEPS[@]}"; do
     script="scripts/${step}.sh"
