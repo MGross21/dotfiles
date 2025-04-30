@@ -9,9 +9,11 @@
 |------------------|----------------------------------------------------------------------|-----------------------------|
 | **Kernel**       | Linux                                                                |                             |
 | **Distribution** | [Arch](https://archlinux.org)                                        | *I use Arch btw*            |
-| **WM**           | [Hyprland](https://wiki.hyprland.org)                                |                             |
+| **Window Manager**| [Hyprland](https://wiki.hyprland.org)                               |    Tiling / Wayland         |
 | **Graphics**     | NVIDIA                                                               |                             |
 | **GRUB Theme**   | [Elegant-Grub2](https://github.com/vinceliuice/Elegant-grub2-themes) | Mojave Window Dark Right    |
+| **Terminal**    | [Alacritty](https://github.com/alacritty/alacritty)                   | Fast, GPU-accelerated       |
+| **Shell**       | [Zsh](https://www.zsh.org)                                           | With [Oh My Zsh](https://ohmyz.sh/) |
 
 ## Download ISO
 
