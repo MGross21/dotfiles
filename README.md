@@ -14,9 +14,7 @@
 
 (*I use Arch btw*)
 
-## Manual Installation
-
-### Download ISO
+## Download ISO
 
 [Download Arch Linux ISO](https://archlinux.org/download/)
 
@@ -88,7 +86,7 @@ mount /dev/sdX1 /mnt/boot  # Mount EFI
 ### Install Base System
 
 ```bash
-pacstrap /mnt base linux linux-firmware linux-headers networkmanager grub efibootmgr sudo base-devel git
+pacstrap /mnt base linux linux-firmware linux-headers networkmanager grub efibootmgr sudo nano base-devel git
 ```
 
 ## Installing GRUB
