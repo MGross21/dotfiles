@@ -1,11 +1,20 @@
-# Installation Instructions
+# Dotfiles & Installation
 
-**Kernel:** Linux  
-**Distribution:** Arch  
-**DE:** Hyprland  
-**Graphics Card:** NVIDIA RTX  
+> [!WARNING] 
+> This code is currently a work in progress. Please note that the implementation may not be complete or fully functional. Any feedback, suggestions, or issues encountered would be greatly appreciated. Feel free to contribute by opening an issue on GitHub.
 
-## Installation
+## System Info
+
+| **Component**   | **Details**       |
+|------------------|-------------------|
+| **Kernel**       | Linux             |
+| **Distribution** | [Arch](https://archlinux.org)               |
+| **WM**           | [Hyprland](https://wiki.hyprland.org)          |
+| **Graphics**     | NVIDIA            |
+
+(*I use Arch btw*)
+
+## Manual Installation
 
 ### Download ISO
 
@@ -79,17 +88,7 @@ mount /dev/sdX1 /mnt/boot  # Mount EFI
 ### Install Base System
 
 ```bash
-pacstrap /mnt base linux linux-firmware linux-headers networkmanager grub efibootmgr sudo base-devel
-```
-
-### Install Additional Packages
-
-```bash
-pacman -S hyprland wayland wlroots xorg-xwayland \
-swaybg swaylock swayidle grim slurp mako \
-alacritty thunar thunar-archive-plugin thunar-volman \
-base-devel git vim wget curl htop neofetch firefox \
-pipewire pipewire-alsa pipewire-pulse wireplumber
+pacstrap /mnt base linux linux-firmware linux-headers networkmanager grub efibootmgr sudo base-devel git
 ```
 
 ## Installing GRUB
@@ -110,17 +109,6 @@ grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 git clone https://github.com/vinceliuice/Elegant-grub2-themes
 cd Elegant-grub2-themes
 sudo ./install.sh -b -t mojave -i right
-```
-
-## Installing Hyprland
-
-Follow the [Hyprland Master Tutorial](https://wiki.hyprland.org/Getting-Started/Master-Tutorial/).
-
-### Install Required Packages
-
-```bash
-sudo pacman -Syu \
-wayland xorg-xwayland xdg-desktop-portal-wlr pipewire wireplumber wl-clipboard wlroots
 ```
 
 ### NVIDIA Drivers
@@ -162,47 +150,23 @@ cp /usr/share/hyprland/hyprland.conf ~/.config/hypr/
 
 ## Additional Setup
 
-### Install Basic Apps
+### Package Installer
 
 ```bash
-sudo pacman -S \
-kitty \   # Terminal
-waybar \  # Top Bar
-rofi      # App Launcher
+git clone --separate-git-dir=$HOME/.dotfiles https://github.com/MGross21/dotfiles.git $HOME
+./install.sh
 ```
 
-### Install Hyprland Packages
+### Making Changes
 
 ```bash
-sudo pacman -S hyprland hyprpaper
+alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 ```
 
-### Screenshot Tools
+#### Examples
 
 ```bash
-sudo pacman -S \
-grim \    # Wayland screenshot tool
-slurp \   # Area selector for screenshots
-swappy    # GUI to edit/annotate screenshots
-```
-
-### Brightness and Volume Control
-
-```bash
-sudo pacman -S \
-brightnessctl \   # Control monitor brightness
-pamixer \         # Audio volume from terminal
-playerctl         # Control media players (Spotify, etc.)
-```
-
-### Fonts
-
-```bash
-sudo pacman -S ttf-jetbrains-mono ttf-nerd-fonts-symbols ttf-nerd-fonts-symbols-common
-```
-
-### GTK Tools (for Theming)
-
-```bash
-sudo pacman -S nwg-look
+dotfiles status
+dotfiles add .vimrc
+dotfiles commit -m "Update vim config"
 ```
