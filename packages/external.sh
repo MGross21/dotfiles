@@ -2,7 +2,7 @@
 
 INSTALL=(
     oh_my_zsh=sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    test=echo "Hello, World!"
+    zoxide=curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
 )
 
 for item in "${INSTALL[@]}"; do
