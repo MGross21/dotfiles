@@ -1,3 +1,11 @@
 .gitignore
 .git
 .dotfiles
+
+.config/*
+!.config/*.toml
+!.config/*.ini
+!.config/*.md
+!.config/neofetch
+!.config/Thunar
+!.config/hypr
