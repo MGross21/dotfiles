@@ -51,8 +51,8 @@ Open Command Prompt (`Win + R`, type `cmd`, press `Enter`):
 ```bash
 wsl --update
 wsl --set-default-version 2
-wsl --set-default archlinux
 wsl --install archlinux
+wsl --set-default archlinux
 wsl ~
 pacman -Syu  # no sudo
 ```
