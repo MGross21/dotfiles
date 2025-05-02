@@ -7,11 +7,11 @@
 
 | **Component**   | **Details**                                                           |    **Notes**                |
 |------------------|----------------------------------------------------------------------|-----------------------------|
-| **Kernel**       | Linux                                                                |                             |
+| **Kernel**       | [Linux](https://github.com/torvalds/linux)                           |  Year of the Linux Desktop  |
 | **Distribution** | [Arch](https://archlinux.org)                                        | *I use Arch btw*            |
 | **Window Manager**| [Hyprland](https://wiki.hyprland.org)                               |    Tiling / Wayland         |
 | **Graphics**     | NVIDIA                                                               |                             |
-| **GRUB Theme**   | [Elegant-Grub2](https://github.com/vinceliuice/Elegant-grub2-themes) | Mojave Window Dark Right    |
+| **GRUB Theme**   | [Elegant-Grub2](https://github.com/vinceliuice/Elegant-grub2-themes) | Mojave, Window, Dark, Right    |
 | **Terminal**    | [Alacritty](https://github.com/alacritty/alacritty)                   | Fast, GPU-accelerated       |
 | **Shell**       | [Zsh](https://www.zsh.org)                                           | With [Oh My Zsh](https://ohmyz.sh/) |
 
@@ -42,4 +42,17 @@ dotfiles config --local status.showUntrackedFiles no
 dotfiles status
 dotfiles add .vimrc
 dotfiles commit -m "Update vim config"
+```
+
+### Installing on WSL2
+
+Open Command Prompt (`Win + R`, type `cmd`, press `Enter`):
+
+```bash
+wsl --update
+wsl --set-default-version 2
+wsl --set-default archlinux
+wsl --install archlinux
+wsl ~
+pacman -Syu  # no sudo
 ```
