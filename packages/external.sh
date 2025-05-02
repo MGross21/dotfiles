@@ -1,13 +1,12 @@
 #!/bin/bash
 
-INSTALL=(
-    oh_my_zsh=sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    zoxide=curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+declare -A INSTALL=(
+    [oh_my_zsh]="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
+    [zoxide]="https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh"
+    [Spicetify]="https://raw.githubusercontent.com/spicetify/cli/main/install.sh"
 )
 
-for item in "${INSTALL[@]}"; do
-    key="${item%%=*}"
-    cmd="${item#*=}"
-    echo "Running $key..."
-    eval "$cmd"
+for key in "${!INSTALL[@]}"; do
+    echo "Installing $key..."
+    curl -fsSL "${INSTALL[$key]}" | sh
 done
