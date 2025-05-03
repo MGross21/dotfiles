@@ -1,10 +1,10 @@
-# Debugging Senarios
+# Debugging
 
 A collection of strange gotchas and debug moments
 
 ## Login to Twich
 
-Upon login, I was propted with `"Incompatible Browser"` despite firefox being explicitly listed.
+Upon login, I was prompted with `"Incompatible Browser"` despite firefox being explicitly listed.
 
 *What was the fix you might ask?* The [**system clock!**](https://bbs.archlinux.org/viewtopic.php?id=289645)
 
