@@ -1,6 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -f "$SCRIPT_DIR/lib/common.sh" ]]; then
+    source "$SCRIPT_DIR/lib/common.sh"
+fi
+
+section "GRUB Bootloader Configuration"
+
 echo "[*] Installing GRUB bootloader (UEFI)..."
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 
@@ -14,20 +22,19 @@ fi
 
 # Ensure os-prober is enabled for dual-boot detection
 if grep -qE "^#?GRUB_DISABLE_OS_PROBER=true" /etc/default/grub; then
+    echo "[*] Enabling os-prober..."
     sed -i 's/^#\?GRUB_DISABLE_OS_PROBER=true/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
 elif ! grep -q "^GRUB_DISABLE_OS_PROBER=" /etc/default/grub; then
     echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
     echo "[*] Enabled os-prober in GRUB config."
 fi
 
-# Install GRUB theme
 echo "[*] Installing Elegant GRUB theme..."
 git clone https://github.com/vinceliuice/Elegant-grub2-themes /tmp/elegant-grub
-cd /tmp/elegant-grub
-./install.sh -b -t mojave -i right
-cd -
+bash /tmp/elegant-grub/install.sh -b -t mojave -i right
 rm -rf /tmp/elegant-grub
 
-# Rebuild GRUB configuration
-echo "[*] Rebuilding GRUB configuration..."
+echo "[*] Generating GRUB configuration..."
 grub-mkconfig -o /boot/grub/grub.cfg
+
+echo "[✓] GRUB bootloader configured successfully."

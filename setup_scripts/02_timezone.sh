@@ -1,24 +1,36 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "[*] Setting up system time and timezone..."
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+[[ -f "$SCRIPT_DIR/lib/common.sh" ]] && source "$SCRIPT_DIR/lib/common.sh"
+
+section "Timezone Setup"
 
 DEFAULT_TIMEZONE="America/Phoenix"
 
-# Prompt user for timezone with default fallback
-read -rp "Enter your timezone [Default: $DEFAULT_TIMEZONE]: " USER_TIMEZONE
-USER_TIMEZONE="${USER_TIMEZONE:-$DEFAULT_TIMEZONE}"
+# Determine if running in non-interactive mode
+NON_INTERACTIVE=false
+[[ "$*" == *--non-interactive* ]] && NON_INTERACTIVE=true
 
-# Validate timezone exists
-if [[ ! -f "/usr/share/zoneinfo/$USER_TIMEZONE" ]]; then
-    echo "[-] Invalid timezone: $USER_TIMEZONE" >&2
-    exit 1
+# Get user timezone
+if $NON_INTERACTIVE; then
+    USER_TIMEZONE="$DEFAULT_TIMEZONE"
+else
+    read -rp "Enter your timezone [Default: $DEFAULT_TIMEZONE]: " USER_TIMEZONE
+    USER_TIMEZONE="${USER_TIMEZONE:-$DEFAULT_TIMEZONE}"
 fi
 
-ln -sf "/usr/share/zoneinfo/$USER_TIMEZONE" /etc/localtime
-echo "[*] Timezone set to $USER_TIMEZONE"
+# Validate timezone
+if [[ ! -f "/usr/share/zoneinfo/$USER_TIMEZONE" ]]; then
+    error "Invalid timezone: $USER_TIMEZONE"
+    safe_exit
+fi
 
-# Sync hardware clock and enable NTP
+# Set timezone
+echo "[*] Setting timezone to $USER_TIMEZONE..."
+ln -sf "/usr/share/zoneinfo/$USER_TIMEZONE" /etc/localtime
 hwclock --systohc
 timedatectl set-ntp true
-echo "[*] NTP time sync enabled"
+
+echo "[✓] Timezone set to $USER_TIMEZONE and NTP enabled."
