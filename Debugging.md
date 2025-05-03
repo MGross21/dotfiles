@@ -24,3 +24,9 @@ Time Zone: <time-zone>
 System clock syncrohonized:yes
 NTP Service: active
 ```
+
+## System Dark Mode
+
+Websites ask to use `System Settings`. *Where can I control this?*
+
+Install GTK package and modify system settings in that GUI.
