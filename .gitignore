@@ -6,7 +6,6 @@
 
 # Whitelisted Configs
 !.config/*.toml
-!.config/*.ini
 !.config/*.md
 !.config/neofetch/
 !.config/hypr/
@@ -17,5 +16,5 @@
 # Whitelist Bash Configs
 !.*shrc
 
-# Hide Backups
-**/*.bak
+# Hide Backup Files
+*.bak
