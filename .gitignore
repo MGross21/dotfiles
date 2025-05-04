@@ -8,10 +8,9 @@
 !.config/*.toml
 !.config/*.ini
 !.config/*.md
-!.config/neofetch
-!.config/Thunar
-!.config/hypr
-!.config/waybar
+!.config/neofetch/
+!.config/hypr/
+!.config/waybar/
 !.config/spotify-launcher.conf
 
 # Whitelist Bash Configs
