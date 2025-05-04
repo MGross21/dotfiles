@@ -10,9 +10,9 @@
     "modules-center": [],
     "modules-right": [
         //"mpd",
-        "idle_inhibitor",
+        //"idle_inhibitor",
         "pulseaudio",
-        "network",
+        //"network",
         "power-profiles-daemon",
         "cpu",
         "memory",
@@ -102,8 +102,8 @@
     "clock": {
         // "timezone": "America/New_York",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-        "format": ":{:%I:%M %p}", // 12-hour format with AM/PM
-	"format-alt": "{:%m-%d-%Y}"
+        "format": "{:%m/%d/%y %H:%M}", // 12-hour format with AM/PM
+	//"format-alt": "{:%m-%d-%Y}"
     },
     "cpu": {
         "format": "{usage}% ",

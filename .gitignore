@@ -1,7 +1,9 @@
+# Ignore Self if Github Repository is Unpacked
 .gitignore
 .git
 .dotfiles
 
+# Whitelisted Configs
 .config/*
 !.config/*.toml
 !.config/*.ini
@@ -10,3 +12,10 @@
 !.config/Thunar
 !.config/hypr
 !.config/waybar
+!.config/spotify-launcher.conf
+
+# Whitelist Bash Configs
+!.*shrc
+
+# Hide Backups
+**/*.bak
