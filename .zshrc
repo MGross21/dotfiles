@@ -36,7 +36,7 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 
 # --- Environment Setup ---
-export EDITOR="nano"  # Or "vim" or "code"
+export EDITOR="nvim"  
 export PATH="$HOME/bin:/usr/local/bin:$PATH"
 
 # --- Prompt ---
@@ -62,7 +62,9 @@ alias reload='source ~/.zshrc'
 alias update="sudo pacman -Syu"
 alias install="sudo pacman -S"
 alias remove="sudo pacman -Rns"
-alias cleanup="sudo pacman -Rns $(pacman -Qdtq)"
+alias search="pacman -Si"
+#alias cleanup='orphans=$(pacman -Qdtq); [[ -n "$orphans" ]] && sudo pacman -Rns $orphans || echo "No orphans to remove."'
+
 
 alias hyprreload="hyprctl reload"
 alias hyprlog="journalctl -xe | grep Hyprland"
@@ -95,6 +97,20 @@ alias ports='ss -tulwn'
 # End Config
 # ==========
 
+_d2g() {
+  cp -r ~/.config ~/dotfiles/
+  cp ~/.*shrc ~/dotfiles/
+}
+alias dot2git=_d2g
 
-alias dot2git="cp -r ~/.config ~/dotfiles/"
+_ds() {
+  cd ~/dotfiles || return
+  git pull
+  dot2git
+  gc -am "Sync dotfiles ($(date +"%m/%d/%y %H:%M:%S %Z"))"
+  git push
+  cd -
+}
+alias dotsync=_ds
+
 alias twitch='function _twitch() { firefox --new-window "https://www.twitch.tv/$1"; }; _twitch'
