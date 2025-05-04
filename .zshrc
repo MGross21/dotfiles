@@ -105,6 +105,7 @@ alias dot2git=_d2g
 
 _ds() {
   cd ~/dotfiles || return
+  git status
   git pull
   dot2git
   gc -am "Sync dotfiles ($(date +"%m/%d/%y %H:%M:%S %Z"))"

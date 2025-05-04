@@ -2,9 +2,9 @@
 .gitignore
 .git
 .dotfiles
+.config/*
 
 # Whitelisted Configs
-.config/*
 !.config/*.toml
 !.config/*.ini
 !.config/*.md
@@ -12,6 +12,7 @@
 !.config/hypr/
 !.config/waybar/
 !.config/spotify-launcher.conf
+!.config/gtk-3.0/
 
 # Whitelist Bash Configs
 !.*shrc
