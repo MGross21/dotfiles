@@ -59,20 +59,25 @@ alias gl="git log --oneline --graph --all"
 alias zshrc='${EDITOR} ~/.zshrc'
 alias reload='source ~/.zshrc'
 
-alias update="sudo pacman -Syu"
+alias update="sudo pacman -Syu && yay -Sua && echo 'Done.'"
 alias install="sudo pacman -S"
-alias remove="sudo pacman -Rns"
+alias uninstall="sudo pacman -Rns"
 alias search="pacman -Si"
+alias packages="pacman -Qet" # All Explicitly installed pacakges, non-dependencies
 #alias cleanup='orphans=$(pacman -Qdtq); [[ -n "$orphans" ]] && sudo pacman -Rns $orphans || echo "No orphans to remove."'
 
 
 alias hyprreload="hyprctl reload"
 alias hyprlog="journalctl -xe | grep Hyprland"
+
+alias barreload='pkill waybar && (waybar & disown)'
+
 alias wlr="env | grep -i wl" # Wayland Variables
 alias monitors="hyprctl monitors"
 alias logout="hyprctl dispatch exit"
 alias reboot="systemctl reboot"
 alias shutdown="systemctl poweroff"
+alias services="systemctl list-unit-files --state=enabled"
 
 alias devices="lsusb && lspci | less"
 alias disks="lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,LABEL"

@@ -11,10 +11,10 @@
 !.config/hypr/
 !.config/waybar/
 !.config/spotify-launcher.conf
-!.config/gtk-3.0/
+#!.config/gtk-3.0/
 
 # Whitelist Bash Configs
-!.*shrc
+!.zshrc
 
 # Hide Backup Files
 *.bak
