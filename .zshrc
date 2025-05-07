@@ -64,8 +64,18 @@ alias install="sudo pacman -S"
 alias uninstall="sudo pacman -Rns"
 alias search="pacman -Si"
 alias packages="pacman -Qet" # All Explicitly installed pacakges, non-dependencies
-#alias cleanup='orphans=$(pacman -Qdtq); [[ -n "$orphans" ]] && sudo pacman -Rns $orphans || echo "No orphans to remove."'
 
+cleanup() {
+  local pkg
+  for pkg in $(pacman -Qdtq); do
+    if pacman -Qi "$pkg" &>/dev/null; then
+      echo "Removing $pkg..."
+      sudo pacman -Rns "$pkg"
+    else
+      echo "Skipping $pkg (not installed)"
+    fi
+  done
+}
 
 alias hyprreload="hyprctl reload"
 alias hyprlog="journalctl -xe | grep Hyprland"
@@ -83,6 +93,10 @@ alias devices="lsusb && lspci | less"
 alias disks="lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,LABEL"
 alias usage="df -hT | grep '^/dev/'"
 alias ports='ss -tulwn'
+
+copyfile() {
+  [[ -f "$1" ]] && wl-copy < "$1" || echo "Usage: copyfile <file>"
+}
 
 #alias volup="pactl set-sink-volume @DEFAULT_SINK@ +5%"
 #alias voldown="pactl set-sink-volume @DEFAULT_SINK@ -5%"
@@ -102,13 +116,12 @@ alias ports='ss -tulwn'
 # End Config
 # ==========
 
-_d2g() {
+dot2git(){
   cp -r ~/.config ~/dotfiles/
   cp ~/.*shrc ~/dotfiles/
 }
-alias dot2git=_d2g
 
-_ds() {
+dotsync(){
   cd ~/dotfiles || return
   git status
   git pull
@@ -117,6 +130,7 @@ _ds() {
   git push
   cd -
 }
-alias dotsync=_ds
 
-alias twitch='function _twitch() { firefox --new-window "https://www.twitch.tv/$1"; }; _twitch'
+twitch() { 
+  firefox --new-window "https://www.twitch.tv/$1"
+}
