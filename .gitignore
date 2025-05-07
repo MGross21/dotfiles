@@ -7,11 +7,10 @@
 # Whitelisted Configs
 !.config/*.toml
 !.config/*.md
-!.config/neofetch/
-!.config/hypr/
-!.config/waybar/
+!.config/neofetch/*
+!.config/hypr/*
+!.config/waybar/*
 !.config/spotify-launcher.conf
-#!.config/gtk-3.0/
 
 # Whitelist Bash Configs
 !.zshrc
