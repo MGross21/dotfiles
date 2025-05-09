@@ -1,21 +1,24 @@
-# Ignore Self if Github Repository is Unpacked
+# Ignore Self if GitHub Repository is Unpacked
 .gitignore
 .git
 .dotfiles
-.config/*
+.bash*
+
+# Whitelist Bash/Zsh Configs
+!.zshrc
 
 # Whitelisted Configs
 !.config/*.toml
 !.config/*.md
-!.config/neofetch/*
-!.config/hypr/*
-!.config/waybar/*
+!.config/neofetch/**
+!.config/hypr/**
+!.config/waybar/**
 !.config/spotify-launcher.conf
-!.confg/nvim/*
-!.config/dunst
+!.config/nvim/**
+!.config/dunst/**
 
-# Whitelist Bash Configs
-!.zshrc
+# Ignore Everything Else in .config
+.config/**
 
 # Hide Backup Files
 *.bak
