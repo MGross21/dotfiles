@@ -1,0 +1,6 @@
+width=500
+height=400
+show=drun
+prompt=Program
+term=$TERM
+allow_markup=true

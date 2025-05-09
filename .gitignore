@@ -16,6 +16,7 @@
 !.config/spotify-launcher.conf
 !.config/nvim/**
 !.config/dunst/**
+!.config/wofi/**
 
 # Ignore Everything Else in .config
 .config/**
