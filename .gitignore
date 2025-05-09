@@ -11,6 +11,8 @@
 !.config/hypr/*
 !.config/waybar/*
 !.config/spotify-launcher.conf
+!.confg/nvim/*
+!.config/dunst
 
 # Whitelist Bash Configs
 !.zshrc

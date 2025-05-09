@@ -32,7 +32,8 @@
     // CPU Usage
     "cpu": {
       "format": "{usage}% ",
-      "tooltip": false
+      "tooltip": false,
+      "on-click": "$TERM -e htop"
     },
   
     // Memory Usage
@@ -94,7 +95,7 @@
       "menu": "on-click",
       "menu-file": "~/.config/waybar/power_menu.xml",
       "menu-actions": {
-          "lock": "loginctl lock-session",
+          "lock": "hyprlock",
           "suspend": "systemctl suspend",
           "hibernate": "systemctl hibernate",
           "reboot": "reboot",
