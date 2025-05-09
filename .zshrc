@@ -80,7 +80,7 @@ cleanup() {
 alias hyprreload="hyprctl reload"
 alias hyprlog="journalctl -xe | grep Hyprland"
 
-alias barreload='pkill waybar && (waybar & disown)'
+alias barreload='pkill waybar; (waybar & disown)'
 
 alias wlr="env | grep -i wl" # Wayland Variables
 alias monitors="hyprctl monitors"
@@ -93,6 +93,7 @@ alias devices="lsusb && lspci | less"
 alias disks="lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,LABEL"
 alias usage="df -hT | grep '^/dev/'"
 alias ports='ss -tulwn'
+alias speedtest="speedtest-cli --simple | column -t"
 
 copyfile() {
   [[ -f "$1" ]] && wl-copy < "$1" || echo "Usage: copyfile <file>"
@@ -134,3 +135,5 @@ dotsync(){
 twitch() { 
   firefox --new-window "https://www.twitch.tv/$1"
 }
+
+export PATH=$PATH:/home/mgross/.spicetify
