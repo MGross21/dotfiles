@@ -36,12 +36,17 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 
 # --- Environment Setup ---
-export EDITOR="nvim"  
+export EDITOR="nvim"
 export PATH="$HOME/bin:/usr/local/bin:$PATH"
 
 # --- Prompt ---
 autoload -Uz colors && colors
-PROMPT='%F{cyan}%n@%m%f:%F{yellow}%~%f %# '
+#PROMPT='%F{cyan}%n@%m%f:%F{yellow}%~%f %# ' # Orange (Default)
+PROMPT='%F{cyan}%n@%m%f:%F{#9C6ADE}%~%f %# ' # Purple
+
+# --- Vivid Terminal Colors ---
+#export LS_COLORS="$(vivid generate purple)"
+export LS_COLORS="$(vivid generate tokyonight-storm)"
 
 # --- Aliases ---
 alias c="clear"
@@ -51,6 +56,8 @@ alias ...="cd ../.."
 alias ls='ls --color=auto'
 alias la='ls -lAFhSr --color=auto' # list all, show filetype, format sizing, reverse sort
 alias ll='ls -lah'
+
+alias vim="nvim"
 
 alias gs='git status'
 alias gc="git commit"

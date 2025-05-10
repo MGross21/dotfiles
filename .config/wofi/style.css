@@ -1,6 +1,15 @@
+/*
+  === Wofi Color Scheme (Purple Accent) ===
+  -- Background:         rgba(30, 30, 30, 0.6)
+  -- Foreground:         #f2f2f2
+  -- Accent:             #9C6ADE
+  -- Accent Light:       rgba(156, 106, 222, 0.15)
+  -- Contrast:           #000000
+*/
+
 window {
     background-color: rgba(30, 30, 30, 0.6); /* Primary BG */
-    border: 2px solid #DB9A2A;              /* Accent */
+    border: 2px solid #9C6ADE;              /* Accent */
     border-radius: 8px;
     font-family: JetBrainsMono Nerd Font;
     font-size: 11pt;
@@ -10,7 +19,7 @@ window {
 #input {
     padding: 6px 10px;
     margin: 6px 0;
-    background-color: rgba(219, 154, 42, 0.15); /* Accent Light */
+    background-color: rgba(156, 106, 222, 0.15); /* Accent Light */
     color: #f2f2f2;
     border: none;
     border-radius: 6px;
@@ -25,7 +34,7 @@ window {
 }
 
 #entry:selected {
-    background-color: #DB9A2A; /* Accent */
+    background-color: #9C6ADE; /* Accent */
     color: #000000;            /* Contrast */
     font-weight: bold;
 }
