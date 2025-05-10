@@ -1,0 +1,18 @@
+---
+styles:
+  directory: "bold 135"         # Purple directory
+  symlink: "cyan"
+  file: "normal"
+  executable: "green"
+  socket: "yellow"
+  block-device: "magenta"
+  char-device: "magenta"
+  special: "red"
+  broken: "red"
+  missing: "red"
+  fifo: "yellow"
+  setuid: "black bg_red"
+  setgid: "black bg_magenta"
+  sticky: "black bg_green"
+  other-writable: "black bg_yellow"
+  door: "blue"

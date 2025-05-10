@@ -17,6 +17,7 @@
 !.config/nvim/**
 !.config/dunst/**
 !.config/wofi/**
+!.config/vivid/**
 
 # Ignore Everything Else in .config
 .config/**
