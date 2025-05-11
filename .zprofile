@@ -1,4 +1,4 @@
-https://wiki.hyprland.org/Useful-Utilities/Systemd-start/
+# https://wiki.hyprland.org/Useful-Utilities/Systemd-start/
 
 # Compositor Selection Menu
 #if uwsm check may-start && uwsm select; then
