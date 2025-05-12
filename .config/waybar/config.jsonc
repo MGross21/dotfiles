@@ -33,7 +33,7 @@
     "cpu": {
       "format": "{usage}% ",
       "tooltip": false,
-      "on-click": "$TERM -e htop"
+      "on-click": "alacritty -e htop"
     },
   
     // Memory Usage
@@ -59,7 +59,7 @@
       "format": "{volume}% {icon} {format_source}",
       "format-bluetooth": "{volume}% {icon} {format_source}",
       "format-muted": " {format_source}",
-      "format-source": "{volume}% ",
+      "format-source": " {volume}% ",
       "format-source-muted": "",
       "format-icons": {
         "default": ["", "", ""]

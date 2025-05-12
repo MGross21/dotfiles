@@ -66,26 +66,33 @@ alias gl="git log --oneline --graph --all"
 alias zshrc='${EDITOR} ~/.zshrc'
 alias reload='source ~/.zshrc'
 
-alias update="sudo pacman -Syu && yay -Sua && echo 'Done.'"
+alias update="sudo pacman -Syu --noconfirm && yay -Sua --noconfirm && spicetify update && echo 'Done.'"
 alias install="sudo pacman -S"
 alias uninstall="sudo pacman -Rns"
 alias search="pacman -Si"
 alias packages="pacman -Qet" # All Explicitly installed pacakges, non-dependencies
 
 cleanup() {
-  local pkg
-  for pkg in $(pacman -Qdtq); do
-    if pacman -Qi "$pkg" &>/dev/null; then
-      echo "Removing $pkg..."
-      sudo pacman -Rns "$pkg"
-    else
-      echo "Skipping $pkg (not installed)"
-    fi
-  done
+  local orphans
+  orphans=$(pacman -Qdtq)
+
+  if [[ -n "$orphans" ]]; then
+    echo "Removing orphan packages:"
+    echo "$orphans"
+    sudo pacman -Rns $orphans
+  else
+    echo "No orphan packages to remove."
+  fi
 }
+
+
+alias forcekill="killall -9"
+
+alias neo="neofetch"
 
 alias hyprreload="hyprctl reload"
 alias hyprlog="journalctl -xe | grep Hyprland"
+alias hyprconfig="${EDITOR} $HOME/.config/hypr/hyprland.conf"
 
 alias barreload='pkill waybar; (waybar & disown)'
 
@@ -100,7 +107,9 @@ alias devices="lsusb && lspci | less"
 alias disks="lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,LABEL"
 alias usage="df -hT | grep '^/dev/'"
 alias ports='ss -tulwn'
-alias speedtest="speedtest-cli --simple | column -t"
+alias speedtest="speedtest-cli --simple --secure | column -t"
+
+alias soundtest="speaker-test -c 8 -t wav"
 
 copyfile() {
   [[ -f "$1" ]] && wl-copy < "$1" || echo "Usage: copyfile <file>"
@@ -139,8 +148,61 @@ dotsync(){
   cd -
 }
 
-twitch() { 
-  firefox --new-window "https://www.twitch.tv/$1"
+twitch() {
+  streamlink --player mpv \
+             --player-args="--no-osc --no-input-cursor --no-input-default-bindings" \
+             "twitch.tv/$1" best & disown
 }
 
+
 export PATH=$PATH:/home/mgross/.spicetify
+
+# Requires https://github.com/caarlos0/timer
+# yay -S timer-bin
+
+pomodoro() {
+  local work_minutes=25
+  local break_minutes=5
+  local count=1
+  local no_break=false
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -w|--work)     shift; work_minutes="$1" ;;
+      -b|--break)    shift; break_minutes="$1" ;;
+      -c|--count)    shift; count="$1" ;;
+      -n|--no-break) no_break=true ;;
+      *) echo "Usage: pomodoro [-w minutes] [-b minutes] [-c count] [--no-break]"; return 1 ;;
+    esac
+    shift
+  done
+
+  on_interrupt() {
+    trap - SIGINT
+    exit 130
+  }
+
+  for ((i = 1; i <= count; i++)); do
+    echo "Pomodoro $i of $count"
+    c
+
+    echo "Work: ${work_minutes} minutes"
+    trap on_interrupt SIGINT
+    timer "${work_minutes}m"
+    local timer_exit=$?
+    trap - SIGINT
+
+    (( timer_exit != 0 )) && return 130
+
+    notify-send "Pomodoro" "Work session over. Take a break!"
+
+    if ! $no_break; then
+      echo "Break: ${break_minutes} minutes"
+      timer "${break_minutes}m"
+      notify-send "Pomodoro" "Break is over. Get back to work!"
+    else
+      echo "Skipping break as requested."
+    fi
+  done
+}
+
