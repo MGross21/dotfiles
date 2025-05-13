@@ -133,16 +133,12 @@ copyfile() {
 # End Config
 # ==========
 
-dot2git(){
-  cp -r ~/.config ~/dotfiles/
-  cp ~/.*shrc ~/dotfiles/
-}
-
 dotsync(){
   cd ~/dotfiles || return
   git status
-  git pull
-  dot2git
+  git pull --rebase origin main
+  cp -r ~/.config ~/dotfiles/
+  cp ~/.*shrc ~/dotfiles/
   gc -am "Sync dotfiles ($(date +"%m/%d/%y %H:%M:%S %Z"))"
   git push
   cd -
