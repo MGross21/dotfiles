@@ -9,7 +9,7 @@ separator_height = 1
 padding = 6
 horizontal_padding = 10
 frame_width = 1
-frame_color = "#DB9A2A"
+frame_color = "#9C6ADE"
 separator_color = frame
 sort = yes
 idle_threshold = 120
@@ -54,7 +54,7 @@ timeout = 3
 [urgency_normal]
 background = "#1e1e1e"
 foreground = "#f2f2f2"
-frame_color = "#DB9A2A"
+frame_color = "#9C6ADE"
 timeout = 5
 
 [urgency_critical]
