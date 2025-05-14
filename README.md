@@ -56,3 +56,5 @@ wsl --set-default archlinux
 wsl ~
 pacman -Syu  # no sudo
 ```
+
+<!--Need to add a user in the above commands. No $HOME DIR has been created yet-->
