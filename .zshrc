@@ -38,7 +38,7 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 # --- Environment Setup ---
 export EDITOR="nvim"
 export PATH="$HOME/bin:/usr/local/bin:$PATH"
-export SUDO_PROMPT="${(U)USER} Password: "
+export SUDO_PROMPT="${(L)USER} password: "
 
 # --- Prompt ---
 autoload -Uz colors && colors
@@ -53,13 +53,14 @@ export LS_COLORS="$(vivid generate tokyonight-storm)"
 alias c="clear"
 alias ..="cd .."
 alias ...="cd ../.."
-alias --="cd -"
+alias c-='cd - >/dev/null'
 
 alias ls='ls --color=auto'
 alias la='ls -lAFhSr --color=auto' # list all, show filetype, format sizing, reverse sort
 alias ll='ls -lah'
 
-alias vim="nvim"
+alias vim=$EDITOR
+alias vi=$EDITOR
 
 alias gs='git status'
 alias gc="git commit"
@@ -140,7 +141,8 @@ dotsync(){
   git status
   git pull --rebase origin main
   cp -r ~/.config ~/dotfiles/ 2>/dev/null
-  cp ~/.*shrc ~/dotfiles/
+  cp ~/.*rc ~/dotfiles/
+  cp ~/.zprofile ~/dotfiles/
   gc -am "Sync dotfiles ($(date +"%m/%d/%y %H:%M:%S %Z"))"
   git push
   cd -
