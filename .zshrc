@@ -53,6 +53,7 @@ export LS_COLORS="$(vivid generate tokyonight-storm)"
 alias c="clear"
 alias ..="cd .."
 alias ...="cd ../.."
+alias --="cd -"
 
 alias ls='ls --color=auto'
 alias la='ls -lAFhSr --color=auto' # list all, show filetype, format sizing, reverse sort
