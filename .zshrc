@@ -38,6 +38,7 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 # --- Environment Setup ---
 export EDITOR="nvim"
 export PATH="$HOME/bin:/usr/local/bin:$PATH"
+export SUDO_PROMPT="${(U)USER} Password: "
 
 # --- Prompt ---
 autoload -Uz colors && colors
@@ -137,7 +138,7 @@ dotsync(){
   cd ~/dotfiles || return
   git status
   git pull --rebase origin main
-  cp -r ~/.config ~/dotfiles/
+  cp -r ~/.config ~/dotfiles/ 2>/dev/null
   cp ~/.*shrc ~/dotfiles/
   gc -am "Sync dotfiles ($(date +"%m/%d/%y %H:%M:%S %Z"))"
   git push

@@ -1,6 +1,6 @@
 /*
-  === Color Scheme Reference (manual only) ===
-  -- Primary BG:         rgba(30, 30, 30, 0.6)  (blur layer-compatible)
+  === Color Scheme Reference ===
+  -- Primary BG:         rgba(30, 30, 30, 0.6)
   -- Foreground Text:    #f2f2f2
   -- Accent:             #9C6ADE
   -- Accent Light:       rgba(156, 106, 222, 0.15)
@@ -10,14 +10,13 @@
 
 * {
   font-family: "JetBrainsMono Nerd Font", monospace;
-  font-size: 13px;
+  font-size: 12px;
   transition: all 0.25s ease-in-out;
 }
 
 window#waybar {
   background-color: rgba(30, 30, 30, 0.6);
   color: #f2f2f2;
-  border-bottom: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
@@ -25,13 +24,23 @@ window#waybar.hidden {
   opacity: 0.1;
 }
 
-button {
-  border: none;
+button,
+#cpu,
+#memory,
+#temperature,
+#backlight,
+#pulseaudio,
+#keyboard-state,
+#clock,
+#tray,
+#custom-weather,
+#custom-power {
+  all: unset;
   background: transparent;
-  box-shadow: none;
-  padding: 3px 8px;
-  margin: 2px 4px;
-  border-radius: 6px;
+  color: #f2f2f2;
+  padding: 1px 3px;
+  margin: 0px 1px;
+  border-radius: 4px;
 }
 
 button:hover {
@@ -40,12 +49,11 @@ button:hover {
 
 /* === Workspaces === */
 #workspaces {
-  padding-left: 6px;
+  padding-left: 4px;
 }
 
 #workspaces button {
-  color: #f2f2f2;
-  padding: 3px 8px;
+  padding: 2px 4px;
 }
 
 #workspaces button.focused {
@@ -59,60 +67,13 @@ button:hover {
   color: #000000;
 }
 
-/* === Modules Styling === */
-#cpu,
-#memory,
-#temperature,
-#backlight,
-#pulseaudio,
-#keyboard-state,
-#clock,
-#tray,
-#custom-power {
-  background-color: rgba(255, 255, 255, 0.04);
-  color: #f2f2f2;
-  padding: 3px 8px;
-  margin: 2px 4px;
-  border-radius: 6px;
-}
-
-/* === Pulseaudio Tweaks === */
-#pulseaudio {
-  font-size: 12px;
-  min-width: 36px;
-  letter-spacing: 0.5px;
-}
-
-/* === Keyboard State Formatting === */
-#keyboard-state {
-  font-size: 12px;
-  min-width: 36px;
-}
-
-#keyboard-state > label {
-  padding: 0 6px;
-  min-width: 30px;
-}
-
-#keyboard-state > label.locked {
-  background-color: rgba(255, 255, 255, 0.12);
-  border-radius: 6px;
-  font-weight: bold;
-}
-
-/* === Clock === */
-#clock {
-  font-weight: bold;
-}
-
-/* === Tray === */
+/* === Module Variants === */
 #tray {
   background-color: rgba(255, 255, 255, 0.03);
-  padding: 3px 10px;
+  padding: 2px 6px;
 }
 
-/* === Power Button === */
-#custom-power {
+/* #custom-power {
   background-color: #9C6ADE;
   color: #000000;
   font-weight: bold;
@@ -121,16 +82,45 @@ button:hover {
 #custom-power:hover {
   background-color: rgba(156, 106, 222, 0.9);
   color: #000000;
+} */
+
+/* === Pulseaudio === */
+#pulseaudio {
+  font-size: 11px;
+  min-width: 30px;
+  letter-spacing: 0.4px;
 }
 
-/* === Critical States === */
-#temperature.critical,
-#pulseaudio.muted {
+#pulseaudio.muted,
+#temperature.critical {
   background-color: #ff5555;
   color: #000000;
   animation: blink 0.6s steps(2) infinite alternate;
 }
 
+/* === Keyboard State === */
+#keyboard-state {
+  font-size: 11px;
+  min-width: 30px;
+}
+
+#keyboard-state > label {
+  padding: 0 4px;
+  min-width: 24px;
+}
+
+#keyboard-state > label.locked {
+  background-color: rgba(255, 255, 255, 0.12);
+  font-weight: bold;
+  border-radius: 6px;
+}
+
+/* === Clock === */
+#clock {
+  font-weight: bold;
+}
+
+/* === Blink Animation === */
 @keyframes blink {
   to {
     background-color: #ffffff;

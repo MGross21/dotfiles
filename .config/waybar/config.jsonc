@@ -8,10 +8,10 @@
     "modules-left": ["hyprland/workspaces", "custom/window"],
     "modules-center": [],
     "modules-right": [
+      "custom/weather",
       "cpu",
       "memory",
       "temperature",
-      "backlight",
       "pulseaudio",
       "keyboard-state",
       "clock",
@@ -23,12 +23,19 @@
       "exec": "hyprctl activewindow -j | jq -r '.class // empty'",
       "return-type": "plain",
       "format": "{}",
+      "format-alt": "desktop",
       "tooltip": false,
       "interval": 1,
       "exec-on-event": ["activewindow"]
     },
 
-  
+    "custom/weather": {
+      "exec": "~/.config/waybar/scripts/phoenix_temp.sh",
+      "interval": 1800,
+      "format": "{}",
+      "tooltip": false
+    },
+
     // CPU Usage
     "cpu": {
       "format": "{usage}% ",
@@ -46,12 +53,6 @@
       "critical-threshold": 80,
       "format": "{temperatureC}°C {icon}",
       "format-icons": ["", "", ""]
-    },
-  
-    // Backlight brightness (desktop monitors supporting DDC)
-    "backlight": {
-      "format": "{percent}% {icon}",
-      "format-icons": ["", "", "", "", "", "", "", "", ""]
     },
   
     // Audio Volume + Mic Status
@@ -90,7 +91,7 @@
     },
   
     "custom/power": {
-      "format": "⏻",
+      "format": "⏻ ",
       "tooltip": false,
       "menu": "on-click",
       "menu-file": "~/.config/waybar/power_menu.xml",
