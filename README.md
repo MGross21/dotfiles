@@ -1,8 +1,5 @@
 # Dotfiles & Installation
 
-> [!WARNING]
-> This code is currently a work in progress. Please note that the implementation may not be complete or fully functional. Any feedback, suggestions, or issues encountered would be greatly appreciated. Feel free to contribute by opening an issue on GitHub.
-
 ## System Info
 
 | **Component**   | **Details**                                                           |    **Notes**                |
