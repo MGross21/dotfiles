@@ -10,3 +10,9 @@ sudo usermod -aG input $USER
 #########
 
 chsh -s $(which zsh) $USER # Change default shell to zsh
+
+#############
+# LANGUAGES #
+#############
+
+rustup install stable # Pull Stable Rust Version
