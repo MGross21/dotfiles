@@ -10,6 +10,10 @@ success() { echo -e "\033[1;32m[SUCCESS]\033[0m $*"; }
 warning() { echo -e "\033[1;33m[WARN]\033[0m $*"; }
 error()   { echo -e "\033[1;31m[ERROR]\033[0m $*"; exit 1; }
 
+if [[ ! -d "$PKG_DIR" ]]; then
+    error "Packages directory not found: $PKG_DIR"
+fi
+
 # Ensure yay is installed
 ensure_yay() {
     if ! command -v yay &>/dev/null; then
