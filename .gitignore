@@ -22,5 +22,8 @@
 # Ignore Everything Else in .config
 .config/**
 
+# Hide System Settings
+.nvidia*
+
 # Hide Backup Files
 *.bak
