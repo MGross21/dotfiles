@@ -23,7 +23,6 @@
       "exec": "hyprctl activewindow -j | jq -r '.class // empty'",
       "return-type": "plain",
       "format": "{}",
-      "format-alt": "desktop",
       "tooltip": false,
       "interval": 1,
       "exec-on-event": ["activewindow"]
