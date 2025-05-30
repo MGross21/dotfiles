@@ -2,31 +2,42 @@
 
 A collection of strange gotchas and debug moments
 
-## Login to Twich
+## Login to Twitch
 
-Upon login, I was prompted with `"Incompatible Browser"` despite firefox being explicitly listed.
+When logging in, I received an `"Incompatible Browser"` error, even though Firefox is supported.
 
-*What was the fix you might ask?* The [**system clock!**](https://bbs.archlinux.org/viewtopic.php?id=289645)
+**Fix:** The issue was with the [system clock](https://bbs.archlinux.org/viewtopic.php?id=289645).
 
 ```bash
-sudo timedatectl set-timezone <time-zone> # For me, American/Phoenix
+sudo timedatectl set-timezone <time-zone>   # e.g., America/Phoenix
 sudo timedatectl enable systemd-timesyncd --now
 sudo timedatectl set-ntp true
 
-# Then Check
+# Verify status
 timedatectl status
 ```
 
-You should now see:
+You should see output similar to:
 
 ```md
-Time Zone: <time-zone>
-System clock syncrohonized:yes
-NTP Service: active
+Time zone: <time-zone>
+System clock synchronized: yes
+NTP service: active
 ```
 
 ## System Dark Mode
 
-Websites ask to use `System Settings`. *Where can I control this?*
+Some websites use your system's dark mode setting.  
+To control this on Linux:
 
-Install GTK package and modify system settings in that GUI.
+1. Install a GTK settings manager
+2. Use the GUI to set your preferred theme.
+
+## Using OAuth to Login to GitHub via VSCode
+
+If you see a `"Missing OS Keyring"` error:
+
+1. Ensure required security/keyring packages are installed (e.g., `gnome-keyring`, `libsecret`).
+2. Open the `Seahorse` app and create a `Login` keyring if it doesn't exist.
+3. Set its password to match your user password.
+4. Reboot or re-source your shell profile.
