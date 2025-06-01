@@ -35,9 +35,16 @@ To control this on Linux:
 
 ## Using OAuth to Login to GitHub via VSCode
 
-If you see a `"Missing OS Keyring"` error:
+If you encounter a `"Missing OS Keyring"` error:
 
-1. Ensure required security/keyring packages are installed (e.g., `gnome-keyring`, `libsecret`).
-2. Open the `Seahorse` app and create a `Login` keyring if it doesn't exist.
-3. Set its password to match your user password.
-4. Reboot or re-source your shell profile.
+1. Install the necessary keyring packages (e.g., `gnome-keyring`, `libsecret`).
+2. Set the keyring password to match your user password.
+3. Restart your system or re-source your shell profile.
+
+To configure VSCode:
+
+1. Open the Command Palette (`Ctrl+Shift+P`) and select **Preferences: Configure Runtime Arguments**.
+2. Add `"password-store": "gnome-libsecret"` to your `argv.json` file.
+3. Restart VSCode (`"Developer: Reload Window"` menu option will not work)
+
+[Learn more about keyring options in VSCode](https://code.visualstudio.com/docs/configure/settings-sync#_recommended-configure-the-keyring-to-use-with-vs-code)
