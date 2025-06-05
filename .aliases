@@ -1,0 +1,200 @@
+alias zalias="$EDITOR ~/.aliases"
+alias zpath="$EDITOR ~/.path"
+alias zexport="$EDITOR ~/.exports"
+
+alias c="clear"
+alias ..="cd .."
+alias ...="cd ../.."
+alias c-='cd - >/dev/null'
+
+alias mv="mv -i"
+alias rm="rm -Iv"
+alias grep="grep --color=auto"
+
+alias ls='ls --color=auto'
+alias la='ls -lAFhSr --color=auto' # list all, show filetype, format sizing, reverse sort
+alias ll='ls -lah'
+
+alias vim=$EDITOR
+alias vi=$EDITOR
+alias v=$EDITOR
+
+alias gs='git status'
+alias gc="git commit"
+alias gl="git log --oneline --graph --all"
+
+alias zshrc='${EDITOR} ~/.zshrc'
+alias reload="source ~/.zshrc"
+
+alias update="sudo pacman -Syu --noconfirm \
+	&& yay -Sua --noconfirm\
+	&& spicetify update\
+	&& echo 'Done.'"
+alias install="sudo pacman -S"
+alias uninstall="sudo pacman -Rns"
+alias packages="pacman -Qet" # All Explicitly installed pacakges, non-dependencies
+
+search() {
+    local output
+    output=$(pacman -Si "$@" 2>/dev/null)
+    if [[ -n "$output" ]]; then
+        echo "$output"
+    else
+        yay -Si "$@"
+    fi
+}
+
+cleanup() {
+  local orphans
+  orphans=$(pacman -Qdtq)
+
+  if [[ -n "$orphans" ]]; then
+    echo "Removing orphan packages:"
+    echo "$orphans"
+    sudo pacman -Rns $orphans
+  else
+    echo "No orphan packages to remove."
+  fi
+
+  yay -Scc --noconfirm
+  yay -Yc --noconfirm
+}
+
+
+alias forcekill="killall -9"
+
+alias nf="neofetch"
+
+alias hyprreload="hyprctl reload"
+alias hyprlog="journalctl -xe | grep Hyprland"
+alias hyprconfig="${EDITOR} $HOME/.config/hypr/hyprland.conf"
+
+alias barreload='pkill waybar; (waybar & disown)'
+alias fontreload='fc-cache -f'
+alias fontlist='fc-list : family lang=en --format="%{family[0]}\n" | sort | uniq | less'
+
+alias wlr="env | grep -i wl" # Wayland Variables
+alias monitors="hyprctl monitors"
+alias logout="hyprctl dispatch exit"
+alias reboot="systemctl reboot"
+alias shutdown="systemctl poweroff"
+alias services="systemctl list-unit-files --state=enabled"
+
+alias devices="lsusb && lspci | less"
+alias disks="lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,LABEL"
+alias usage="df -hT | grep '^/dev/'"
+alias ports='ss -tulwn'
+alias speedtest="speedtest-cli --simple --secure | column -t"
+
+alias soundtest="speaker-test -c 8 -t wav"
+
+copyfile() {
+  [[ -f "$1" ]] && wl-copy < "$1" || echo "Usage: copyfile <file>"
+}
+
+alias volup="pactl set-sink-volume @DEFAULT_SINK@ +5%"
+alias voldown="pactl set-sink-volume @DEFAULT_SINK@ -5%"
+alias mute="pactl set-sink-mute @DEFAULT_SINK@ toggle"
+alias micmute="pactl set-source-mute @DEFAULT_SOURCE@ toggle"
+alias audiolist="pactl list sinks short"
+
+alias docrs="rustup doc"
+alias docrs-proj="rustup doc --open --document-private-items" # Also show items not marked pub
+
+dotsync() {
+  DF="$HOME/dotfiles"
+  DOTFILES_LIST="$DF/dotfiles.list"
+
+  # Ensure we're in the repo
+  cd "$DF" || return
+
+  # Pull latest changes
+  git pull --rebase origin main
+
+  # Loop through each path in dotfiles.list
+  while IFS= read -r path; do
+    # Skip blank lines and comments
+    [[ -z "$path" || "$path" == \#* ]] && continue
+
+    src="$HOME/$path"
+    dest="$DF/$path"
+
+    # Skip if source doesn't exist
+    [ -e "$src" ] || continue
+
+    echo "Syncing: $src → $dest"
+
+    # Create destination directory if needed
+    mkdir -p "$(dirname "$dest")"
+
+    # Copy file or directory
+    if [ -d "$src" ]; then
+      cp -r "$src" "$dest"
+    else
+      cp "$src" "$dest"
+    fi
+  done < "$DOTFILES_LIST"
+
+  # Git commit and push
+  git status
+  git commit -am "Sync dotfiles ($(date +"%m/%d/%y %H:%M:%S %Z"))"
+  git push
+
+  # Return to previous directory
+  cd -
+}
+
+twitch() {
+  streamlink --player mpv \
+             --player-args="--no-osc --no-input-cursor --no-input-default-bindings" \
+             "twitch.tv/$1" best & disown
+}
+
+# Requires https://github.com/caarlos0/timer
+# yay -S timer-bin
+
+pomodoro() {
+  local work_minutes=25
+  local break_minutes=5
+  local count=1
+  local no_break=false
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -w|--work)     shift; work_minutes="$1" ;;
+      -b|--break)    shift; break_minutes="$1" ;;
+      -c|--count)    shift; count="$1" ;;
+      -n|--no-break) no_break=true ;;
+      *) echo "Usage: pomodoro [-w minutes] [-b minutes] [-c count] [--no-break]"; return 1 ;;
+    esac
+    shift
+  done
+
+  on_interrupt() {
+    trap - SIGINT
+    exit 130
+  }
+
+  for ((i = 1; i <= count; i++)); do
+    echo "Pomodoro $i of $count"
+    c
+
+    echo "Work: ${work_minutes} minutes"
+    trap on_interrupt SIGINT
+    timer "${work_minutes}m"
+    local timer_exit=$?
+    trap - SIGINT
+
+    (( timer_exit != 0 )) && return 130
+
+    notify-send "Pomodoro" "Work session over. Take a break!"
+
+    if ! $no_break; then
+      echo "Break: ${break_minutes} minutes"
+      timer "${break_minutes}m"
+      notify-send "Pomodoro" "Break is over. Get back to work!"
+    else
+      echo "Skipping break as requested."
+    fi
+  done
+}

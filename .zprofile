@@ -1,8 +1,20 @@
+# Start DBus session if not already running
+if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+  eval "$(dbus-launch --sh-syntax)"
+fi
+
 # Start GNOME Keyring with secrets, ssh, and gpg support
 if [ -z "$GNOME_KEYRING_CONTROL" ]; then
-  eval $(gnome-keyring-daemon --start --components=secrets,ssh,gpg)
+  eval "$(gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg)"
   export SSH_AUTH_SOCK
-  export GPG_AGENT_INFO
+  export GNOME_KEYRING_CONTROL
+  export GNOME_KEYRING_PID
+fi
+
+# Start GNOME Keyring with secrets, ssh, and gpg support
+if [ -z "$GNOME_KEYRING_CONTROL" ]; then
+  eval "$(gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg)"
+  export SSH_AUTH_SOCK
   export GNOME_KEYRING_CONTROL
   export GNOME_KEYRING_PID
 fi

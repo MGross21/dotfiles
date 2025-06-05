@@ -4,24 +4,6 @@
 .dotfiles
 .bash*
 
-# Whitelist Bash/Zsh Configs
-!.zshrc
-
-# Whitelisted Configs
-!.config/*.toml
-!.config/*.md
-!.config/neofetch/**
-!.config/hypr/**
-!.config/waybar/**
-!.config/spotify-launcher.conf
-!.config/nvim/**
-!.config/dunst/**
-!.config/wofi/**
-!.config/vivid/**
-
-# Ignore Everything Else in .config
-.config/**
-
 # Hide System Settings
 .nvidia*
 

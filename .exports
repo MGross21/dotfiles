@@ -1,0 +1,15 @@
+# ====================
+# Environment Settings
+# ====================
+
+export EDITOR="nvim"
+export PATH="$HOME/bin:/usr/local/bin:/usr/bin:/bin:$HOME/.local/bin"
+export PATH=$PATH:/home/mgross/.spicetify
+export SUDO_PROMPT="${(L)USER} password: "
+
+# ====================
+# Environment Settings
+# ====================
+
+#export LS_COLORS="$(vivid generate purple)"
+export LS_COLORS="$(vivid generate tokyonight-storm)"
