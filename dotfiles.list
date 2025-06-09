@@ -11,3 +11,4 @@
 .config/spotify-launcher.conf
 .config/hypr/**
 .config/vivid/**
+.config/alacritty.toml
