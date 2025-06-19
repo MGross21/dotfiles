@@ -87,3 +87,15 @@ Uncomment:
 ```bash
 su - <username>
 ```
+
+### Custom GRUB Theme
+
+<img src="https://raw.githubusercontent.com/vinceliuice/Elegant-grub2-themes/refs/heads/main/preview-02.jpg"
+     width="840" height="500"
+     style="object-fit: none; object-position: -1020px -1100px;">
+
+```bash
+git clone https://github.com/vinceliuice/Elegant-grub2-themes
+cd Elegant-grub2-themes
+sudo ./install.sh -b -t mojave -i right
+```
