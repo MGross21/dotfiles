@@ -8,11 +8,12 @@
 | **Distribution** | [Arch](https://archlinux.org)                                        |       *Arch btw*            |
 | **Window Manager**| [Hyprland](https://wiki.hyprland.org)                               |    Tiling / Wayland         |
 | **Graphics**     | NVIDIA                                                               |     Open Drivers            |
-| **GRUB Theme**   | [Elegant-Grub2](https://github.com/vinceliuice/Elegant-grub2-themes) | Mojave, Window, Dark, Right    |
+| **GRUB Theme**   | [Elegant-Grub2](https://github.com/vinceliuice/Elegant-grub2-themes) | Mojave, Window, Dark, Right |
 | **Terminal**    | [Alacritty](https://github.com/alacritty/alacritty)                   | Fast, GPU-accelerated       |
-| **Shell**       | [Zsh](https://www.zsh.org)                                           | With [Oh My Zsh](https://ohmyz.sh/) |
-| **Font**        | [Ubuntu](https://design.ubuntu.com/font/)                            |                               |
-<!--Add GTK theme and colors-->
+| **Shell**       | [Zsh](https://www.zsh.org)                                            | With [Oh My Zsh](https://ohmyz.sh/) |
+| **Font**        | [Ubuntu](https://design.ubuntu.com/font/)                             |                             |
+| **System Theme**| [Materia Dark](https://github.com/nana-4/materia-theme)               | Based on Adwaita            |
+<!--Add GTK Folder Pack-->
 
 ## Download ISO
 
