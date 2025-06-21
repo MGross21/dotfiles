@@ -8,8 +8,11 @@ alias ...="cd ../.."
 alias c-='cd - >/dev/null'
 
 alias mv="mv -i"
+alias cp="cp -i"
 alias rm="rm -Iv"
-alias grep="grep --color=auto"
+alias grep="rg --smart-case --hidden --color=auto"
+alias find="fd --hidden --exclude .git"
+alias cat="bat --paging=always --style=plain --color=always --theme=TwoDark"
 
 alias ls='ls --color=auto'
 alias la='ls -lAFhSr --color=auto' # list all, show filetype, format sizing, reverse sort
