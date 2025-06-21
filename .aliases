@@ -5,6 +5,8 @@ alias zexport="$EDITOR ~/.exports"
 alias c="clear"
 alias ..="cd .."
 alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
 alias c-='cd - >/dev/null'
 
 alias mv="mv -i"
