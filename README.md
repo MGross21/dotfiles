@@ -13,6 +13,7 @@
 | **Shell**       | [Zsh](https://www.zsh.org)                                            | With [Oh My Zsh](https://ohmyz.sh/) |
 | **Font**        | [Ubuntu](https://design.ubuntu.com/font/)                             |                             |
 | **System Theme**| [Materia Dark](https://github.com/nana-4/materia-theme)               | Based on Adwaita            |
+| **KVM**         | [Input Leap](https://github.com/input-leap/input-leap)                | Cross-platform mouse/keyboard sharing |
 <!--Add GTK Folder Pack-->
 
 ## Download ISO
@@ -100,3 +101,24 @@ git clone https://github.com/vinceliuice/Elegant-grub2-themes
 cd Elegant-grub2-themes
 sudo ./install.sh -b -t mojave -i right
 ```
+
+### Cross-Platform KVM Setup
+
+This setup includes [Input Leap](https://github.com/input-leap/input-leap), a cross-platform KVM solution that allows you to share keyboard and mouse across multiple computers.
+
+#### Features
+- ✅ Cross-platform: Linux, Windows, macOS
+- ✅ Wayland compatible (better than Barrier/Deskflow)
+- ✅ Secure encrypted connections
+- ✅ Clipboard sharing
+- ✅ Multiple monitor support
+
+#### Quick Setup
+1. **Install**: Input Leap is automatically installed via the AUR package
+2. **Configure**: See [`.config/input-leap/README.md`](.config/input-leap/README.md) for detailed setup
+3. **Example config**: Use [`.config/input-leap/server.conf.example`](.config/input-leap/server.conf.example) as a starting point
+
+#### Alternative Options
+If Input Leap doesn't work for your setup, other options mentioned in [issue #4](https://github.com/MGross21/dotfiles/issues/4) include:
+- [Deskflow](https://github.com/deskflow/deskflow) - May have Wayland issues
+- [Barrier](https://github.com/debauchee/barrier) - Deprecated, but stable
