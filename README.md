@@ -24,25 +24,43 @@ Use tool like Rufus to flash `.iso` to boot drive
 ## Installation Script
 
 ```bash
-git clone --bare https://github.com/MGross21/dotfiles.git ~/.dotfiles
+git clone https://github.com/MGross21/dotfiles.git ~/dotfiles
+cd ~/dotfiles
 ./install.sh
+./dotfiles-sync.sh init
 ```
 
-### Making Changes
+### Managing Dotfiles
+
+This repository includes a standalone dotfiles management script that supports initialization and syncing:
 
 ```bash
-alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
-dotfiles checkout
-dotfiles config --local status.showUntrackedFiles no
+# Initialize dotfiles (create symlinks from repo to home directory)
+./dotfiles-sync.sh init
+
+# Sync changes from home directory back to repository
+./dotfiles-sync.sh sync
+
+# Check status of dotfile symlinks
+./dotfiles-sync.sh status
 ```
 
-#### Examples
+#### Aliases Available
+
+After sourcing `.aliases`, you can use these convenient aliases:
 
 ```bash
-dotfiles status
-dotfiles add .vimrc
-dotfiles commit -m "Update vim config"
+dotinit      # Initialize dotfiles with symlinks
+dotsync      # Sync changes back to repository  
+dotstatus    # Check symlink status
 ```
+
+#### How It Works
+
+- **Initialization**: Creates symlinks from the repository files to your home directory
+- **No Duplicates**: Uses symlinks instead of copying to avoid data duplication
+- **Backup Safety**: Automatically backs up existing files before creating symlinks
+- **Glob Support**: Handles wildcard patterns in `dotfiles.list` (e.g., `.config/nvim/**`)
 
 ### Arch on WSL2
 
