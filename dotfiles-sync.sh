@@ -7,7 +7,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_LIST="$SCRIPT_DIR/dotfiles.list"
-HOME_DIR="${HOME:-$(eval echo ~$(whoami))}"
+HOME_DIR="${HOME_DIR:-${HOME:-$(eval echo ~$(whoami))}}"
 
 # Color output functions
 info()    { echo -e "\033[1;34m[INFO]\033[0m $*"; }
