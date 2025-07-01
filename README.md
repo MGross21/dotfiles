@@ -7,7 +7,7 @@
 | **Kernel**       | [Linux](https://github.com/torvalds/linux)                           |  Year of the Linux Desktop  |
 | **Distribution** | [Arch](https://archlinux.org)                                        |       *Arch btw*            |
 | **Window Manager**| [Hyprland](https://wiki.hyprland.org)                               |    Tiling / Wayland         |
-| **Graphics**     | NVIDIA                                                               |     Open Drivers            |
+| **Graphics**     | NVIDIA                                                               |   Proprietary Drivers       |
 | **GRUB Theme**   | [Elegant-Grub2](https://github.com/vinceliuice/Elegant-grub2-themes) | Mojave, Window, Dark, Right |
 | **Terminal**    | [Alacritty](https://github.com/alacritty/alacritty)                   | Fast, GPU-accelerated       |
 | **Shell**       | [Zsh](https://www.zsh.org)                                            | With [Oh My Zsh](https://ohmyz.sh/) |
