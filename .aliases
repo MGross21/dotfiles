@@ -31,6 +31,10 @@ alias gl="git log --oneline --graph --all"
 alias zshrc='${EDITOR} ~/.zshrc'
 alias reload="source ~/.zshrc"
 
+alias sysen="sudo systemctl enable" # start at boot
+alias sysst="sudo systemctl start" 
+alias sysre="sudo systemctl restart"
+
 alias update="sudo pacman -Syu --noconfirm \
 	&& yay -Sua --noconfirm\
 	&& spicetify update\
@@ -90,6 +94,8 @@ alias disks="lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,LABEL"
 alias usage="df -hT | grep '^/dev/'"
 alias ports='ss -tulwn'
 alias speedtest="speedtest-cli --simple --secure | column -t"
+alias wifi="nmcli device wifi"
+
 
 alias soundtest="speaker-test -c 8 -t wav"
 

@@ -8,7 +8,8 @@
     "modules-left": ["hyprland/workspaces", "custom/window"],
     "modules-center": [],
     "modules-right": [
-      "custom/weather",
+      "battery",
+      "power-profiles-daemon",
       "cpu",
       "memory",
       "temperature",
@@ -19,20 +20,29 @@
       "custom/power"
     ],
 
+    "battery":{
+      "exec-if": "test -d /sys/class/power_supply/BAT*",
+      "format": "{icon} {capacity}%",
+      "format-icons": [" "," "," "," "," "]
+    },
+
+    "power-profiles-daemon":{
+      "exec-if": "test -d /sys/class/power_supply/BAT*",
+      "format": "{icon}",
+        "format-icons": {
+    		"performance": " ",
+    		"balanced": " ",
+    		"power-saver": " "
+  	}
+    },
+
     "custom/window": {
-      "exec": "hyprctl activewindow -j | jq -r '.class // empty'",
+      "exec": "hyprctl activewindow -j | sed -n 's/.*\"class\": *\"\\([^\"]*\\)\".*/\\1/p'",
       "return-type": "plain",
       "format": "{}",
       "tooltip": false,
       "interval": 1,
       "exec-on-event": ["activewindow"]
-    },
-
-    "custom/weather": {
-      "exec": "~/.config/waybar/scripts/phoenix_temp.sh",
-      "interval": 1800,
-      "format": "{}",
-      "tooltip": false
     },
 
     // CPU Usage
