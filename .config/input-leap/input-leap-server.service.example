@@ -1,0 +1,20 @@
+[Unit]
+Description=Input Leap Server
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/input-leaps -f -c %h/.config/input-leap/server.conf
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+User=%i
+Group=input
+Environment=DISPLAY=:0
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=graphical-session.target

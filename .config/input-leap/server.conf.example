@@ -1,0 +1,44 @@
+# Input Leap Server Configuration
+# Copy this file and modify for your setup
+
+section: screens
+    # Define all screens in your setup
+    main-pc:        # Name of your main computer (server)
+    laptop:         # Name of your laptop/client
+    work-pc:        # Additional client (optional)
+end
+
+section: aliases
+    # Define aliases for easier referencing
+    main-pc:
+        localhost
+    laptop:
+        laptop.local
+        192.168.1.100  # Example IP - replace with actual
+    work-pc:
+        work-pc.local
+        192.168.1.101  # Example IP - replace with actual
+end
+
+section: links
+    # Define screen layout and transitions
+    # Syntax: screen-name = left:screen right:screen up:screen down:screen
+    
+    main-pc = right:laptop
+    laptop = left:main-pc right:work-pc
+    work-pc = left:laptop
+    
+    # Alternative vertical layout:
+    # main-pc = down:laptop
+    # laptop = up:main-pc
+end
+
+section: options
+    # Global options
+    relativeMouseMoves = false
+    screenSaverSync = true
+    win32KeepForeground = false
+    clipboardSharing = true
+    switchCorners = none
+    switchCornerSize = 0
+end
