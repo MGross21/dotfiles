@@ -9,3 +9,14 @@
 
 # Hide Backup Files
 *.bak
+
+.config/*
+!.config/alacritty.toml
+!.config/hypr/*
+!.config/nvim/*
+!.config/nwg-look/*
+!.config/README.md
+!.config/Thunar/*
+!.config/vivid/*
+!.config/waybar/*
+!.config/wofi/*
