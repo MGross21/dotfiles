@@ -1,24 +1,33 @@
 // Waybar configuration for modern desktop setup
 {
     // UI Settings
-    "height": 24, // Min requested is 34
+    "height": 24,
     "spacing": 8,
   
     // Module placement
     "modules-left": ["hyprland/workspaces", "custom/window"],
-    "modules-center": [],
+    "modules-center": ["clock"],
     "modules-right": [
-      "battery",
-      "power-profiles-daemon",
+      "tray",
       "cpu",
       "memory",
       "temperature",
       "pulseaudio",
-      "keyboard-state",
-      "clock",
-      "tray",
+      // "keyboard-state",
+      "network",
+      "battery",
+      "power-profiles-daemon",
       "custom/power"
     ],
+
+    "network": {
+        // no "interface": auto-detects active
+        "format-ethernet": "",          // ethernet icon only
+        "format-wifi": " ", // wifi icon. optional strength {signalStrength}%
+        "format-disconnected": "⚠",
+        "tooltip-format": "↓ {bandwidthDownBits} ↑ {bandwidthUpBits}",
+        "interval": 3
+    },
 
     "battery":{
       "exec-if": "test -d /sys/class/power_supply/BAT*",
@@ -48,13 +57,15 @@
     // CPU Usage
     "cpu": {
       "format": "{usage}% ",
-      "tooltip": false,
+      // "tooltip-format": "{icon0}{icon1}{icon2}{icon3}{icon4}{icon5}{icon6}{icon7}",
+      // "tooltip-format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
       "on-click": "alacritty -e htop"
     },
   
     // Memory Usage
     "memory": {
-      "format": "{used:0.1f}G "
+      "format": "{percentage}% ",
+      "tooltip-format":"{used:0.1f}G / {total:0.1f}G"
     },
   
     // Temperature (e.g., CPU or main sensor)

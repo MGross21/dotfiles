@@ -33,6 +33,9 @@ button,
 #keyboard-state,
 #clock,
 #tray,
+#power-profiles-daemon,
+#network,
+#battery,
 #custom-weather,
 #custom-power {
   all: unset;
