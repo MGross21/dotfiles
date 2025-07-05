@@ -45,10 +45,6 @@ autoload -Uz colors && colors
 #PROMPT='%F{cyan}%n@%m%f:%F{yellow}%~%f %# ' # Orange (Default)
 PROMPT='%F{cyan}%n@%m%f:%F{#9C6ADE}%~%f %# ' # Purple
 
-# --- Vivid Terminal Colors ---
-#export LS_COLORS="$(vivid generate purple)"
-export LS_COLORS="$(vivid generate tokyonight-storm)"
-
 # --- Plugins/Frameworks ---
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=cyan'
 
@@ -60,3 +56,5 @@ done
 # Needs to be last
 highlight_path="/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 [[ -r "$highlight_path" ]] && source "$highlight_path"
+
+eval "$(zoxide init zsh --cmd cd)"

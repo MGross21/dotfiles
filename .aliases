@@ -2,11 +2,12 @@ alias zalias="$EDITOR ~/.aliases"
 alias zpath="$EDITOR ~/.path"
 alias zexport="$EDITOR ~/.exports"
 
+alias kver="uname -rs"
+alias !!="sudo !!"
+
 alias c="clear"
 alias ..="cd .."
 alias ...="cd ../.."
-alias ....="cd ../../.."
-alias .....="cd ../../../.."
 alias c-='cd - >/dev/null'
 
 alias mv="mv -i"
@@ -95,7 +96,6 @@ alias usage="df -hT | grep '^/dev/'"
 alias ports='ss -tulwn'
 alias speedtest="speedtest-cli --simple --secure | column -t"
 alias wifi="nmcli device wifi"
-
 
 alias soundtest="speaker-test -c 8 -t wav"
 
