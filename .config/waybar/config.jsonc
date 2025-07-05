@@ -16,7 +16,6 @@
       // "keyboard-state",
       "network",
       "battery",
-      "power-profiles-daemon",
       "custom/power"
     ],
 
@@ -33,16 +32,6 @@
       "exec-if": "test -d /sys/class/power_supply/BAT*",
       "format": "{icon} {capacity}%",
       "format-icons": [" "," "," "," "," "]
-    },
-
-    "power-profiles-daemon":{
-      "exec-if": "test -d /sys/class/power_supply/BAT*",
-      "format": "{icon}",
-        "format-icons": {
-    		"performance": " ",
-    		"balanced": " ",
-    		"power-saver": " "
-  	}
     },
 
     "custom/window": {
