@@ -98,7 +98,5 @@ su - <username>
      style="object-fit: none; object-position: -1020px -1100px;">
 
 ```bash
-git clone https://github.com/vinceliuice/Elegant-grub2-themes
-cd Elegant-grub2-themes
-sudo ./install.sh -b -t mojave -i right
+./scripts/grub_theme_install.sh
 ```
