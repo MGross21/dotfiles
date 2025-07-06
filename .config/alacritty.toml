@@ -4,6 +4,7 @@
 
 [window]
 opacity = 0.3
+padding = { x = 5, y = 5 }
 
 [colors.primary]
 background = "#000000"
@@ -11,22 +12,22 @@ foreground = "#ffffff"
 
 [colors.normal]
 black   = "#000000"
-red     = "#555555"
-green   = "#888888"
-yellow  = "#aaaaaa"
-blue    = "#cccccc"
-magenta = "#9c6ade"
-cyan    = "#eeeeee"
+red     = "#5C27A2"
+green   = "#6F2EC5"
+yellow  = "#8548D5"
+blue    = "#9C6ADE"
+magenta = "#B38CE6"
+cyan    = "#CAAFEE"
 white   = "#ffffff"
 
 [colors.bright]
 black   = "#222222"
-red     = "#555555"
-green   = "#888888"
-yellow  = "#aaaaaa"
-blue    = "#cccccc"
-magenta = "#9c6ade"
-cyan    = "#eeeeee"
+red     = "#7A37D1"
+green   = "#8B51D8"
+yellow  = "#9C6ADE"
+blue    = "#AD84E4"
+magenta = "#BF9DEA"
+cyan    = "#D0B7F0"
 white   = "#ffffff"
 
 [colors.cursor]
@@ -34,5 +35,5 @@ text = "#000000"
 cursor = "#ffffff"
 
 [colors]
-draw_bold_text_with_bright_colors = false
+draw_bold_text_with_bright_colors = true
 

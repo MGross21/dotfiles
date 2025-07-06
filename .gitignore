@@ -10,7 +10,6 @@
 # Hide Backup Files
 *.bak
 
-.config/*
 !.config/alacritty.toml
 !.config/hypr/*
 !.config/nvim/*
@@ -20,3 +19,5 @@
 !.config/vivid/*
 !.config/waybar/*
 !.config/wofi/*
+
+.config/*

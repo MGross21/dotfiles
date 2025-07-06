@@ -1,0 +1,137 @@
+# Purple Monochrome Theme (Alacritty-inspired)
+
+colors:
+  fg:        "ffffff"
+  bg:        "000000"
+  purple:    "B38CE6"
+  purple_b:  "BF9DEA"
+  blue:      "9C6ADE"
+  blue_b:    "AD84E4"
+  dark:      "000000"
+  dark_b:    "222222"
+  white:     "ffffff"
+  gray:      "8548D5"
+  gray_b:    "9C6ADE"
+  cyan:      "CAAFEE"
+  cyan_b:    "D0B7F0"
+
+core:
+  normal_text:
+    foreground: gray_b
+  regular_file: {}
+  reset_to_normal:
+    foreground: gray_b
+  directory:
+    foreground: purple
+    font-style: bold
+  executable_file:
+    foreground: purple_b
+    font-style: bold
+  file_with_capability:
+    background: gray
+  setuid:
+    background: purple
+  setgid:
+    background: blue
+  sticky:
+    background: gray_b
+  sticky_other_writable:
+    foreground: bg
+    background: blue
+    font-style: bold
+  other_writable:
+    foreground: blue
+    background: gray
+    font-style: bold
+  symlink:
+    foreground: blue_b
+    font-style: italic
+  broken_symlink:
+    foreground: bg
+    background: dark_b
+  missing_symlink_target:
+    foreground: dark_b
+  multi_hard_link: {}
+  socket:
+    foreground: cyan
+    background: cyan_b
+    font-style: bold
+  fifo:
+    foreground: gray
+    background: gray_b
+    font-style: bold
+  door:
+    foreground: cyan_b
+    background: cyan
+    font-style: bold
+  block_device:
+    foreground: blue
+    background: dark_b
+    font-style: bold
+  character_device:
+    foreground: gray
+    background: gray_b
+    font-style: bold
+
+executable:
+  foreground: cyan
+
+archives:
+  foreground: purple_b
+  font-style: bold
+
+media:
+  audio:
+    foreground: blue_b
+    font-style: bold
+  image:
+    foreground: purple_b
+    font-style: bold
+  video:
+    foreground: cyan_b
+    font-style: bold
+  fonts:
+    foreground: cyan
+    font-style: bold
+  3d:
+    foreground: purple_b
+    font-style: bold
+
+office:
+  foreground: cyan_b
+  font-style: bold
+
+text:
+  foreground: fg
+  configuration:
+    foreground: gray
+  dockerfile:
+    foreground: blue
+  licenses:
+    foreground: fg
+    font-style: bold
+  special:
+    foreground: cyan_b
+    font-style: bold
+  todo:
+    foreground: cyan
+    font-style: bold
+
+markup:
+  foreground: fg
+
+programming:
+  foreground: gray_b
+  tooling:
+    foreground: blue_b
+    code-style:
+      foreground: gray_b
+    build:
+      foreground: blue
+    lint:
+      foreground: cyan
+    test:
+      foreground: purple_b
+
+unimportant:
+  foreground: gray
