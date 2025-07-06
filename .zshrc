@@ -9,8 +9,8 @@ bindkey -e                # Emacs-style keybindings (default)
 
 # --- History Settings ---
 HISTFILE=~/.zsh_history
-HISTSIZE=1000
-SAVEHIST=1000
+HISTSIZE=10000
+SAVEHIST=10000
 
 setopt HIST_IGNORE_ALL_DUPS      # Remove older duplicate commands
 setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before saving
@@ -22,18 +22,22 @@ setopt AUTO_CD                   # Just type directory name to cd
 setopt AUTO_PUSHD                # Use directory stack for cd
 setopt PUSHD_IGNORE_DUPS         # Don't duplicate entries in stack
 setopt EXTENDED_GLOB             # Advanced globbing support
+setopt GLOB_DOTS                 # Include dotfiles in globs
+setopt NO_NOMATCH                # If glob doesn't match, don't error out
 setopt PROMPT_SUBST              # Allow variable expansion in prompt
 setopt INTERACTIVE_COMMENTS      # Allow comments in interactive shell
-setopt NO_CLOBBER                # Prevent `>` from overwriting files
+setopt NO_CLOBBER                 # Prevent `>` from overwriting files
 setopt IGNORE_EOF                # Prevent accidental exit on Ctrl-D
 setopt CORRECT                   # Auto-correct mistyped commands
+unsetopt CORRECT_ALL             # Only correct the command name, not args
 
 # --- Completion System ---
-autoload -Uz compinit && compinit
+autoload -Uz compinit
+compinit -d ~/.cache/zsh/zcompdump
 
 # Optional: Smarter completion menu
 zstyle ':completion:*' menu select
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*'
 
 # --- Sourcing ---
 for dot in ~/.{exports,aliases,path};do
