@@ -5,6 +5,8 @@
 [window]
 opacity = 0.3
 padding = { x = 5, y = 5 }
+title = "terminal"
+class = {instance = "terminal", general = "terminal"}
 
 [colors.primary]
 background = "#000000"
