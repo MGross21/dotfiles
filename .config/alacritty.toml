@@ -1,3 +1,38 @@
 [terminal]
 [terminal.shell]
   program = "/bin/zsh"
+
+[window]
+opacity = 0.3
+
+[colors.primary]
+background = "#000000"
+foreground = "#ffffff"
+
+[colors.normal]
+black   = "#000000"
+red     = "#555555"
+green   = "#888888"
+yellow  = "#aaaaaa"
+blue    = "#cccccc"
+magenta = "#9c6ade"
+cyan    = "#eeeeee"
+white   = "#ffffff"
+
+[colors.bright]
+black   = "#222222"
+red     = "#555555"
+green   = "#888888"
+yellow  = "#aaaaaa"
+blue    = "#cccccc"
+magenta = "#9c6ade"
+cyan    = "#eeeeee"
+white   = "#ffffff"
+
+[colors.cursor]
+text = "#000000"
+cursor = "#ffffff"
+
+[colors]
+draw_bold_text_with_bright_colors = false
+
