@@ -30,6 +30,7 @@ setopt NO_CLOBBER                 # Prevent `>` from overwriting files
 setopt IGNORE_EOF                # Prevent accidental exit on Ctrl-D
 setopt CORRECT                   # Auto-correct mistyped commands
 unsetopt CORRECT_ALL             # Only correct the command name, not args
+CORRECT_IGNORE=('_*')
 
 # --- Completion System ---
 autoload -Uz compinit
