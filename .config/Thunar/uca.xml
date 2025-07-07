@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actions>
 <action>
-	<icon>Alacritty</icon>
+	<icon>terminal</icon>
 	<name>Open Terminal Here</name>
 	<submenu></submenu>
 	<unique-id>1751591550154775-1</unique-id>
@@ -11,5 +11,15 @@
 	<patterns>*</patterns>
 	<startup-notify/>
 	<directories/>
+</action>
+<action>
+	<icon>neovim</icon>
+	<name>Open File</name>
+	<submenu></submenu>
+	<unique-id>1751846995155458-1</unique-id>
+	<command>alacritty -e nvim %f</command>
+	<description>Open file with neovim</description>
+	<range>*</range>
+	<patterns>*</patterns>
 </action>
 </actions>

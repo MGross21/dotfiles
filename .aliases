@@ -73,7 +73,7 @@ cleanup() {
 
 alias forcekill="killall -9"
 
-alias nf="neofetch"
+alias sf="fastfetch"
 
 alias hyprreload="hyprctl reload"
 alias hyprlog="journalctl -xe | grep Hyprland"

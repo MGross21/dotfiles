@@ -15,9 +15,11 @@
 !.config/nvim/*
 !.config/nwg-look/*
 !.config/README.md
-!.config/Thunar/*
+!.config/Thunar/uca.xml
 !.config/vivid/*
 !.config/waybar/*
 !.config/wofi/*
+!.config/fastfetch/*
+
 
 .config/*

@@ -1,6 +1,7 @@
 [terminal]
 [terminal.shell]
   program = "/bin/zsh"
+  # args = ["-c","fastfetch"]
 
 [window]
 opacity = 0.3
@@ -38,4 +39,8 @@ cursor = "#ffffff"
 
 [colors]
 draw_bold_text_with_bright_colors = true
+
+[cursor]
+style = {shape= "beam", blinking = "Never"}
+unfocused_hollow = false
 
