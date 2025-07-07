@@ -9,13 +9,17 @@ padding = { x = 5, y = 5 }
 title = "terminal"
 class = {instance = "terminal", general = "terminal"}
 
+[font]
+normal = { family = "monospace", style = "Regular" } # default
+size = 11
+
 [colors.primary]
 background = "#000000"
 foreground = "#ffffff"
 
 [colors.normal]
 black   = "#000000"
-red     = "#5C27A2"
+red     = "#555555"
 green   = "#6F2EC5"
 yellow  = "#8548D5"
 blue    = "#9C6ADE"
@@ -25,7 +29,7 @@ white   = "#ffffff"
 
 [colors.bright]
 black   = "#222222"
-red     = "#7A37D1"
+red     = "#888888"
 green   = "#8B51D8"
 yellow  = "#9C6ADE"
 blue    = "#AD84E4"
