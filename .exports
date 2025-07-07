@@ -13,3 +13,9 @@ export SUDO_PROMPT="${(L)USER} password: "
 
 export LS_COLORS="$(vivid generate purple)"
 # export LS_COLORS="$(vivid generate tokyonight-storm)"
+
+# Mozilla Firefox
+export MOZ_DBUS_REMOTE=1
+export MOZ_ENABLE_WAYLAND=1
+export MOZ_GTK_TITLEBAR_DECORATION=client
+export MOZ_DISABLE_SPLASH=1
