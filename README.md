@@ -4,18 +4,18 @@
 
 ## System Info
 
-| **Component**   | **Details**                                                           |    **Notes**                |
-|------------------|----------------------------------------------------------------------|-----------------------------|
-| **Kernel**       | [Linux](https://github.com/torvalds/linux)                           |  Year of the Linux Desktop  |
-| **Distribution** | [Arch](https://archlinux.org)                                        |       *Arch btw*            |
-| **Window Manager**| [Hyprland](https://wiki.hyprland.org)                               |    Tiling / Wayland         |
-| **Graphics**     | NVIDIA                                                               |     Open Drivers            |
-| **GRUB Theme**   | [Elegant-Grub2](https://github.com/vinceliuice/Elegant-grub2-themes) | Mojave, Window, Dark, Right |
-| **Terminal**    | [Alacritty](https://github.com/alacritty/alacritty)                   | Fast, GPU-accelerated       |
-| **Shell**       | [Zsh](https://www.zsh.org)                                            | With [Oh My Zsh](https://ohmyz.sh/) |
-| **Font**        | [Ubuntu](https://design.ubuntu.com/font/)                             |                             |
-| **System Theme**| [Materia Dark](https://github.com/nana-4/materia-theme)               | Based on Adwaita            |
-| **Icon Theme** | [Tela Circle](https://github.com/vinceliuice/Tela-circle-icon-theme) | Black, Dark |
+| **Component**     | **Details**                                                          |        **Notes**            |
+|-------------------|----------------------------------------------------------------------|-----------------------------|
+| **Kernel**        | [Linux](https://github.com/torvalds/linux)                           |  Year of the Linux Desktop  |
+| **Distribution**  | [Arch](https://archlinux.org)                                        |       *Arch btw*            |
+| **Window Manager**| [Hyprland](https://wiki.hyprland.org)                                |    Tiling / Wayland         |
+| **Graphics**      | [NVIDIA](https://wiki.archlinux.org/title/NVIDIA)                    |     Proprietary Drivers     |
+| **GRUB Theme**    | [Dark Mojave](https://github.com/vinceliuice/Elegant-grub2-themes)   |      Right Window           |
+| **Terminal**      | [Alacritty](https://github.com/alacritty/alacritty)                  | Fast, GPU-accelerated       |
+| **Shell**         | [Zsh](https://www.zsh.org)                                           |    Z-Shell (*"zish"*)       |
+| **Font**          | [Ubuntu](https://design.ubuntu.com/font/)                            |         *sacrilegious*      |
+| **System Theme**  | [Materia Dark Compact](https://github.com/nana-4/materia-theme)      |      Based on Adwaita       |
+| **Icon Theme**   | [Tela Circle](https://github.com/vinceliuice/Tela-circle-icon-theme)  |       Black, Dark           |
 
 ## Download ISO
 
@@ -30,7 +30,7 @@ git clone --bare https://github.com/MGross21/dotfiles.git ~/.dotfiles
 ./install.sh
 ```
 
-### Making Changes
+<!-- ### Making Changes
 
 ```bash
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
@@ -44,7 +44,7 @@ dotfiles config --local status.showUntrackedFiles no
 dotfiles status
 dotfiles add .vimrc
 dotfiles commit -m "Update vim config"
-```
+``` -->
 
 ### Arch on WSL2
 
@@ -89,14 +89,4 @@ Uncomment:
 
 ```bash
 su - <username>
-```
-
-### Custom GRUB Theme
-
-<img src="https://raw.githubusercontent.com/vinceliuice/Elegant-grub2-themes/refs/heads/main/preview-02.jpg"
-     width="840" height="500"
-     style="object-fit: none; object-position: -1020px -1100px;">
-
-```bash
-./scripts/grub_theme_install.sh
 ```
