@@ -25,9 +25,33 @@ alias vim=$EDITOR
 alias vi=$EDITOR
 alias v=$EDITOR
 
-alias gs='git status'
+alias gs='git status -sb'
+alias ga="git add"
+alias gaa="git add -A"
 alias gc="git commit"
+alias gcm="git commit -m"
+alias gco="git checkout"
+alias gcb="git checkout -b"
+alias gbd="git branch -d"
+alias gbl="git blame"
+alias gd="git diff"
+alias gds="git diff --staged"
+alias gundo="git reset --soft HEAD~1"
+alias grh="git reset HEAD"
+alias grhh="git reset --hard HEAD"
+alias gf="git fetch --all --prune"
+alias gp="git push"
+alias gpl="git pull"
+alias gplo="git pull origin"
+alias gst="git stash"
+alias gtag="git tag"
+alias gtags="git tag -l"
+alias gcp="git cherry-pick"
+alias grl="git reflog"
+
 alias gl="git log --oneline --graph --all"
+alias glg='git log --graph --pretty=format:"%C(yellow)%h%Creset -%C(auto)%d%Creset %s %C(blue)[%an]" --abbrev-commit'
+alias gllg='git log --oneline --graph --decorate --all'
 
 alias zshrc='${EDITOR} ~/.zshrc'
 alias reload="source ~/.zshrc"
@@ -115,48 +139,7 @@ alias audiolist="pactl list sinks short"
 alias docrs="rustup doc"
 alias docrs-proj="rustup doc --open --document-private-items" # Also show items not marked pub
 
-dotsync() {
-  DF="$HOME/dotfiles"
-  DOTFILES_LIST="$DF/dotfiles.list"
-
-  # Ensure we're in the repo
-  cd "$DF" || return
-
-  # Pull latest changes
-  git pull --rebase origin main
-
-  # Loop through each path in dotfiles.list
-  while IFS= read -r path; do
-    # Skip blank lines and comments
-    [[ -z "$path" || "$path" == \#* ]] && continue
-
-    src="$HOME/$path"
-    dest="$DF/$path"
-
-    # Skip if source doesn't exist
-    [ -e "$src" ] || continue
-
-    echo "Syncing: $src → $dest"
-
-    # Create destination directory if needed
-    mkdir -p "$(dirname "$dest")"
-
-    # Copy file or directory
-    if [ -d "$src" ]; then
-      cp -r "$src" "$dest"
-    else
-      cp "$src" "$dest"
-    fi
-  done < "$DOTFILES_LIST"
-
-  # Git commit and push
-  git status
-  git commit -am "Sync dotfiles ($(date +"%m/%d/%y %H:%M:%S %Z"))"
-  git push
-
-  # Return to previous directory
-  cd -
-}
+alias pomodoro="pomodoro-cli"
 
 twitch() {
   streamlink --player mpv \
@@ -164,51 +147,3 @@ twitch() {
              "twitch.tv/$1" best & disown
 }
 
-# Requires https://github.com/caarlos0/timer
-# yay -S timer-bin
-
-pomodoro() {
-  local work_minutes=25
-  local break_minutes=5
-  local count=1
-  local no_break=false
-
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      -w|--work)     shift; work_minutes="$1" ;;
-      -b|--break)    shift; break_minutes="$1" ;;
-      -c|--count)    shift; count="$1" ;;
-      -n|--no-break) no_break=true ;;
-      *) echo "Usage: pomodoro [-w minutes] [-b minutes] [-c count] [--no-break]"; return 1 ;;
-    esac
-    shift
-  done
-
-  on_interrupt() {
-    trap - SIGINT
-    exit 130
-  }
-
-  for ((i = 1; i <= count; i++)); do
-    echo "Pomodoro $i of $count"
-    c
-
-    echo "Work: ${work_minutes} minutes"
-    trap on_interrupt SIGINT
-    timer "${work_minutes}m"
-    local timer_exit=$?
-    trap - SIGINT
-
-    (( timer_exit != 0 )) && return 130
-
-    notify-send "Pomodoro" "Work session over. Take a break!"
-
-    if ! $no_break; then
-      echo "Break: ${break_minutes} minutes"
-      timer "${break_minutes}m"
-      notify-send "Pomodoro" "Break is over. Get back to work!"
-    else
-      echo "Skipping break as requested."
-    fi
-  done
-}
