@@ -41,7 +41,7 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*'
 
 # --- Sourcing ---
-for dot in ~/.{exports,aliases,path};do
+for dot in ~/.{exports,aliases};do
   [ -r "$dot" ] && [ -f "$dot" ] && source "$dot";
 done
 
@@ -58,8 +58,9 @@ for plugin in zsh-{autosuggestions,history-substring-search}; do
   [[ -r "$plugin_path" ]] && source "$plugin_path"
 done
 
-# Needs to be last
 highlight_path="/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 [[ -r "$highlight_path" ]] && source "$highlight_path"
 
+
+source <(fzf --zsh)
 eval "$(zoxide init zsh --cmd cd)"
