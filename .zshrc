@@ -36,9 +36,14 @@ CORRECT_IGNORE=('_*')
 autoload -Uz compinit
 compinit -d ~/.cache/zsh/zcompdump
 
-# Optional: Smarter completion menu
+# Smarter completion menu
 zstyle ':completion:*' menu select
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*'
+zstyle ':completion:*' matcher-list \
+    'm:{a-zA-Z}={A-Za-z}' \
+    'r:|?=**' \
+    'l:|=* r:|=*'
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # --- Sourcing ---
 for dot in ~/.{exports,aliases};do
@@ -47,7 +52,6 @@ done
 
 # --- Prompt ---
 autoload -Uz colors && colors
-#PROMPT='%F{cyan}%n@%m%f:%F{yellow}%~%f %# ' # Orange (Default)
 PROMPT='%F{cyan}%n@%m%f:%F{#9C6ADE}%~%f %# ' # Purple
 
 # --- Plugins/Frameworks ---
