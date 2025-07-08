@@ -5,6 +5,7 @@
 export EDITOR="nvim"
 export PATH="$HOME/bin:/usr/local/bin:/usr/bin:/bin:$HOME/.local/bin"
 export PATH=$PATH:$HOME/.spicetify
+export PATH=$PATH:$HOME/.cargo/bin
 export SUDO_PROMPT="${(L)USER} password: "
 
 # ====================
