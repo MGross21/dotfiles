@@ -1,0 +1,7 @@
+$HOME/.cargo/bin
+$HOME/.local/bin
+$HOME/bin
+/usr/local/bin
+/usr/bin
+/bin
+$HOME/.spicetify
