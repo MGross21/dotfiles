@@ -3,7 +3,7 @@ alias zpath="$EDITOR ~/.path"
 alias zexport="$EDITOR ~/.exports"
 
 alias kver="uname -rs"
-alias !!="sudo !!"
+alias pls='sudo $(fc -ln -1)'
 
 alias c="clear"
 alias ..="cd .."
@@ -98,6 +98,9 @@ alias speedtest="speedtest-cli --simple --secure | column -t"
 alias wifi="nmcli device wifi"
 
 alias soundtest="speaker-test -c 8 -t wav"
+
+alias fw="sudo ufw"
+alias fws="sudo ufw status verbose"
 
 copyfile() {
   [[ -f "$1" ]] && wl-copy < "$1" || echo "Usage: copyfile <file>"
