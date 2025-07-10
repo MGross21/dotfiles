@@ -147,10 +147,15 @@ alias pomo="$HOME/Documents/github/pomodoro-cli/target/release/pomodoro-cli || p
 
 alias pyvenv="python -m venv .venv && source .venv/bin/activate"
 alias pyinstall="ping -c1 8.8.8.8 >/dev/null 2>&1 && python -m pip install --upgrade pip && (pip install -r requirements.txt || pip install .)"
-
-twitch() {
-  streamlink --player mpv \
-             --player-args="--no-osc --no-input-cursor --no-input-default-bindings" \
-             "twitch.tv/$1" best & disown
-}
-
+alias pyclean="find . -type d -name '__pycache__' -exec rm -r {} +"
+alias pyignore='cat <<EOF >> .gitignore
+**/__pycache__/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.coverage
+**/.DS_Store
+*.egg-info/
+*.egg
+.env
+EOF'
