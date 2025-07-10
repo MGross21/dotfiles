@@ -1,3 +1,6 @@
+alias zshrc='${EDITOR} ~/.zshrc'
+alias reload="source ~/.zshrc"
+
 alias zalias="$EDITOR ~/.aliases"
 alias zpath="$EDITOR ~/.path"
 alias zexport="$EDITOR ~/.exports"
@@ -52,9 +55,6 @@ alias grl="git reflog"
 alias gl="git log --oneline --graph --all"
 alias glg='git log --graph --pretty=format:"%C(yellow)%h%Creset -%C(auto)%d%Creset %s %C(blue)[%an]" --abbrev-commit'
 alias gllg='git log --oneline --graph --decorate --all'
-
-alias zshrc='${EDITOR} ~/.zshrc'
-alias reload="source ~/.zshrc"
 
 alias sysen="sudo systemctl enable" # start at boot
 alias sysst="sudo systemctl start" 
@@ -130,6 +130,10 @@ copyfile() {
   [[ -f "$1" ]] && wl-copy < "$1" || echo "Usage: copyfile <file>"
 }
 
+pastefile() {
+  [[ -f "$1" ]] && wl-paste > "$1" || echo "Usage: pastefile <file>"
+}
+
 alias volup="pactl set-sink-volume @DEFAULT_SINK@ +5%"
 alias voldown="pactl set-sink-volume @DEFAULT_SINK@ -5%"
 alias mute="pactl set-sink-mute @DEFAULT_SINK@ toggle"
@@ -139,7 +143,10 @@ alias audiolist="pactl list sinks short"
 alias docrs="rustup doc"
 alias docrs-proj="rustup doc --open --document-private-items" # Also show items not marked pub
 
-alias pomodoro="pomodoro-cli"
+alias pomo="$HOME/Documents/github/pomodoro-cli/target/release/pomodoro-cli || pomodoro-cli"
+
+alias pyvenv="python -m venv .venv && source .venv/bin/activate"
+alias pyinstall="ping -c1 8.8.8.8 >/dev/null 2>&1 && python -m pip install --upgrade pip && (pip install -r requirements.txt || pip install .)"
 
 twitch() {
   streamlink --player mpv \
