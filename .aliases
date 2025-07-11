@@ -143,7 +143,7 @@ alias audiolist="pactl list sinks short"
 alias docrs="rustup doc"
 alias docrs-proj="rustup doc --open --document-private-items" # Also show items not marked pub
 
-alias pomo="$HOME/Documents/github/pomodoro-cli/target/release/pomodoro-cli || pomodoro-cli"
+alias pom="$HOME/Documents/github/pomodoro-cli/target/release/pomodoro-cli || pomodoro-cli"
 
 alias pyvenv="python -m venv .venv && source .venv/bin/activate"
 alias pyinstall="ping -c1 8.8.8.8 >/dev/null 2>&1 && python -m pip install --upgrade pip && (pip install -r requirements.txt || pip install .)"
