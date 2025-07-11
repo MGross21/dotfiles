@@ -11,5 +11,5 @@ Pictures/
 )
 
 for link in "${LINKS[@]}"; do
-    ln -svf "$HOME/dotfiles/$link" "$HOME/$link"
+    ln -svf "$HOME/dotfiles/$link" "$HOME"
 done

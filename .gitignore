@@ -10,6 +10,9 @@
 # Hide Backup Files
 *.bak
 
+# System Screenshots
+**/hyprshot.png
+
 !.config/alacritty.toml
 !.config/hypr/*
 !.config/nvim/*
