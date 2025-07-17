@@ -11,7 +11,7 @@
 *.bak
 
 # System Screenshots
-**/hyprshot.png
+**/*_hyprshot.png
 
 !.config/alacritty.toml
 !.config/hypr/*
@@ -24,6 +24,7 @@
 !.config/wofi/*
 !.config/fastfetch/*
 !.config/cava/config
+!.config/tmux/*
 
 
 .config/*
