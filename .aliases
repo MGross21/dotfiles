@@ -58,8 +58,12 @@ alias glg='git log --graph --pretty=format:"%C(yellow)%h%Creset -%C(auto)%d%Cres
 alias gllg='git log --oneline --graph --decorate --all'
 
 alias sysen="sudo systemctl enable" # start at boot
-alias sysst="sudo systemctl start" 
-alias sysre="sudo systemctl restart"
+alias sysstart="sudo systemctl start" 
+alias sysrestart="sudo systemctl restart"
+alias sysstop="sudo systemctl stop"
+alias sysdisable="sudo systemctl disable"
+alias services='systemctl list-unit-files --type=service --no-pager | tail -n +2 | fzf --with-nth=1 --preview="systemctl status {1}"'
+
 
 alias update="sudo pacman -Syu --noconfirm \
 	&& yay -Sua --noconfirm\
@@ -113,7 +117,6 @@ alias monitors="hyprctl monitors"
 alias logout="hyprctl dispatch exit"
 alias reboot="systemctl reboot"
 alias shutdown="systemctl poweroff"
-alias services="systemctl list-unit-files --state=enabled"
 
 alias devices="lsusb && lspci | less"
 alias disks="lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,LABEL"
