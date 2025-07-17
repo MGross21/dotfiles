@@ -13,8 +13,15 @@ source = auto
 method = ncurses
 
 [color]
-foreground = default
+gradient = 1
+gradient_color_1 = "#6F2EC5"
+gradient_color_2 = "#8548D5"
+gradient_color_3 = "#9C6ADE"
+gradient_color_4 = "#B38CE6"
+gradient_color_5 = "#CAAFEE"
+gradient_color_6 = "#D0B7F0"
 background = default
+
 
 [smoothing]
 noise_reduction = 77
