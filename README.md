@@ -57,8 +57,8 @@ dotfiles commit -m "Update vim config"
 2. Run the following commands
 
 > [!Note]
-> You may need to restart your wsl session or computer during setup.
-> To restart wsl session, run: `wsl --terminate arch`
+> You may need to restart your wsl session or computer during setup. <br>
+> To restart wsl session, run: `wsl --terminate arch` <br>
 > To restart from PowerShell, run: `Restart-Computer`
 
 ```bash
