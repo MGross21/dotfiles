@@ -66,7 +66,7 @@ winget install Microsoft.WSL
 wsl --update
 wsl --set-default-version 2
 wsl --install -d archlinux --web-download --no-launch --name arch
-wsl --set-default arch # required if other distrobutions exist
+wsl --set-default arch # required if other distributions exist, otherwise ignore
 wsl --manage arch --set-default-user $env:USERNAME # set default username to same as windows computer
 wsl ~
 pacman -Syu
