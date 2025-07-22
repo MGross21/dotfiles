@@ -58,8 +58,8 @@ dotfiles commit -m "Update vim config"
 
 > [!Note]
 > You may need to restart your wsl session or computer during setup. <br>
-> To restart wsl session, run: `wsl --terminate arch` <br>
-> To restart from PowerShell, run: `Restart-Computer`
+> *To restart wsl session, run: `wsl --terminate arch` *<br>
+> *To restart from PowerShell, run: `Restart-Computer`*
 
 ```bash
 winget install Microsoft.WSL
