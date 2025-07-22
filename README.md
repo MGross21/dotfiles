@@ -49,18 +49,39 @@ dotfiles commit -m "Update vim config"
 
 ### Arch on WSL2
 
-To set up Arch Linux on WSL2:
+<sub>For instructions directly from Arch Linux forums, [see here](https://wiki.archlinux.org/title/Install_Arch_Linux_on_WSL)</sub>
 
-1. Open Command Prompt (`Win + R`, type `cmd`, press `Enter`).
-2. Run the following commands:
+#### Installation
+
+1. Open Command Prompt <kbd><img src="https://img.icons8.com/ios-filled/16/000000/windows8.png" alt="Windows logo" style="vertical-align:middle;"/> Win</kbd> + <kbd>R</kbd>, type <kbd>cmd</kbd>, press <kbd>Enter</kbd>.
+2. Run the following commands
+
+> [!Note]
+> You may need to restart your wsl session or computer during setup.
+> To restart wsl session, run: `wsl --terminate arch`
+> To restart from PowerShell, run: `Restart-Computer`
 
 ```bash
+winget install Microsoft.WSL
 wsl --update
 wsl --set-default-version 2
-wsl --install archlinux
-wsl --set-default archlinux
+wsl --install -d archlinux --web-download --no-launch --name arch
+wsl --set-default arch # required if other distrobutions exist
+wsl --manage arch --set-default-user $env:USERNAME # set default username to same as windows computer
 wsl ~
 pacman -Syu
+```
+
+#### Terminate Session
+
+```bash
+wsl --terminate arch
+```
+
+#### Uninstall
+
+```bash
+wsl --unregister arch
 ```
 
 ### User Setup

@@ -9,7 +9,7 @@ sudo usermod -aG input $USER
 # SHELL #
 #########
 
-chsh -s $(which zsh) $USER # Change default shell to zsh
+sudo chsh -s $(which zsh) $USER # Change default shell to zsh
 
 #############
 # LANGUAGES #
