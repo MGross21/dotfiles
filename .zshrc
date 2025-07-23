@@ -75,3 +75,5 @@ if command -v tmux >/dev/null 2>&1; then
     exec tmux new-session -A -s main
   fi
 fi
+
+fastfetch --logo none && echo ""
