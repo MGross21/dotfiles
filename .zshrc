@@ -73,7 +73,6 @@ eval "$(zoxide init zsh --cmd cd)"
 if command -v tmux >/dev/null 2>&1; then
   if [[ -z "$TMUX" ]] && [[ "$TERM_PROGRAM" != "vscode" ]]; then
     exec tmux new-session -A -s main
+    fastfetch --logo none && echo ""
   fi
 fi
-
-fastfetch --logo none && echo ""
