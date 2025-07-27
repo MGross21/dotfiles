@@ -71,7 +71,7 @@ alias update="sudo pacman -Syu --noconfirm \
 	&& echo 'Done.'"
 alias install="sudo pacman -S"
 alias uninstall="sudo pacman -Rns"
-alias packages="pacman -Qet" # All Explicitly installed pacakges, non-dependencies
+alias packages="pacman -Qet | less" # All Explicitly installed pacakges, non-dependencies
 
 search() {
     local output
