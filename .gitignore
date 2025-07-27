@@ -22,7 +22,7 @@
 !.config/fastfetch/*
 !.config/cava/config
 !.config/tmux/*
-!.config/.spicetify
+!.config/spicetify
 
 
 .config/*
