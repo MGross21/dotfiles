@@ -11,13 +11,11 @@
 * {
   font-family: "JetBrainsMono Nerd Font", monospace;
   font-size: 12px;
-  /* transition: all 0.25s ease-in-out; */
 }
 
 window#waybar {
   background-color: rgba(30, 30, 30, 0.6);
   color: #f2f2f2;
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); */
 }
 
 window#waybar.hidden {
@@ -38,7 +36,6 @@ button,
 #battery,
 #custom-weather,
 #custom-power {
-  /* all: unset; */
   background: transparent;
   color: #f2f2f2;
   padding: 0px 3px;
@@ -51,14 +48,14 @@ button:hover {
   color: #000000;
 }
 
-/* === Workspaces === */
 #workspaces {
-  padding-left: 2px;
+  padding-left: 1px;
 }
 
-#workspaces button {
-  padding: 0px 4px;
-}
+/* #workspaces button {
+  padding: 0px 0px;
+  margin: 0px 0px;
+} */
 
 #workspaces button.focused,
 #workspaces button.active {
@@ -74,31 +71,17 @@ button:hover {
   color: #000000;
 }
 
-/* === Module Variants === */
 #tray {
   background-color: rgba(255, 255, 255, 0.03);
   padding: 2px 6px;
 }
 
-/* #custom-power {
-  background-color: #9C6ADE;
-  color: #000000;
-  font-weight: bold;
-}
-
-#custom-power:hover {
-  background-color: rgba(156, 106, 222, 0.9);
-  color: #000000;
-} */
-
-/* === Pulseaudio === */
 #pulseaudio {
   font-size: 11px;
   min-width: 30px;
   letter-spacing: 0.4px;
 }
 
-/* === Keyboard State === */
 #keyboard-state {
   font-size: 11px;
   min-width: 30px;
@@ -115,7 +98,6 @@ button:hover {
   border-radius: 6px;
 }
 
-/* === Clock === */
 #clock {
   font-weight: bolder;
 }
