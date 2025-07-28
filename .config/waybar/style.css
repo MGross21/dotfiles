@@ -49,18 +49,13 @@ button:hover {
 }
 
 #workspaces {
-  padding-left: 1px;
-}
-
-/* #workspaces button {
-  padding: 0px 0px;
   margin: 0px 0px;
-} */
+}
 
 #workspaces button.focused,
 #workspaces button.active {
   background-color: #9C6ADE;
-  color: #f2f2f2;
+  color: #000000;
   font-weight: bolder;
 }
 
