@@ -2,7 +2,7 @@ alias zshrc='${EDITOR} ~/.zshrc'
 alias reload="source ~/.zshrc"
 
 alias zalias="$EDITOR ~/.aliases"
-alias zpath="$EDITOR ~/.path"
+alias zpath="$EDITOR ~/.paths"
 alias zexport="$EDITOR ~/.exports"
 
 alias kver="uname -rs"
@@ -130,6 +130,8 @@ alias soundtest="speaker-test -c 8 -t wav"
 alias fw="sudo ufw"
 alias fws="sudo ufw status verbose"
 
+alias gemini="gemini -s"
+
 copyfile() {
   [[ -f "$1" ]] && wl-copy < "$1" || echo "Usage: copyfile <file>"
 }
@@ -151,7 +153,7 @@ alias pom="$HOME/Documents/github/pomodoro-cli/target/release/pomodoro || pomodo
 
 alias latexrender="latexmk -pdf -interaction=nonstopmode -silent >/dev/null && latexmk -c >/dev/null"
 
-alias pyvenv="python -m venv .venv && source .venv/bin/activate"
+alias pyvenv="python -m venv .venv && source .venv/bin/activate && pip install --upgrade pip --quiet"
 alias pyinstall="ping -c1 8.8.8.8 >/dev/null 2>&1 && python -m pip install --upgrade pip && (pip install -r requirements.txt || pip install .)"
 alias pyclean="find . -type d -name '__pycache__' -exec rm -r {} +"
 alias pyignore='cat <<EOF >> .gitignore
