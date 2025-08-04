@@ -1,3 +1,15 @@
+# Welcome Message
+if command -v toilet &>/dev/null && command -v lolcat &>/dev/null; then
+    echo
+    toilet -f pagga -F border -F metal "Welcome $USER" | lolcat -a -d 5 -s 100 -S 100 -F 1
+    echo
+fi
+
+# Setup Keyboard Lighting (requires yay -S msi-perkeyrgb)
+if command -v msi-perkeyrgb &>/dev/null; then
+    msi-perkeyrgb --model GS65 --steady 9c6ade
+fi
+
 # Start DBus session if not already running
 if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
   eval "$(dbus-launch --sh-syntax)"
