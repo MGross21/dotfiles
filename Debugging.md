@@ -48,3 +48,17 @@ To configure VSCode:
 3. Restart VSCode (`"Developer: Reload Window"` menu option will not work)
 
 [Learn more about keyring options in VSCode](https://code.visualstudio.com/docs/configure/settings-sync#_recommended-configure-the-keyring-to-use-with-vs-code)
+
+## Returning the Charge Light Functionality to MSI Laptops
+
+If the charge LED stopped working after switching to Linux, try resetting the embedded controller (EC):
+
+### EC Reset Steps
+
+1. Power off the laptop completely.
+2. Unplug the AC adapter.
+3. Hold the power button for 30–60 seconds.
+4. Plug the AC adapter back in.
+5. Power on the laptop.
+
+This often restores the charge LED functionality on MSI laptops.

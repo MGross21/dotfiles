@@ -27,6 +27,7 @@ alias ll='ls -lah'
 alias vim=$EDITOR
 alias vi=$EDITOR
 alias v=$EDITOR
+alias sv="sudo $EDITOR"
 
 alias gs='git status -sb'
 alias ga="git add"
@@ -64,12 +65,13 @@ alias sysstop="sudo systemctl stop"
 alias sysdisable="sudo systemctl disable"
 alias services='systemctl list-unit-files --type=service --no-pager | tail -n +2 | fzf --with-nth=1 --preview="systemctl status {1}"'
 
+alias timesync="sudo timedatectl set-ntp true"
 
 alias update="sudo pacman -Syu --noconfirm \
 	&& yay -Sua --noconfirm\
 	&& spicetify update\
 	&& echo 'Done.'"
-alias install="sudo pacman -S"
+alias install="sudo pacman -S --needed"
 alias uninstall="sudo pacman -Rns"
 alias packages="pacman -Qet | less" # All Explicitly installed pacakges, non-dependencies
 
