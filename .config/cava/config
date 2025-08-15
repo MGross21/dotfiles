@@ -10,7 +10,8 @@ method = pulse
 source = auto
 
 [output]
-method = ncurses
+method = noncurses
+synchronized_sync = 1
 
 [color]
 gradient = 1
