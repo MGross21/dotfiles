@@ -1,5 +1,5 @@
-width=500
-height=400
+width=30%
+allow_images=true
 show=drun
 prompt=Program
 term=$TERM
