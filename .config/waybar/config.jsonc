@@ -14,7 +14,7 @@
       "temperature",
       "pulseaudio",
       // "keyboard-state",
-      "network",
+      // "network",
       "battery",
       "custom/power"
     ],
