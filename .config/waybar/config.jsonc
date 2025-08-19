@@ -107,7 +107,6 @@
       "menu-actions": {
           "lock": "hyprlock",
           "suspend": "systemctl suspend",
-          "hibernate": "systemctl hibernate",
           "reboot": "reboot",
           "shutdown": "shutdown now"
       }
