@@ -1,7 +1,6 @@
 # Dotfiles & Installation
 
-![Desktop Preview](Pictures/screenshots/monochrome1.png)
-![Theme Preview](Pictures/screenshots/preview1.png)
+![Desktop Preview](Pictures/screenshots/version2.png)
 
 ## System Info
 
