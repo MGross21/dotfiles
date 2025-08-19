@@ -1,41 +1,26 @@
 # Welcome Message
-if command -v toilet &>/dev/null && command -v lolcat &>/dev/null; then
+if [[ "$(tty)" == "/dev/tty*" ]] && command -v toilet &>/dev/null && command -v lolcat &>/dev/null; then
     echo
     toilet -f pagga -F border -F metal "Welcome $USER" | lolcat -a -d 5 -s 100 -S 100 -F 1
     echo
 fi
 
 # Setup Keyboard Lighting (requires yay -S msi-perkeyrgb)
-if command -v msi-perkeyrgb &>/dev/null; then
-    msi-perkeyrgb --model GS65 --steady 9c6ade
-fi
+command -v msi-perkeyrgb &>/dev/null && msi-perkeyrgb --model GS65 --steady 9c6ade
 
 # Start DBus session if not already running
-if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
-  eval "$(dbus-launch --sh-syntax)"
-fi
-
+[ -z "$DBUS_SESSION_BUS_ADDRESS" ] && eval "$(dbus-launch --sh-syntax)"
 
 # Start gnome-keyring-daemon if not already running
-if ! busctl --user | grep -q org.freedesktop.secrets; then
-  eval "$(gnome-keyring-daemon --start --components=pkcs11,secrets,ssg,gpg)"
-fi
-
-# https://wiki.hyprland.org/Useful-Utilities/Systemd-start/
+! busctl --user | grep -q org.freedesktop.secrets && eval "$(gnome-keyring-daemon --start --components=pkcs11,secrets,ssg,gpg)"
 
 # Explicitly point to keyring
 export SSH_AUTH_SOCK="/run/user/$UID/keyring/ssh"
 
 # Source uswm-generated env vars, if they exist
-[ -f ${XDG_RUNTIME_DIR}/wayland-session.env ] && source "${XDG_RUNTIME_DIR}/wayland-session.env"
-
-
-# Compositor Selection Menu
-#if uwsm check may-start && uwsm select; then
-#	exec uwsm start default
-#fi
+[ -f "${XDG_RUNTIME_DIR}/wayland-session.env" ] && source "${XDG_RUNTIME_DIR}/wayland-session.env"
 
 # Direct Hyprland Launch
-if [ "$(tty)" = "/dev/tty1" ] && command -v uwsm &>/dev/null && uwsm check may-start; then
+if [[ "$(tty)" == "/dev/tty1" ]] && command -v uwsm &>/dev/null && uwsm check may-start; then
   exec uwsm start hyprland.desktop
 fi
