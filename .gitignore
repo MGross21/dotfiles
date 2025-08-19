@@ -28,6 +28,7 @@
 .config/*
 
 Pictures/
+!Pictures/wallpapers/*
 
 # System Screenshots
 **/*_hyprshot.png
