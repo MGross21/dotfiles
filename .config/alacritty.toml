@@ -4,8 +4,9 @@
   # args = ["-c","fastfetch"]
 
 [window]
-opacity = 0.75
+opacity = 0.2
 padding = { x = 5, y = 5 }
+dynamic_padding = true
 title = "terminal"
 class = {instance = "terminal", general = "terminal"}
 
