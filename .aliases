@@ -161,6 +161,10 @@ alias pyvenv="python -m venv .venv --prompt ${PWD##*/} && source .venv/bin/activ
 alias pyinstall="python -m pip install --upgrade pip && (pip install -r requirements.txt || pip install .)"
 
 alias uvenv="uv venv"
+alias uva="uv add"
+alias uvad="uv add --dev"
+alias uvs="uv sync"
+alias lock="uv lock"
 alias uvr="uv run"
 alias uvb="uv build"
 
