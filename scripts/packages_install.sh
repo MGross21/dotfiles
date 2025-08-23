@@ -58,7 +58,7 @@ fi
 
 # Install AUR packages
 for pkg in "${APPS[@]}"; do
-    yay -S --needed "$pkg"
+    yay -S --needed "$pkg" --noconfirm
 done
 
 

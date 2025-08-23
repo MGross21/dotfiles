@@ -110,6 +110,7 @@ alias hyprreload="hyprctl reload"
 alias hyprlog="journalctl -xe | grep Hyprland"
 alias hyprconfig="${EDITOR} $HOME/.config/hypr/hyprland.conf"
 alias nightmode="hyprsunset --temperature 3000"
+alias paperreload="pkill hyprpaper; (hyprpaper & disown)"
 
 alias barreload='pkill waybar; (waybar & disown)'
 alias fontreload='fc-cache -f'
