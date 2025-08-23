@@ -91,9 +91,10 @@
     // Date & Time
     "clock": {
       "format": "{:%I:%M %p | %a %b %d}",
-      "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+      "tooltip-format": "<tt><big>{calendar}</big></tt>",
+      "on-click": "alacritty --hold -o window.dimensions.columns=32 -o window.dimensions.lines=10 -e cal -3Ss"
     },
-  
+
     // System Tray
     "tray": {
       "spacing": 10
