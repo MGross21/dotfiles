@@ -161,10 +161,10 @@ alias pip="pip --require-virtualenv"
 alias pyvenv="python -m venv .venv --prompt ${PWD##*/} && source .venv/bin/activate"
 alias pyinstall="python -m pip install --upgrade pip && (pip install -r requirements.txt || pip install .)"
 
-alias uvenv="uv venv"
+alias uvenv="uv venv --clear && source ./.venv/bin/activate" # overrides existing venv
 alias uva="uv add"
 alias uvad="uv add --dev"
-alias uvs="uv sync"
+alias uvs="uv sync -u --all-extras --all-groups --active"
 alias lock="uv lock"
 alias uvr="uv run"
 alias uvb="uv build"
