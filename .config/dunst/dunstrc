@@ -1,16 +1,18 @@
 [global]
 monitor = 0
-geometry = "220x5-10+10"
+width = 280
+height = (0, 80)
+origin = top-right
+offset = (15, 15)
 indicate_hidden = yes
 shrink = yes
 transparency = 0
-notification_height = 0
-separator_height = 1
-padding = 6
-horizontal_padding = 10
+separator_height = 0
+padding = 14
+horizontal_padding = 18
 frame_width = 1
-frame_color = "#9C6ADE"
-separator_color = frame
+frame_color = "#ffffff60"
+separator_color = "#ffffff30"
 sort = yes
 idle_threshold = 120
 font = JetBrainsMono Nerd Font 9
@@ -33,32 +35,30 @@ sticky_history = yes
 history_length = 100
 title = Dunst
 class = Dunst
-corner_radius = 6
+corner_radius = 12
 always_run_script = true
 mouse_left_click = close_current
 mouse_middle_click = do_action
 mouse_right_click = close_all
-
-[shortcuts]
 close = ctrl+shift+space
 close_all = ctrl+shift+BackSpace
 history = ctrl+shift+period
 context = ctrl+shift+comma
 
 [urgency_low]
-background = "#1e1e1e"
-foreground = "#f2f2f2"
-frame_color = "#4f4f4f"
+background = "#ffffff20"
+foreground = "#ffffff"
+frame_color = "#ffffff60"
 timeout = 3
 
 [urgency_normal]
-background = "#1e1e1e"
-foreground = "#f2f2f2"
-frame_color = "#9C6ADE"
+background = "#ffffff30"
+foreground = "#ffffff"
+frame_color = "#ffffff80"
 timeout = 5
 
 [urgency_critical]
-background = "#1e1e1e"
-foreground = "#f2f2f2"
-frame_color = "#ff5555"
+background = "#ff808040"
+foreground = "#ffffff"
+frame_color = "#ff8080a0"
 timeout = 0
