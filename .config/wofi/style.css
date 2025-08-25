@@ -1,48 +1,63 @@
 /*
-  === Wofi Color Scheme (Modern Purple) ===
-  -- Background:         rgba(26, 27, 38, 0.8)
-  -- Foreground:         #CAD3F5
-  -- Accent:             #9C6ADE
-  -- Accent Light:       rgba(156, 106, 222, 0.15)
-  -- Contrast:           #1A1B26
+  === Wofi Liquid Glassy Theme ===
+  Inspired by Waybar's frosted glass aesthetic
+  -- Glass Background:    rgba(255, 255, 255, 0.08)
+  -- Glass Border:        rgba(255, 255, 255, 0.18)
+  -- Frosted Active:      rgba(255, 255, 255, 0.25)
+  -- Text Light:          #ffffff
+  -- Text Dark:           #000000
 */
 
 window {
-    background-color: rgba(26, 27, 38, 0.8); /* Primary BG */
-    border: 1px solid #9C6ADE;              /* Accent */
-    border-radius: 8px;
-    font-family: JetBrainsMono Nerd Font;
-    font-size: 11pt;
-    padding: 8px;
+    background: rgba(255, 255, 255, 0.08);     /* Frosted glass base */
+    border: 1px solid rgba(255, 255, 255, 0.18); /* Glass border */
+    border-radius: 12px;
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 12px;
+    padding: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15),
+                0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
 #input {
-    padding: 6px 10px;
-    margin: 4px 0;
-    background-color: rgba(156, 106, 222, 0.15); /* Accent Light */
-    color: #CAD3F5;
-    border: none;
-    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 6px 0;
+    background: rgba(255, 255, 255, 0.12);     /* Slightly more opaque glass */
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.1);
 }
 
 #entry {
-    padding: 10px;
+    padding: 12px 8px;
     margin: 2px 0;
-    color: #CAD3F5;
-    border-radius: 6px;
-    background-color: transparent;
+    color: #ffffff;
+    border-radius: 8px;
+    background: transparent;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+#entry:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 #entry:selected {
-    background-color: #9C6ADE; /* Accent */
-    color: #1A1B26;            /* Contrast */
-    font-weight: bold;
+    background: rgba(255, 255, 255, 0.25);     /* Frosted active state */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #000000;
+    font-weight: 600;
+    box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.15),
+                0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 #scroll {
-    margin-top: 6px;
+    margin-top: 8px;
 }
 
-#img {
-    margin-right: 10px;
+#img, image {
+    margin-right: 12px;
+    filter: grayscale(100%) brightness(1.8) contrast(0.8) opacity(0.9);
 }
