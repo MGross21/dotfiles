@@ -52,7 +52,8 @@ done
 
 # --- Prompt ---
 autoload -Uz colors && colors
-PROMPT='%F{cyan}%n@%m%f:%F{#9C6ADE}%~%f %# ' # Purple
+# PROMPT='%F{cyan}%n@%m%f:%F{#9C6ADE}%~%f %# ' # Purple
+PROMPT='%F{grey}%(3~|../|)%f%F{blue}%2~%f %# ' # Ultra minimal
 
 # --- Plugins/Frameworks ---
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=cyan'
@@ -68,6 +69,10 @@ highlight_path="/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highli
 
 source <(fzf --zsh)
 eval "$(zoxide init zsh --cmd cd)"
+
+eval "$(uv generate-shell-completion zsh)"
+eval "$(uvx --generate-shell-completion zsh)"
+
 
 # Auto-start tmux if not already inside one
 #if command -v tmux >/dev/null 2>&1; then

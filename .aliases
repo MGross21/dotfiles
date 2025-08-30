@@ -39,7 +39,7 @@ alias gco="git checkout"
 alias gcob="git checkout -b"
 alias gbd="git branch -d"
 alias gbD="git branch -D"
-alias gbl="git branch -rl"
+alias gbl="git branch -al"
 alias gd="git diff"
 alias gds="git diff --staged"
 alias gundo="git reset --soft HEAD~1"
@@ -162,12 +162,15 @@ alias pip="pip --require-virtualenv"
 alias pyvenv="python -m venv .venv --prompt ${PWD##*/} && source .venv/bin/activate"
 alias pyinstall="python -m pip install --upgrade pip && (pip install -r requirements.txt || pip install .)"
 
-alias uvenv="uv venv --clear && source ./.venv/bin/activate" # overrides existing venv
+alias uvenv="uv venv --clear --no-managed-python && source ./.venv/bin/activate" # overrides existing venv
 alias uva="uv add"
 alias uvad="uv add --dev"
 alias uvs="uv sync -U --all-extras --all-groups --active --no-install-package uv"
 alias lock="uv lock"
 alias uvr="uv run"
 alias uvb="uv build"
+alias uvx="uvx --no-managed-python"
 
 alias supabase="$PWD/node_modules/supabase/bin/supabase"
+
+alias ascii="ascii-image-converter"
