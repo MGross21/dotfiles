@@ -1,5 +1,5 @@
 # Welcome Message
-if [[ "$(tty)" == "/dev/tty*" ]] && command -v toilet &>/dev/null && command -v lolcat &>/dev/null; then
+if [[ "$(tty)" == /dev/tty* ]] && command -v toilet &>/dev/null && command -v lolcat &>/dev/null; then
     echo
     toilet -f pagga -F border -F metal "Welcome $USER" | lolcat -a -d 5 -s 100 -S 100 -F 1
     echo
