@@ -4,6 +4,8 @@
 
 export EDITOR="nvim"
 export SUDO_PROMPT="${(L)USER} password: "
+export PAGER=${PAGER:-less}
+export LESS='-R -i -w -M -z-4'
 
 # ====================
 # PATH Sourcing
@@ -25,7 +27,9 @@ export PATH
 export LS_COLORS="$(vivid generate purple)"
 # export LS_COLORS="$(vivid generate tokyonight-storm)"
 
-export TERM=tmux-256color
+# Terminal colors
+[[ -n "$TMUX" ]] && export TERM=tmux-256color || export TERM=xterm-256color
+export CLICOLOR=1
 
 # Mozilla Firefox
 export MOZ_DBUS_REMOTE=1
