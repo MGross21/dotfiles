@@ -1,34 +1,38 @@
-# Ignore Self if GitHub Repository is Unpacked
-.gitignore
-.git
-.dotfiles
+# Hide system and shell files
 .bash*
-
-# Hide System Settings
 .nvidia*
 
-# Hide Backup Files
+# Hide backup files
 *.bak
 
-!.config/alacritty.toml
-!.config/hypr/*
-!.config/nvim/*
-!.config/nwg-look/*
-!.config/README.md
-!.config/Thunar/uca.xml
-!.config/vivid/*
-!.config/waybar/*
-!.config/wofi/*
-!.config/fastfetch/*
-!.config/cava/config
-!.config/tmux/*
-!.config/spicetify
-
-
+# Ignore all .config contents first, then selectively include
 .config/*
 
-Pictures/
-!Pictures/wallpapers/*
+# Include specific config directories (entire folders)
+!.config/hypr/
+!.config/nvim/
+!.config/vivid/
+!.config/waybar/
+!.config/wofi/
+!.config/fastfetch/
+!.config/tmux/
 
-# System Screenshots
+# Include specific files only
+!.config/alacritty.toml
+!.config/README.md
+
+# Include specific files from folders (need to include folder first)
+!.config/Thunar/
+.config/Thunar/*
+!.config/Thunar/uca.xml
+
+!.config/cava/
+.config/cava/*
+!.config/cava/config
+
+# Pictures - ignore all, then include wallpapers
+Pictures/*
+!Pictures/wallpapers/
+
+# System screenshots
 **/*_hyprshot.png
