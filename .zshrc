@@ -53,7 +53,7 @@ done
 # --- Prompt ---
 autoload -Uz colors && colors
 # PROMPT='%F{cyan}%n@%m%f:%F{#9C6ADE}%~%f %# ' # Purple
-PROMPT='%F{grey}%(3~|../|)%f%F{blue}%2~%f %# ' # Ultra minimal
+PROMPT='%F{blue}%1~%f %# ' # Show only the final folder
 
 # --- Plugins/Frameworks ---
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=cyan'

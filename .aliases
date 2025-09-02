@@ -1,34 +1,53 @@
+# Shell config
 alias zshrc='${EDITOR} ~/.zshrc'
 alias reload="source ~/.zshrc"
-
 alias zalias="$EDITOR ~/.aliases"
 alias zpath="$EDITOR ~/.paths"
 alias zexport="$EDITOR ~/.exports"
 
+# System & navigation
 alias kver="uname -rs"
 alias pls='sudo $(fc -ln -1)'
-
 alias c="clear"
 alias ..="cd .."
 alias ...="cd ../.."
 alias c-='cd - >/dev/null'
 
+# Core commands
 alias mv="mv -i"
 alias cp="cp -i"
 alias rm="rm -Iv"
-alias grep="rg --smart-case --hidden --color=auto"
-alias find="fd --hidden --exclude .git"
-alias cat="bat --paging=always --style=plain --color=always --theme=TwoDark"
 
+if command -v rg &>/dev/null; then
+    alias grep="rg --smart-case --hidden --color=auto"
+else
+    alias grep="grep --color=auto -n"
+fi
+
+if command -v fd &>/dev/null; then
+    alias find="fd --hidden --exclude .git"
+else
+    alias find="find . -not -path '*/\.git/*'"
+fi
+
+if command -v bat &>/dev/null; then
+    alias cat="bat --paging=always --style=plain --color=always --theme=TwoDark"
+else
+    alias cat="cat -n"
+fi
+
+# File listing
 alias ls='ls --color=auto'
-alias la='ls -lAFhSr --color=auto' # list all, show filetype, format sizing, reverse sort
+alias la='ls -lAFhSr --color=auto'
 alias ll='ls -lah'
 
+# Editors
 alias vim=$EDITOR
 alias vi=$EDITOR
 alias v=$EDITOR
 alias sv="sudo $EDITOR"
 
+# Git
 if command -v git &>/dev/null; then
     alias gs='git status -sb'
     alias ga="git add"
@@ -55,136 +74,191 @@ if command -v git &>/dev/null; then
     alias gtags="git tag -l"
     alias gcp="git cherry-pick"
     alias grl="git reflog"
-
     alias gl="git log --oneline --graph --all"
     alias glg='git log --graph --pretty=format:"%C(yellow)%h%Creset -%C(auto)%d%Creset %s %C(blue)[%an]" --abbrev-commit'
     alias gllg='git log --oneline --graph --decorate --all'
 fi
 
+# SystemD
 if command -v systemctl &>/dev/null; then
-    alias sysen="sudo systemctl enable" # start at boot
+    alias sysen="sudo systemctl enable"
     alias sysstart="sudo systemctl start"
     alias sysrestart="sudo systemctl restart"
     alias sysstop="sudo systemctl stop"
     alias sysdisable="sudo systemctl disable"
-
+    
     if command -v fzf &>/dev/null; then
         alias services='systemctl list-unit-files --type=service --no-pager | tail -n +2 | fzf --with-nth=1 --preview="systemctl status {1}"'
     fi
 fi
 
-alias timesync="sudo timedatectl set-ntp true"
-
-alias update="sudo pacman -Syu --noconfirm \
-	&& yay -Sua --noconfirm\
-	&& spicetify update\
-	&& echo 'Done.'"
-
+# Arch Linux
 if command -v pacman &>/dev/null; then
-  alias install="sudo pacman -S --needed"
-  alias uninstall="sudo pacman -Rns"
-  alias packages="pacman -Qet | less" # All Explicitly installed pacakges, non-dependencies
+    alias install="sudo pacman -S --needed"
+    alias uninstall="sudo pacman -Rns"
+    alias packages="pacman -Qet | less"
+    
+    if command -v yay &>/dev/null && command -v spicetify &>/dev/null; then
+        alias update="sudo pacman -Syu --noconfirm && yay -Sua --noconfirm && spicetify update && echo 'Done.'"
+    elif command -v yay &>/dev/null; then
+        alias update="sudo pacman -Syu --noconfirm && yay -Sua --noconfirm && echo 'Done.'"
+    else
+        alias update="sudo pacman -Syu --noconfirm && echo 'Done.'"
+    fi
+    
+    search() {
+        local output
+        output=$(pacman -Si "$@" 2>/dev/null)
+        if [[ -n "$output" ]]; then
+            echo "$output"
+        elif command -v yay &>/dev/null; then
+            yay -Si "$@"
+        else
+            echo "Package not found in official repositories and yay not available"
+        fi
+    }
+    
+    cleanup() {
+        local orphans
+        orphans=$(pacman -Qdtq)
+        
+        if [[ -n "$orphans" ]]; then
+            echo "Removing orphan packages:"
+            echo "$orphans"
+            sudo pacman -Rns $orphans
+        else
+            echo "No orphan packages to remove."
+        fi
+        
+        if command -v yay &>/dev/null; then
+            yay -Scc --noconfirm
+            yay -Yc --noconfirm
+        fi
+    }
 fi
 
-search() {
-    local output
-    output=$(pacman -Si "$@" 2>/dev/null)
-    if [[ -n "$output" ]]; then
-        echo "$output"
-    else
-        yay -Si "$@"
-    fi
-}
-
-cleanup() {
-  local orphans
-  orphans=$(pacman -Qdtq)
-
-  if [[ -n "$orphans" ]]; then
-    echo "Removing orphan packages:"
-    echo "$orphans"
-    sudo pacman -Rns $orphans
-  else
-    echo "No orphan packages to remove."
-  fi
-
-  yay -Scc --noconfirm
-  yay -Yc --noconfirm
-}
-
-
+# System utilities
+alias timesync="sudo timedatectl set-ntp true"
 alias forcekill="killall -9"
 
-alias sf="fastfetch"
+if command -v fastfetch &>/dev/null; then
+    alias sf="fastfetch"
+fi
 
-alias hyprreload="hyprctl reload"
-alias hyprlog="journalctl -xe | grep Hyprland"
-alias hyprconfig="${EDITOR} $HOME/.config/hypr/hyprland.conf"
-alias nightmode="hyprsunset --temperature 3000"
-alias paperreload="pkill hyprpaper; (hyprpaper & disown)"
+# Hyprland/Wayland
+if command -v hyprctl &>/dev/null; then
+    alias hyprreload="hyprctl reload"
+    alias hyprlog="journalctl -xe | grep Hyprland"
+    alias hyprconfig="${EDITOR} $HOME/.config/hypr/hyprland.conf"
+    alias monitors="hyprctl monitors"
+    alias logout="hyprctl dispatch exit"
+    
+    if command -v hyprsunset &>/dev/null; then
+        alias nightmode="hyprsunset --temperature 3000"
+    fi
+    
+    if command -v hyprpaper &>/dev/null; then
+        alias paperreload="pkill hyprpaper; (hyprpaper & disown)"
+    fi
+fi
 
-alias barreload='pkill waybar; (waybar & disown)'
+if command -v waybar &>/dev/null; then
+    alias barreload='pkill waybar; (waybar & disown)'
+fi
+
 alias fontreload='fc-cache -f'
 alias fontlist='fc-list : family lang=en --format="%{family[0]}\n" | sort | uniq | less'
-
-alias wlr="env | grep -i wl" # Wayland Variables
-alias monitors="hyprctl monitors"
-alias logout="hyprctl dispatch exit"
+alias wlr="env | grep -i wl"
 alias reboot="systemctl reboot"
 alias shutdown="systemctl poweroff"
 
+# Hardware & network
 alias devices="lsusb && lspci | less"
 alias disks="lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,LABEL"
 alias usage="df -hT | grep '^/dev/'"
 alias ports='ss -tulwn'
-alias speedtest="speedtest-cli --simple --secure | column -t"
-alias wifi="nmcli device wifi"
 
-alias soundtest="speaker-test -c 8 -t wav"
+if command -v speedtest-cli &>/dev/null; then
+    alias speedtest="speedtest-cli --simple --secure | column -t"
+fi
 
-alias fw="sudo ufw"
-alias fws="sudo ufw status verbose"
+if command -v nmcli &>/dev/null; then
+    alias wifi="nmcli device wifi"
+fi
 
-alias gemini="gemini -s"
+# Audio
+if command -v pactl &>/dev/null; then
+    alias volup="pactl set-sink-volume @DEFAULT_SINK@ +5%"
+    alias voldown="pactl set-sink-volume @DEFAULT_SINK@ -5%"
+    alias mute="pactl set-sink-mute @DEFAULT_SINK@ toggle"
+    alias micmute="pactl set-source-mute @DEFAULT_SOURCE@ toggle"
+    alias audiolist="pactl list sinks short"
+fi
 
-copyfile() {
-  [[ -f "$1" ]] && wl-copy < "$1" || echo "Usage: copyfile <file>"
-}
+if command -v speaker-test &>/dev/null; then
+    alias soundtest="speaker-test -c 8 -t wav"
+fi
 
-pastefile() {
-  [[ -f "$1" ]] && wl-paste > "$1" || echo "Usage: pastefile <file>"
-}
+# Security
+if command -v ufw &>/dev/null; then
+    alias fw="sudo ufw"
+    alias fws="sudo ufw status verbose"
+fi
 
-alias volup="pactl set-sink-volume @DEFAULT_SINK@ +5%"
-alias voldown="pactl set-sink-volume @DEFAULT_SINK@ -5%"
-alias mute="pactl set-sink-mute @DEFAULT_SINK@ toggle"
-alias micmute="pactl set-source-mute @DEFAULT_SOURCE@ toggle"
-alias audiolist="pactl list sinks short"
+# Development tools
+if command -v gemini &>/dev/null; then
+    alias gemini="gemini -s"
+fi
 
-alias docrs="rustup doc"
-alias docrs-proj="rustup doc --open --document-private-items" # Also show items not marked pub
+if command -v wl-copy &>/dev/null && command -v wl-paste &>/dev/null; then
+    copyfile() {
+        [[ -f "$1" ]] && wl-copy < "$1" || echo "Usage: copyfile <file>"
+    }
+    
+    pastefile() {
+        [[ -f "$1" ]] && wl-paste > "$1" || echo "Usage: pastefile <file>"
+    }
+fi
 
-alias pom="$HOME/Documents/github/pomodoro-cli/target/release/pomodoro || pomodoro"
+if command -v rustup &>/dev/null; then
+    alias docrs="rustup doc"
+    alias docrs-proj="rustup doc --open --document-private-items"
+fi
 
-alias latexrender="latexmk -pdf -interaction=nonstopmode -silent >/dev/null && latexmk -c >/dev/null"
+if [[ -f "$HOME/Documents/github/pomodoro-cli/target/release/pomodoro" ]]; then
+    alias pom="$HOME/Documents/github/pomodoro-cli/target/release/pomodoro"
+elif command -v pomodoro &>/dev/null; then
+    alias pom="pomodoro"
+fi
 
+if command -v latexmk &>/dev/null; then
+    alias latexrender="latexmk -pdf -interaction=nonstopmode -silent >/dev/null && latexmk -c >/dev/null"
+fi
+
+if command -v ascii-image-converter &>/dev/null; then
+    alias ascii="ascii-image-converter"
+fi
+
+# Python
 if command -v python &>/dev/null; then
-  alias pip="pip --require-virtualenv"
-  alias pyvenv="python -m venv .venv --prompt ${PWD##*/} && source .venv/bin/activate"
-  alias pyinstall="python -m pip install --upgrade pip && (pip install -r requirements.txt || pip install .)"
+    alias pip="pip --require-virtualenv"
+    alias pyvenv="python -m venv .venv --prompt \${PWD##*/} && source .venv/bin/activate"
+    alias pyinstall="python -m pip install --upgrade pip && (pip install -r requirements.txt || pip install .)"
 fi
 
+# UV
 if command -v uv &>/dev/null; then
-  alias uvenv="uv venv --clear --no-managed-python && source ./.venv/bin/activate" # overrides existing venv
-  alias uva="uv add"
-  alias uvad="uv add --dev"
-  alias uvs="uv sync -U --all-extras --all-groups --active --no-install-package uv"
-  alias lock="uv lock"
-  alias uvr="uv run"
-  alias uvb="uv build"
-  alias uvx="uvx --no-managed-python"
+    alias uvenv="uv venv --clear --no-managed-python && source ./.venv/bin/activate"
+    alias uva="uv add"
+    alias uvad="uv add --dev"
+    alias uvs="uv sync -U --all-extras --all-groups --active --no-install-package uv"
+    alias lock="uv lock"
+    alias uvr="uv run"
+    alias uvb="uv build"
+    alias uvx="uvx --no-managed-python"
 fi
 
-alias supabase="$PWD/node_modules/supabase/bin/supabase"
-
-alias ascii="ascii-image-converter"
+# Project-specific
+if [[ -f "$PWD/node_modules/supabase/bin/supabase" ]]; then
+    alias supabase="$PWD/node_modules/supabase/bin/supabase"
+fi
