@@ -2,17 +2,14 @@
 # PERMISSIONS #
 ###############
 
-sudo usermod -aG sudo $USER
-sudo usermod -aG input $USER
+groups=(sudo input docker)
+
+for group in "${groups[@]}"; do
+    sudo usermod -aG "$group" "$USER" || { echo "Failed to add $USER to $group group"; exit 1; }
+done
 
 #########
 # SHELL #
 #########
 
-sudo chsh -s $(which zsh) $USER # Change default shell to zsh
-
-#############
-# LANGUAGES #
-#############
-
-rustup install stable # Pull Stable Rust Version
+sudo chsh -s "$(command -v zsh)" "$USER" || { echo "Failed to change shell to zsh for $USER"; exit 1; }

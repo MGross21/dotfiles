@@ -25,8 +25,12 @@ Use tool like Rufus to flash `.iso` to boot drive
 
 ## Installation Script
 
+Functions optimally on a clean system install.
+
 ```bash
-git clone --bare https://github.com/MGross21/dotfiles.git ~/.dotfiles
+git clone https://github.com/MGross21/dotfiles.git
+cd dotfiles
+chmod +x install.sh
 ./install.sh
 ```
 
