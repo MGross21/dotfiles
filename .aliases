@@ -184,6 +184,7 @@ fi
 
 if command -v nmcli &>/dev/null; then
     alias wifi="nmcli device wifi"
+    alias wifireload="nmcli radio wifi off && nmcli radio wifi on"
 fi
 
 # Audio
