@@ -208,7 +208,7 @@ fi
 
 # Development tools
 if command -v gemini &>/dev/null; then
-    alias gemini="gemini -s"
+    alias gemini="gemini --show-memory-usage"
 fi
 
 if command -v wl-copy &>/dev/null && command -v wl-paste &>/dev/null; then
