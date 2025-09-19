@@ -86,6 +86,9 @@ if command -v systemctl &>/dev/null; then
     alias sysrestart="sudo systemctl restart"
     alias sysstop="sudo systemctl stop"
     alias sysdisable="sudo systemctl disable"
+
+    alias blame="systemd-analyze blame | less"
+    alias chain="systemd-analyze critical-chain | less"
     
     if command -v fzf &>/dev/null; then
         alias services='systemctl list-unit-files --type=service --no-pager | tail -n +2 | fzf --with-nth=1 --preview="systemctl status {1}"'
