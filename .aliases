@@ -140,6 +140,11 @@ if command -v pacman &>/dev/null; then
     }
 fi
 
+# Mirror list update
+if command -v reflector &>/dev/null; then
+    alias mirrorreload="sudo reflector --country US --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist"
+fi
+
 # System utilities
 alias timesync="sudo timedatectl set-ntp true"
 alias forcekill="killall -9"
