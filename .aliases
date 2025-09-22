@@ -89,6 +89,9 @@ if command -v systemctl &>/dev/null; then
 
     alias blame="systemd-analyze blame | less"
     alias chain="systemd-analyze critical-chain | less"
+
+    alias reboot="systemctl reboot"
+    alias shutdown="systemctl poweroff"
     
     if command -v fzf &>/dev/null; then
         alias services='systemctl list-unit-files --type=service --no-pager | tail -n +2 | fzf --with-nth=1 --preview="systemctl status {1}"'
@@ -177,8 +180,6 @@ fi
 alias fontreload='fc-cache -f'
 alias fontlist='fc-list : family lang=en --format="%{family[0]}\n" | sort | uniq | less'
 alias wlr="env | grep -i wl"
-alias reboot="systemctl reboot"
-alias shutdown="systemctl poweroff"
 
 # Hardware & network
 alias devices="lsusb && lspci | less"
