@@ -258,6 +258,7 @@ fi
 
 # UV
 if command -v uv &>/dev/null; then
+    # "no-managed-python" uses system python version (python --version)
     alias uvenv="uv venv --clear --no-managed-python && source ./.venv/bin/activate"
     alias uva="uv add"
     alias uvad="uv add --dev"
@@ -266,6 +267,7 @@ if command -v uv &>/dev/null; then
     alias uvr="uv run"
     alias uvb="uv build"
     alias uvx="uvx --no-managed-python"
+    alias uvi="uv init --vcs git --author-from git --no-managed-python --no-python-downloads --no-readme --no-description --no-package --bare"
 fi
 
 # Project-specific
