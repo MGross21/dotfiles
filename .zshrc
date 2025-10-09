@@ -16,7 +16,7 @@ setopt HIST_VERIFY
 zshaddhistory() {
     local line=${1%%$'\n'}
     # Exclude commands longer than 200 chars or containing newlines
-    [[ ${#line} -le 200 ]] && [[ $line != *$'\n'* ]]
+    [[ ${#line} -le 200 && $line != *$'\n'* ]]
 }
 
 # Shell behavior
