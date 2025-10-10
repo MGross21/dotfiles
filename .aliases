@@ -1,11 +1,15 @@
-# Shell config
+# Shell
 alias zshrc='${EDITOR} ~/.zshrc'
-alias reload="source ~/.zshrc"
+alias bashrc='${EDITOR} ~/.bashrc'
+alias reload="source ~/.${SHELL##*/}rc"
 alias zalias="$EDITOR ~/.aliases"
 alias zpath="$EDITOR ~/.paths"
 alias zexport="$EDITOR ~/.exports"
+alias chshell="chsh -s $(command -v $SHELL) $USER"
+alias zsh="chsh -s $(command -v zsh) $USER"
+alias bash="chsh -s $(command -v bash) $USER"
 
-# System & navigation
+# Navigation
 alias kver="uname -rs"
 alias pls='sudo $(fc -ln -1)'
 alias c="clear"
@@ -13,10 +17,12 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias c-='cd - >/dev/null'
 
-# Core commands
+# Commands
 alias mv="mv -i"
 alias cp="cp -i"
 alias rm="rm -Iv"
+alias mkdir="mkdir -pv"
+alias rmdir="rmdir -v"
 
 if command -v rg &>/dev/null; then
     alias grep="rg --smart-case --hidden --color=auto"
@@ -32,14 +38,23 @@ fi
 
 if command -v bat &>/dev/null; then
     alias cat="bat --paging=always --style=plain --color=always --theme=TwoDark"
+elif command -v batcat &>/dev/null; then
+    alias cat="batcat --paging=always --style=plain --color=always --theme=TwoDark"
+    alias bat="batcat"
 else
     alias cat="cat -n"
 fi
 
-# File listing
-alias ls='ls --color=auto'
-alias la='ls -lAFhSr --color=auto'
-alias ll='ls -lah'
+# Listing
+if ls --color=auto / &>/dev/null 2>&1; then
+    alias ls='ls --color=auto'
+    alias la='ls -lAFhSr --color=auto'
+    alias ll='ls -lah --color=auto'
+else
+    alias ls='ls -G'
+    alias la='ls -lAFhSrG'
+    alias ll='ls -lahG'
+fi
 
 # Editors
 alias vim=$EDITOR
@@ -98,21 +113,31 @@ if command -v systemctl &>/dev/null; then
     fi
 fi
 
-# Arch Linux
+# Arch
 if command -v pacman &>/dev/null; then
     alias install="sudo pacman -S --needed"
     alias uninstall="sudo pacman -Rns"
     alias packages="pacman -Qet | less"
+    alias installed="pacman -Qi"
+    alias files="pacman -Ql"
+    alias owns="pacman -Qo"
+    alias deps="pactree"
+    alias rdeps="pactree -r"
     
     if command -v yay &>/dev/null && command -v spicetify &>/dev/null; then
-        alias update="sudo pacman -Syu --noconfirm && yay -Sua --noconfirm && spicetify update && echo 'Done.'"
+        alias update="echo 'Updating system...' && sudo pacman -Syu --noconfirm && echo 'Updating AUR packages...' && yay -Sua --noconfirm && echo 'Updating Spicetify...' && spicetify update && echo 'System update completed!'"
     elif command -v yay &>/dev/null; then
-        alias update="sudo pacman -Syu --noconfirm && yay -Sua --noconfirm && echo 'Done.'"
+        alias update="echo 'Updating system...' && sudo pacman -Syu --noconfirm && echo 'Updating AUR packages...' && yay -Sua --noconfirm && echo 'System update completed!'"
     else
-        alias update="sudo pacman -Syu --noconfirm && echo 'Done.'"
+        alias update="echo 'Updating system...' && sudo pacman -Syu --noconfirm && echo 'System update completed!'"
     fi
     
     search() {
+        if [[ $# -eq 0 ]]; then
+            echo "Usage: search <package_name>"
+            return 1
+        fi
+        
         local output
         output=$(pacman -Si "$@" 2>/dev/null)
         if [[ -n "$output" ]]; then
@@ -124,39 +149,154 @@ if command -v pacman &>/dev/null; then
         fi
     }
     
+    psearch() {
+        if [[ $# -eq 0 ]]; then
+            echo "Usage: psearch <pattern>"
+            return 1
+        fi
+        pacman -Ss "$@"
+        if command -v yay &>/dev/null; then
+            echo -e "\n--- AUR Results ---"
+            yay -Ss "$@"
+        fi
+    }
+    
     cleanup() {
+        echo "Starting system cleanup..."
+        
         local orphans
-        orphans=$(pacman -Qdtq)
+        orphans=$(pacman -Qdtq 2>/dev/null)
         
         if [[ -n "$orphans" ]]; then
             echo "Removing orphan packages:"
             echo "$orphans"
-            sudo pacman -Rns $orphans
+            sudo pacman -Rns $orphans --noconfirm
         else
             echo "No orphan packages to remove."
         fi
         
+        echo "Cleaning package cache..."
+        sudo pacman -Sc --noconfirm
+        
         if command -v yay &>/dev/null; then
+            echo "Cleaning AUR cache..."
             yay -Scc --noconfirm
             yay -Yc --noconfirm
         fi
+        
+        if command -v journalctl &>/dev/null; then
+            echo "Cleaning old system logs..."
+            sudo journalctl --vacuum-time=7d
+        fi
+        
+        echo "Cleanup completed!"
     }
 fi
 
-# Mirror list update
-if command -v reflector &>/dev/null; then
-    alias mirrorreload="sudo reflector --country US --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist"
+# Ubuntu
+if command -v apt &>/dev/null; then
+    alias install="sudo apt install"
+    alias uninstall="sudo apt remove --autoremove"
+    alias purge="sudo apt purge"
+    alias packages="apt list --installed | less"
+    alias installed="apt show"
+    alias files="dpkg -L"
+    alias owns="dpkg -S"
+    alias deps="apt-cache depends"
+    alias rdeps="apt-cache rdepends"
+    
+    if command -v flatpak &>/dev/null && command -v snap &>/dev/null; then
+        alias update="echo 'Updating APT packages...' && sudo apt update && sudo apt upgrade -y && echo 'Updating Flatpak packages...' && flatpak update -y && echo 'Updating Snap packages...' && sudo snap refresh && echo 'System update completed!'"
+    elif command -v flatpak &>/dev/null; then
+        alias update="echo 'Updating APT packages...' && sudo apt update && sudo apt upgrade -y && echo 'Updating Flatpak packages...' && flatpak update -y && echo 'System update completed!'"
+    elif command -v snap &>/dev/null; then
+        alias update="echo 'Updating APT packages...' && sudo apt update && sudo apt upgrade -y && echo 'Updating Snap packages...' && sudo snap refresh && echo 'System update completed!'"
+    else
+        alias update="echo 'Updating system packages...' && sudo apt update && sudo apt upgrade -y && echo 'System update completed!'"
+    fi
+    
+    search() {
+        if [[ $# -eq 0 ]]; then
+            echo "Usage: search <package_name>"
+            return 1
+        fi
+        
+        local output
+        output=$(apt show "$@" 2>/dev/null)
+        if [[ -n "$output" ]]; then
+            echo "$output"
+        else
+            echo "Package not found in repositories"
+        fi
+    }
+    
+    psearch() {
+        if [[ $# -eq 0 ]]; then
+            echo "Usage: psearch <pattern>"
+            return 1
+        fi
+        apt search "$@"
+    }
+    
+    cleanup() {
+        echo "Starting system cleanup..."
+        
+        echo "Removing unnecessary packages..."
+        sudo apt autoremove -y
+        
+        echo "Cleaning package cache..."
+        sudo apt autoclean
+        sudo apt clean
+        
+        echo "Removing old configuration files..."
+        sudo dpkg --purge $(dpkg -l | awk '/^rc/ { print $2 }') 2>/dev/null || true
+        
+        if command -v flatpak &>/dev/null; then
+            echo "Cleaning flatpak unused packages..."
+            flatpak uninstall --unused -y 2>/dev/null || true
+        fi
+        
+        if command -v snap &>/dev/null; then
+            echo "Removing old snap revisions..."
+            LANG=en_US.UTF-8 snap list --all | awk '/disabled/{print $1, $3}' | while read snapname revision; do
+                sudo snap remove "$snapname" --revision="$revision" 2>/dev/null || true
+            done
+        fi
+        
+        if command -v journalctl &>/dev/null; then
+            echo "Cleaning old system logs..."
+            sudo journalctl --vacuum-time=7d
+        fi
+        
+        echo "Cleanup completed!"
+    }
 fi
 
-# System utilities
+# Mirrors
+if command -v reflector &>/dev/null; then
+    alias mirrorreload="sudo reflector --country US --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist"
+elif command -v apt &>/dev/null; then
+    alias mirrorreload="sudo apt update"
+fi
+
+# System
 alias timesync="sudo timedatectl set-ntp true"
 alias forcekill="killall -9"
 
 if command -v fastfetch &>/dev/null; then
     alias sf="fastfetch"
+elif command -v neofetch &>/dev/null; then
+    alias sf="neofetch"
+elif command -v screenfetch &>/dev/null; then
+    alias sf="screenfetch"
 fi
 
-# Hyprland/Wayland
+# Process
+alias psg="ps aux | grep -v grep | grep -i"
+alias topmem="ps auxf | sort -nr -k 4 | head -10"
+alias topcpu="ps auxf | sort -nr -k 3 | head -10"
+
+# Hyprland
 if command -v hyprctl &>/dev/null; then
     alias hyprreload="hyprctl reload"
     alias hyprlog="journalctl -xe | grep Hyprland"
@@ -181,19 +321,28 @@ alias fontreload='fc-cache -f'
 alias fontlist='fc-list : family lang=en --format="%{family[0]}\n" | sort | uniq | less'
 alias wlr="env | grep -i wl"
 
-# Hardware & network
+# Hardware
 alias devices="lsusb && lspci | less"
 alias disks="lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,LABEL"
 alias usage="df -hT | grep '^/dev/'"
 alias ports='ss -tulwn'
+alias listening="ss -tlnp"
+alias myip="curl -s ifconfig.me"
+alias localip="ip route get 1.1.1.1 | awk '{print \$7; exit}'"
 
 if command -v speedtest-cli &>/dev/null; then
     alias speedtest="speedtest-cli --simple --secure | column -t"
 fi
 
+# Network
 if command -v nmcli &>/dev/null; then
     alias wifi="nmcli device wifi"
     alias wifireload="nmcli radio wifi off && nmcli radio wifi on"
+    alias wifilist="nmcli device wifi list"
+    alias netdevices="nmcli device status"
+elif command -v iwctl &>/dev/null; then
+    alias wifi="iwctl station wlan0 show"
+    alias wifilist="iwctl station wlan0 get-networks"
 fi
 
 # Audio
@@ -203,28 +352,40 @@ if command -v pactl &>/dev/null; then
     alias mute="pactl set-sink-mute @DEFAULT_SINK@ toggle"
     alias micmute="pactl set-source-mute @DEFAULT_SOURCE@ toggle"
     alias audiolist="pactl list sinks short"
+    alias audiodevices="pactl list sinks"
+elif command -v amixer &>/dev/null; then
+    alias volup="amixer set Master 5%+"
+    alias voldown="amixer set Master 5%-"
+    alias mute="amixer set Master toggle"
 fi
 
 if command -v speaker-test &>/dev/null; then
     alias soundtest="speaker-test -c 8 -t wav"
 fi
 
-# Security
 if command -v ufw &>/dev/null; then
     alias fw="sudo ufw"
     alias fws="sudo ufw status verbose"
+elif command -v firewall-cmd &>/dev/null; then
+    alias fw="sudo firewall-cmd"
+    alias fws="sudo firewall-cmd --list-all"
 fi
 
-# Development tools
-if command -v gemini &>/dev/null; then
-    alias gemini="gemini --show-memory-usage"
+# Services
+if command -v systemctl &>/dev/null; then
+    alias services='systemctl list-unit-files --type=service --no-pager'
+    alias syslog='journalctl -f'
+    alias bootlog='journalctl -b'
+    alias userservices='systemctl --user list-unit-files --type=service'
 fi
 
+# Clipboard
 if command -v wl-copy &>/dev/null && command -v wl-paste &>/dev/null; then
+    alias clip="wl-copy"
+    alias paste="wl-paste"
     copyfile() {
         [[ -f "$1" ]] && wl-copy < "$1" || echo "Usage: copyfile <file>"
     }
-    
     pastefile() {
         [[ -f "$1" ]] && wl-paste > "$1" || echo "Usage: pastefile <file>"
     }
@@ -259,7 +420,6 @@ fi
 
 # UV
 if command -v uv &>/dev/null; then
-    # "no-managed-python" uses system python version (python --version)
     alias uvenv="uv venv --clear --no-managed-python && source ./.venv/bin/activate"
     alias uva="uv add"
     alias uvad="uv add --dev"
@@ -272,7 +432,7 @@ if command -v uv &>/dev/null; then
     alias uvi="uv init --vcs git --author-from git --no-managed-python --no-python-downloads --no-readme --no-description --no-package --bare"
 fi
 
-# Project-specific
+# Project
 if [[ -f "$PWD/node_modules/supabase/bin/supabase" ]]; then
     alias supabase="$PWD/node_modules/supabase/bin/supabase"
 fi
