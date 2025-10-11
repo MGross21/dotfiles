@@ -6,7 +6,9 @@ if [[ "$(tty)" == /dev/tty* ]] && command -v toilet &>/dev/null && command -v lo
 fi
 
 # Setup Keyboard Lighting (requires yay -S msi-perkeyrgb)
-command -v msi-perkeyrgb &>/dev/null && msi-perkeyrgb --model GS65 --steady 9c6ade
+if command -v msi-perkeyrgb &>/dev/null && grep -qi "GS65" /sys/class/dmi/id/product_name 2>/dev/null; then
+    msi-perkeyrgb --model GS65 --steady 9c6ade
+fi
 
 # Start DBus session if not already running
 [ -z "$DBUS_SESSION_BUS_ADDRESS" ] && eval "$(dbus-launch --sh-syntax)"
@@ -22,5 +24,5 @@ export SSH_AUTH_SOCK="/run/user/$UID/keyring/ssh"
 
 # Direct Hyprland Launch
 if [[ "$(tty)" == "/dev/tty1" ]] && command -v uwsm &>/dev/null && uwsm check may-start; then
-  exec uwsm start hyprland.desktop
+  exec uwsm start hyprland.desktop >/dev/null # Supress only non-error output
 fi
