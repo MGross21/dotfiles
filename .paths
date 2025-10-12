@@ -5,3 +5,5 @@ $HOME/bin
 /usr/bin
 /bin
 $HOME/.spicetify
+$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
+$ANDROID_SDK_ROOT/platform-tools

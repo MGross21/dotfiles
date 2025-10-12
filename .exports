@@ -4,6 +4,8 @@ export SUDO_PROMPT="${(L)USER} password: "
 export PAGER="less"
 export LESS='-R -i -w -M -z-4'
 
+export ANDROID_SDK_ROOT="/opt/android-sdk"
+
 # PATH sourcing
 if [[ -f "$HOME/.paths" ]]; then
     while IFS= read -r dir; do
