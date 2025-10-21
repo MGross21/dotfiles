@@ -302,7 +302,12 @@ if command -v hyprctl &>/dev/null; then
     alias hyprlog="journalctl -xe | grep Hyprland"
     alias hyprconfig="${EDITOR} $HOME/.config/hypr/hyprland.conf"
     alias monitors="hyprctl monitors"
-    alias logout="hyprctl dispatch exit"
+
+    if commmand -v uwsm &>/dev/null; then
+        alias logout="loginctl terminate-user $USER"
+    else
+        alias logout="hyprctl dispatch exit"
+    fi
     
     if command -v hyprsunset &>/dev/null; then
         alias nightmode="hyprsunset --temperature 3000"

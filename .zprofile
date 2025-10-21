@@ -1,8 +1,9 @@
 # Welcome Message
 if [[ "$(tty)" == /dev/tty* ]] && command -v toilet &>/dev/null && command -v lolcat &>/dev/null; then
-    echo
-    toilet -f pagga -F border -F metal "Welcome $USER" | lolcat -a -d 5 -s 100 -S 100 -F 1
-    echo
+  clear
+  echo
+  toilet -f pagga -F border -F metal "Welcome $USER" | lolcat --truecolor --seed=90 --force
+  echo
 fi
 
 # Setup Keyboard Lighting (requires yay -S msi-perkeyrgb)
