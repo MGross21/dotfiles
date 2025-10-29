@@ -71,6 +71,7 @@ if command -v git &>/dev/null; then
     alias gcm="git commit -m"
     alias gcam="git commit -am"
     alias gco="git checkout"
+    alias gcom="git checkout main 2>/dev/null || git checkout master 2>/dev/null"
     alias gcob="git checkout -b"
     alias gbd="git branch -d"
     alias gbD="git branch -D"
