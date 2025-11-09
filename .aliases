@@ -438,7 +438,30 @@ if command -v uv &>/dev/null; then
     alias uvi="uv init --vcs git --author-from git --no-managed-python --no-python-downloads --no-readme --no-description --no-package --bare"
 fi
 
+# mpv
+if command -v mpv &>/dev/null; then
+    alias play="mpv --no-terminal --force-window=yes"
+    alias playaudio="mpv --no-terminal --force-window=no"
+    alias photobooth="mpv av://v4l2:/dev/video0 \
+    --demuxer-lavf-format=v4l2 \
+    --demuxer-lavf-o=video_size=1280x720,framerate=30,input_format=mjpeg,use_libv4l2=1 \
+    --profile=low-latency --untimed --no-cache \
+    --vo=gpu --gpu-context=${XDG_SESSION_TYPE:-wayland} \
+    --osc=no --osd-level=0 \
+    --msg-level=ffmpeg=no,v4l2=no \
+    --screenshot-directory=$HOME/Pictures/photobooth 2>/dev/null"
+fi
+
 # Project
 if [[ -f "$PWD/node_modules/supabase/bin/supabase" ]]; then
     alias supabase="$PWD/node_modules/supabase/bin/supabase"
+fi
+
+if [[ -f "$PWD/.gradlew" ]]; then
+    alias gr="./gradlew"
+    alias grcb="./gradlew clean build"
+    alias ktlint="./gradlew ktlintFormat"
+elif command -v gradle &>/dev/null; then
+    alias gr="gradle"
+    alias grd="gradle dependencies"
 fi
