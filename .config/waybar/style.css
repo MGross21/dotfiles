@@ -88,7 +88,8 @@ button:hover {
 
 /* Critical states */
 #pulseaudio.muted,
-#temperature.critical {
+#temperature.critical,
+#battery.critical {
   background: rgba(255, 80, 80, 0.35);
   border: 1px solid rgba(255, 120, 120, 0.45);
   color: #000000;

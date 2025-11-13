@@ -8,7 +8,7 @@ fi
 
 # Setup Keyboard Lighting (requires yay -S msi-perkeyrgb)
 if command -v msi-perkeyrgb &>/dev/null && grep -qi "GS65" /sys/class/dmi/id/product_name 2>/dev/null; then
-    msi-perkeyrgb --model GS65 --steady 9c6ade
+    msi-perkeyrgb --model GS65 --steady ff0000
 fi
 
 # Start DBus session if not already running

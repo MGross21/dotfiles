@@ -15,12 +15,12 @@ synchronized_sync = 1
 
 [color]
 gradient = 1
-gradient_color_1 = "#6F2EC5"
-gradient_color_2 = "#8548D5"
-gradient_color_3 = "#9C6ADE"
-gradient_color_4 = "#B38CE6"
-gradient_color_5 = "#CAAFEE"
-gradient_color_6 = "#D0B7F0"
+gradient_color_1 = "#832e31"
+gradient_color_2 = "#a63c40"
+gradient_color_3 = "#d3494e"
+gradient_color_4 = "#fc595f"
+gradient_color_5 = "#df9395"
+gradient_color_6 = "#ba8586"
 background = default
 
 

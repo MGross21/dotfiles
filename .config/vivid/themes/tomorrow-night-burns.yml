@@ -1,0 +1,169 @@
+# Tomorrow Night "Burns" theme
+# Based on the provided SSH colors
+
+colors:
+  fg:        "a1b0b8"
+  bg:        "151515"
+
+  gray1:     "5d6f71"
+  gray2:     "708284"
+  gray3:     "819090"
+
+  red1:      "832e31"
+  red2:      "a63c40"
+  orange:    "d3494e"
+  yellow:    "fc595f"
+
+  green1:    "df9395"
+  green2:    "ba8586"
+  green3:    "ba8586"
+
+  blue1:     "b0bec5"
+  blue2:     "2a2d32"
+  blue3:     "fc595f"
+  blue4:     "df9395"
+  blue5:     "ba8586"
+  blue6:     "f5f5f5"
+
+  purple1:   "832e31"
+  purple2:   "a63c40"
+
+  bg_red1:   "252525"
+  bg_orange: "252525"
+  bg_yellow: "252525"
+  bg_green1: "252525"
+  bg_green2: "252525"
+
+core: # See `dircolors -p` for explanations
+  normal_text:
+    foreground: gray3
+
+  regular_file: {}
+
+  reset_to_normal:
+    foreground: gray3
+
+  directory:
+    foreground: blue6
+    font-style: bold
+
+  executable_file: # Files with exec permissions
+    foreground: green1
+    font-style: bold
+
+  file_with_capability:
+    background: gray1
+
+  setuid:
+    background: gray1
+
+  setgid:
+    background: gray1
+
+  sticky:
+    background: gray1
+
+  sticky_other_writable: # Usually a directory on Linux
+    foreground: bg
+    background: blue6
+    font-style: bold
+
+  other_writable: # Ditto ^
+    foreground: blue6
+    background: gray1
+    font-style: bold
+
+  symlink:
+    foreground: blue4
+    font-style: italic
+
+  broken_symlink:
+    foreground: bg
+    background: red2
+
+  missing_symlink_target:
+    foreground: red2
+
+  multi_hard_link: {}
+
+  socket:
+    foreground: green2
+    background: bg_green2
+    font-style: bold
+
+  fifo:
+    foreground: orange
+    background: bg_orange
+    font-style: bold
+
+  door:
+    foreground: green1
+    background: bg_green1
+    font-style: bold
+
+  block_device:
+    foreground: red1
+    background: bg_red1
+    font-style: bold
+
+  character_device:
+    foreground: yellow
+    background: bg_yellow
+    font-style: bold
+
+executable: # Libs and exec binaries (without exec permissions)
+  foreground: green2
+
+archives:
+  foreground: red1
+  font-style: bold
+
+media:
+  audio:
+    foreground: blue3
+    font-style: bold
+  image:
+    foreground: purple1
+    font-style: bold
+  video:
+    foreground: green3
+    font-style: bold
+  fonts:
+    foreground: green2
+    font-style: bold
+  3d:
+    foreground: purple1
+    font-style: bold
+
+office:
+  foreground: purple2
+  font-style: bold
+
+text:
+  foreground: fg
+  configuration:
+    foreground: orange
+    dockerfile:
+      foreground: blue2
+  licenses:
+    foreground: fg
+    font-style: bold
+  special:
+    foreground: blue5
+    font-style: bold
+  todo:
+    foreground: blue1
+    font-style: bold
+
+markup:
+  foreground: fg
+
+programming:
+  foreground: yellow
+  tooling:
+    foreground: blue3
+    continuous-integration:
+      foreground: blue2
+
+unimportant:
+  foreground: gray2

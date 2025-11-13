@@ -1,6 +1,6 @@
 # Dotfiles & Installation
 
-![Desktop Preview](Pictures/screenshots/version2.png)
+![Desktop Preview](Pictures/screenshots/version3.png)
 
 ## System Info
 
@@ -15,7 +15,7 @@
 | **Shell**         | [Zsh](https://www.zsh.org)                                           |    Z-Shell (*"zish"*)       |
 | **Font**          | [Ubuntu](https://design.ubuntu.com/font/)                            |         *sacrilegious*      |
 | **System Theme**  | [Materia Dark Compact](https://github.com/nana-4/materia-theme)      |      Based on Adwaita       |
-| **Icon Theme**   | [Tela Circle](https://github.com/vinceliuice/Tela-circle-icon-theme)  |       Black, Dark           |
+| **Icon Theme**   | [Tela Circle](https://github.com/vinceliuice/Tela-circle-icon-theme)  |       Red, Dark             |
 
 ## Download ISO
 

@@ -22,4 +22,15 @@
 	<range>*</range>
 	<patterns>*</patterns>
 </action>
+<action>
+	<icon>application-x-archive</icon>
+	<name>Extract Here</name>
+	<submenu></submenu>
+	<unique-id>1763109541206135-1</unique-id>
+	<command>unzip %f</command>
+	<description>Unzip file</description>
+	<range>*</range>
+	<patterns>*.zip</patterns>
+	<other-files/>
+</action>
 </actions>
