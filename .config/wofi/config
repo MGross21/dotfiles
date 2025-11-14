@@ -4,3 +4,4 @@ show=drun
 prompt=Program
 term=$TERM
 allow_markup=true
+hide_scroll=true

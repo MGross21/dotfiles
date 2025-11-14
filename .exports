@@ -18,15 +18,22 @@ fi
 
 # Colors
 if command -v vivid &>/dev/null; then
-    export LS_COLORS="$(vivid generate tomorrow-night-burns)"
+    theme="tomorrow-night-burns"
+    if [[ "$TERM" == "linux" ]]; then
+        export LS_COLORS="$(vivid -m 8-bit generate "$theme")"
+    else
+        export LS_COLORS="$(vivid generate "$theme")"
+    fi
 fi
 
-# Terminal
+# Terminal TERM adjustments for compatibility
 if [[ -n "$TMUX" ]]; then
     export TERM=tmux-256color
 elif [[ "$TERM" == "xterm" ]] || [[ "$TERM" == "xterm-color" ]]; then
     export TERM=xterm-256color
 fi
+
+# Enable color output where applicable
 export CLICOLOR=1
 export COLORTERM=truecolor
 
