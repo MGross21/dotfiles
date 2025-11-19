@@ -27,9 +27,15 @@ require("lazy").setup({
     -- import your plugins
     { import = "plugins" },
   },
-  -- Configure any other settings here. See the documentation for more details.
-  -- colorscheme that will be used when installing plugins.
-  install = { colorscheme = { "habamax" } },
-  -- automatically check for plugin updates
+  -- Performance optimizations
+  defaults = { lazy = true },
+  install = { colorscheme = { "tomorrow-night-burns" } },
   checker = { enabled = true },
 })
+
+-- Debug statement to confirm colorscheme file is loaded
+print("Loading Tomorrow Night Burns colorscheme...")
+
+-- Simplify colorscheme loading
+vim.cmd([[runtime lua/colors/tomorrow-night-burns.lua]])
+vim.cmd([[colorscheme tomorrow-night-burns]])

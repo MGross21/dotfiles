@@ -6,5 +6,8 @@ return {
       highlight = { enable = true },
       indent = { enable = true },
     })
+  opts = {
+    ensure_installed = { "c", "cpp", "lua", "python", "javascript", "html", "css" , "kotlin" },
+  }
   end
 }
