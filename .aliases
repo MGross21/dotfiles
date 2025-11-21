@@ -437,6 +437,10 @@ if command -v uv &>/dev/null; then
     alias uvi="uv init --vcs git --author-from git --no-managed-python --no-python-downloads --no-readme --no-description --no-package --bare"
 fi
 
+if [ -f "$PWD/.venv/bin/activate" ]; then
+    alias activate="source $PWD/.venv/bin/activate"
+fi
+
 # mpv
 if command -v mpv &>/dev/null; then
     alias play="mpv --no-terminal --force-window=yes"

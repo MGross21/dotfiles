@@ -11,16 +11,16 @@
 
 window#waybar {
   /* GTK-safe liquid glass fallback (no backdrop-filter) */
-  background-color: rgba(255,255,255,0.10);
+  background-color: rgba(255,255,255,0.02);
   background-image: linear-gradient(145deg,
-    rgba(255,255,255,0.18) 0%,
-    rgba(255,255,255,0.07) 40%,
-    rgba(255,255,255,0.02) 100%);
+    rgba(255,255,255,0.05) 0%,
+    rgba(255,255,255,0.02) 40%,
+    rgba(255,255,255,0.01) 100%);
   border: none;
   border-radius: 0;
   padding: 2px 8px; /* Reduce vertical padding */
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
 }
 
 window#waybar:hover {

@@ -48,7 +48,7 @@ fi
 # FZF
 if command -v fzf &>/dev/null; then
     export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-    export FZF_DEFAULT_OPTS="--height=40% --layout=reverse --border --color=fg:#ffffff,bg:#000000,hl:#FC595F --color=fg+:#ffffff,bg+:#222222,hl+:#BF9DEA --color=info:#FC595F,prompt:#8548D5,pointer:#B38CE6,marker:#CAAFEE,spinner:#D0B7F0,header:#555555"
+    export FZF_DEFAULT_OPTS="--height=40% --layout=reverse --border --color=fg:#a1b0b8,bg:#151515,hl:#fc595f --color=fg+:#f5f5f5,bg+:#252525,hl+:#df9395 --color=info:#fc595f,prompt:#832e31,pointer:#a63c40,marker:#d3494e,spinner:#ba8586,header:#5d6f71"
     
     if command -v bat &>/dev/null; then
         export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always --line-range :100 {}' --bind 'ctrl-/:toggle-preview'"
