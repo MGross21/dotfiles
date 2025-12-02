@@ -280,7 +280,10 @@ elif command -v apt &>/dev/null; then
 fi
 
 # System
-alias timesync="sudo timedatectl set-ntp true"
+alias timesync='tz=$(curl -fsSL https://worldtimeapi.org/api/ip | jq -r .timezone) && [ -n "$tz" ] && sudo timedatectl set-timezone "$tz" && sudo timedatectl set-ntp true'
+alias timezones="timedatectl list-timezones"
+alias timeset="sudo timedatectl set-time"
+alias timezoneset="sudo timedatectl set-timezone"
 alias forcekill="killall -9"
 
 if command -v fastfetch &>/dev/null; then
@@ -328,6 +331,8 @@ alias wlr="env | grep -i wl"
 
 # Hardware
 alias devices="lsusb && lspci | less"
+alias lastdevice="ls -tr1 /dev/tty* | tail -n 1"
+alias devicekill="fuser -k -9"
 alias disks="lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,LABEL"
 alias usage="df -hT | grep '^/dev/'"
 alias ports='ss -tulwn'
