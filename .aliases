@@ -80,7 +80,7 @@ if command -v git &>/dev/null; then
     alias gundo="git reset --soft HEAD~1"
     alias grh="git reset HEAD"
     alias grhh="git reset --hard HEAD"
-    alias gf="git fetch --all --prune --prune-tags --multiple --progress"
+    alias gf="git fetch --all --prune --prune-tags --progress"
     alias gp="git push"
     alias gpu="git pull"
     alias gpuo="git pull origin"
@@ -304,7 +304,7 @@ if command -v hyprctl &>/dev/null; then
     alias hyprreload="hyprctl reload"
     alias hyprlog="journalctl -xe | grep Hyprland"
     alias hyprconfig="${EDITOR} $HOME/.config/hypr/hyprland.conf"
-    alias monitors="hyprctl monitors"
+    alias monitors="hyprctl monitors all"
 
     if commmand -v uwsm &>/dev/null; then
         alias logout="loginctl terminate-user $USER"
@@ -319,6 +319,10 @@ if command -v hyprctl &>/dev/null; then
     if command -v hyprpaper &>/dev/null; then
         alias paperreload="pkill hyprpaper; (hyprpaper & disown)"
     fi
+fi
+
+if command -v hyprshot &>/dev/null; then
+    alias screenshot="hyprshot -m region --clipboard-only"
 fi
 
 if command -v waybar &>/dev/null; then
@@ -450,14 +454,14 @@ fi
 if command -v mpv &>/dev/null; then
     alias play="mpv --no-terminal --force-window=yes"
     alias playaudio="mpv --no-terminal --force-window=no"
-    alias photobooth="mpv av://v4l2:/dev/video0 \
+    alias camera="mpv av://v4l2:/dev/video0 \
     --demuxer-lavf-format=v4l2 \
     --demuxer-lavf-o=video_size=1280x720,framerate=30,input_format=mjpeg,use_libv4l2=1 \
     --profile=low-latency --untimed --no-cache \
     --vo=gpu --gpu-context=${XDG_SESSION_TYPE:-wayland} \
     --osc=no --osd-level=0 \
     --msg-level=ffmpeg=no,v4l2=no \
-    --screenshot-directory=$HOME/Pictures/photobooth 2>/dev/null"
+    --screenshot-directory=$HOME/Pictures/camera 2>/dev/null"
 fi
 
 # Project
