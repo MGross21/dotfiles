@@ -4,6 +4,7 @@ $HOME/bin
 /usr/local/bin
 /usr/bin
 /bin
+/opt/cuda/bin
 $HOME/.spicetify
 $ANDROID_SDK_ROOT/cmdline-tools/latest/bin
 $ANDROID_SDK_ROOT/platform-tools
