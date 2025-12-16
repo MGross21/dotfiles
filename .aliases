@@ -46,7 +46,12 @@ else
 fi
 
 # Listing
-if ls --color=auto / &>/dev/null 2>&1; then
+if command -v eza &>/dev/null; then
+    alias ls='eza --color=auto --icons'
+    alias la='eza -a --color=auto --icons'
+    alias ll='eza -lah --color=auto --icons'
+    alias tree='eza --tree --level=3 --color=auto --icons'
+elif ls --color=auto / &>/dev/null 2>&1; then
     alias ls='ls --color=auto'
     alias la='ls -lAFhSr --color=auto'
     alias ll='ls -lah --color=auto'
