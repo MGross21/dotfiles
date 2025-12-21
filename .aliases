@@ -467,6 +467,7 @@ if command -v uv &>/dev/null; then
     alias uvs="uv sync -U --all-extras --all-groups --active --no-install-package uv"
     alias lock="uv lock"
     alias uvr="uv run"
+    alias pip="uv run pip --require-virtualenv"
     alias uvb="uv build"
     alias uvp="uv publish --token '__token__'"
     alias uvx="uvx --no-managed-python"
@@ -496,6 +497,20 @@ if [[ -f "$PWD/node_modules/supabase/bin/supabase" ]]; then
     alias supabase="$PWD/node_modules/supabase/bin/supabase"
 fi
 
+# Android
+if command -v adb &>/dev/null; then
+    alias adevices="adb devices -l"
+    alias ainstall="adb install -r"
+    alias auninstall="adb uninstall"
+    alias areboot="adb reboot"
+    alias akill="adb kill-server"
+    alias alisten="adb logcat"
+    alias ascreenshot="adb exec-out screencap -p > ~/Pictures/android/adb_screenshot_$(date +%Y%m%d_%H%M%S).png"
+    alias als="adb shell ls"
+
+fi
+
+# Gradle
 if [[ -f "$PWD/.gradlew" ]]; then
     alias gr="./gradlew"
     alias grcb="./gradlew clean build"

@@ -16,6 +16,7 @@
 !.config/wofi/
 !.config/fastfetch/
 !.config/tmux/
+!.config/ly
 
 # Include specific files only
 !.config/alacritty.toml
