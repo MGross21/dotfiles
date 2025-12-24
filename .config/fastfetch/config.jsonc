@@ -29,7 +29,7 @@
     // "gpu",
     // "memory",
     // "swap",
-    // "disk",
+    "disk",
     // "localip",
     // "battery",
     // "poweradapter",
