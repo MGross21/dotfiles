@@ -9,10 +9,7 @@ setopt HIST_IGNORE_ALL_DUPS HIST_REDUCE_BLANKS INC_APPEND_HISTORY SHARE_HISTORY
 setopt HIST_IGNORE_SPACE HIST_VERIFY
 
 # Filter out massive scripts and long commands from history
-zshaddhistory() {
-    local line=${1%%$'\n'}
-    [[ ${#line} -le 200 && $line != *$'\n'* ]]
-}
+zshaddhistory() { [[ ${#1} -le 200 && $1 != *$'\n'* ]] }
 
 # Shell Behavior
 setopt AUTO_CD AUTO_PUSHD PUSHD_IGNORE_DUPS PUSHD_SILENT
@@ -46,9 +43,17 @@ for dot in ~/.{exports,aliases}; do
     [[ -r "$dot" && -f "$dot" ]] && source "$dot"
 done
 
+# Version Control Info
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:git:*' formats ' [%b]'
+zstyle ':vcs_info:git:*' actionformats ' [%b|%a]'
+precmd() { vcs_info } # runs before each prompt
+setopt PROMPT_SUBST
+
 # Prompt
 autoload -Uz colors && colors
-PROMPT='%F{blue}%1~%f %# '
+PROMPT='%F{blue}%1~%f%F{magenta}${vcs_info_msg_0_}%f %# '
 
 # Plugins
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
@@ -85,4 +90,28 @@ command -v uvx &>/dev/null && eval "$(uvx --generate-shell-completion zsh)"
 [[ -f /usr/share/zsh/functions/Misc/async ]] && source /usr/share/zsh/functions/Misc/async
 
 # Virtual Environment
-[[ -f ./.venv/bin/activate ]] && source ./.venv/bin/activate
+autoload -U add-zsh-hook
+
+_auto_venv() {
+    local target_venv=""
+    
+    # Find .venv in current or parent directories
+    local dir="$PWD"
+    while [[ "$dir" != "/" ]]; do
+        if [[ -f "$dir/.venv/bin/activate" ]]; then
+            target_venv="$dir/.venv"
+            break
+        fi
+        dir="${dir:h}"
+    done
+    
+    # Handle activation/deactivation
+    if [[ -n "$target_venv" ]]; then
+        [[ "$VIRTUAL_ENV" != "$target_venv" ]] && source "$target_venv/bin/activate"
+    elif [[ -n "$VIRTUAL_ENV" ]]; then
+        deactivate 2>/dev/null
+    fi
+}
+
+add-zsh-hook chpwd _auto_venv
+_auto_venv

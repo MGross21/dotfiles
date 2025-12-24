@@ -519,3 +519,21 @@ elif command -v gradle &>/dev/null; then
     alias gr="gradle"
     alias grd="gradle dependencies"
 fi
+
+# SSH
+if command -v w &>/dev/null && [[ -n "$USER" ]]; then
+    alias users="w -h | awk '{print \$1}' | sort | uniq | wc -l"
+fi
+
+# ARES
+ares(){
+    if ! systemctl is-active --quiet tailscaled.service; then
+        sudo systemctl start tailscaled.service
+    fi
+
+    if ! tailscale status | grep -q "100."; then
+        sudo tailscale up
+    fi
+
+    ssh ares
+}
