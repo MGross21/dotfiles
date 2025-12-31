@@ -5,7 +5,11 @@
 groups=(sudo input docker)
 
 for group in "${groups[@]}"; do
-    sudo usermod -aG "$group" "$USER" || { echo "Failed to add $USER to $group group"; exit 1; }
+    if getent group "$group" > /dev/null; then
+        sudo usermod -aG "$group" "$USER" || { echo "Failed to add $USER to $group group"; exit 1; }
+    else
+        echo "Group $group does not exist, skipping."
+    fi
 done
 
 #########
