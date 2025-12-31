@@ -24,3 +24,8 @@ gtk-quick-terminal-namespace = terminal
 
 window-decoration = none
 window-theme = auto
+
+term=ghostty
+
+#Other
+macos-icon=glass

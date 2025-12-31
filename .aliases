@@ -327,7 +327,7 @@ alias topcpu="ps auxf | sort -nr -k 3 | head -10"
 if command -v hyprctl &>/dev/null; then
     alias hyprreload="hyprctl reload"
     alias hyprlog="journalctl -xe | grep Hyprland"
-    alias hyprconfig="${EDITOR} $HOME/.config/hypr/hyprland.conf"
+    alias hyprconfig="${EDITOR} $HOME/.config/hypr/"
     alias monitors="hyprctl monitors all"
 
     if commmand -v uwsm &>/dev/null; then
