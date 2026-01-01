@@ -158,30 +158,25 @@ if command -v pacman &>/dev/null; then
     
     search() {
         if [[ $# -eq 0 ]]; then
-            echo "Usage: search <package_name>"
-            return 1
-        fi
-        
-        local output
-        output=$(pacman -Si "$@" 2>/dev/null)
-        if [[ -n "$output" ]]; then
-            echo "$output"
-        elif command -v yay &>/dev/null; then
-            yay -Si "$@"
+            if command -v yay &>/dev/null; then
+                local pkg
+                pkg=$(yay -Slq | fzf --multi --preview="yay -Si {}" --preview-window=up:60%)
+                [[ -n "$pkg" ]] && yay -S $pkg
+            else
+                local pkg
+                pkg=$(pacman -Slq | fzf --multi --preview="pacman -Si {}" --preview-window=up:60%)
+                [[ -n "$pkg" ]] && sudo pacman -S $pkg
+            fi
         else
-            echo "Package not found in official repositories and yay not available"
-        fi
-    }
-    
-    psearch() {
-        if [[ $# -eq 0 ]]; then
-            echo "Usage: psearch <pattern>"
-            return 1
-        fi
-        pacman -Ss "$@"
-        if command -v yay &>/dev/null; then
-            echo -e "\n--- AUR Results ---"
-            yay -Ss "$@"
+            if command -v yay &>/dev/null; then
+                local pkg
+                pkg=$(yay -Ss "$@" | fzf --ansi --multi --preview="yay -Si {1}" --preview-window=up:60% | awk '{print $1}')
+                [[ -n "$pkg" ]] && yay -S $pkg
+            else
+                local pkg
+                pkg=$(pacman -Ss "$@" | fzf --ansi --multi --preview="pacman -Si {1}" --preview-window=up:60% | awk '{print $1}')
+                [[ -n "$pkg" ]] && sudo pacman -S $pkg
+            fi
         fi
     }
     
