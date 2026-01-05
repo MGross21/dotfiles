@@ -8,5 +8,6 @@ done
 
 ./scripts/packages_install.sh
 ./scripts/grub_theme_install.sh
+./scripts/vscode_theme_install.sh
 ./scripts/symlink.sh
 ./scripts/system.sh
