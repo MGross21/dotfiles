@@ -37,5 +37,4 @@ require("lazy").setup({
 print("Loading Tomorrow Night Burns colorscheme...")
 
 -- Simplify colorscheme loading
-vim.cmd([[runtime lua/colors/tomorrow-night-burns.lua]])
-vim.cmd([[colorscheme tomorrow-night-burns]])
+vim.cmd("colorscheme tomorrow-night-burns")
