@@ -22,7 +22,7 @@ title = terminal
 class = g.terminal
 gtk-quick-terminal-namespace = terminal
 
-window-decoration = none
+window-decoration = auto
 window-theme = auto
 
 term=ghostty

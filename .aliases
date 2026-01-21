@@ -140,9 +140,9 @@ if command -v pacman &>/dev/null; then
         fi
 
         if command -v npm &>/dev/null; then
-            if npm outdated -g --parseable | grep -q .; then
+            if npm outdated -g --parseable 2>/dev/null | grep -q .; then
                 echo "Updating global npm packages..."
-                sudo npm update -g
+                sudo npm update -g 2>/dev/null || echo "npm update failed, skipping..."
             else
                 echo "No global npm package updates available."
             fi
