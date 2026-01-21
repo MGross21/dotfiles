@@ -46,7 +46,7 @@ done
 # Version Control Info
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:git:*' formats ' [%b]'
+zstyle ':vcs_info:git:*' formats ':%b'
 zstyle ':vcs_info:git:*' actionformats ' [%b|%a]'
 precmd() { vcs_info } # runs before each prompt
 setopt PROMPT_SUBST
