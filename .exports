@@ -60,3 +60,8 @@ if command -v fzf &>/dev/null; then
         export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -50'"
     fi
 fi
+
+# Homebrew on MacOS
+if command -v  brew &>/dev/null && [[ "$(uname)" == "Darwin" ]]; then
+    export HOMEBREW_NO_ENV_HINTS=1
+fi

@@ -21,11 +21,20 @@ desktop-notifications = true
 title = terminal
 class = g.terminal
 gtk-quick-terminal-namespace = terminal
+term=ghostty
 
 window-decoration = auto
 window-theme = auto
 
-term=ghostty
+# Behaviors
+quit-after-last-window-closed=true
+clipboard-paste-protection=true
 
-#Other
+# MacOS
 macos-icon=glass
+macos-window-buttons=hidden
+macos-titlebar-style=transparent
+macos-titlebar-proxy-icon=hidden
+macos-auto-secure-input=true
+macos-secure-input-indication=true
+quick-terminal-screen=mouse

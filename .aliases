@@ -6,8 +6,8 @@ alias zalias="$EDITOR ~/.aliases"
 alias zpath="$EDITOR ~/.paths"
 alias zexport="$EDITOR ~/.exports"
 alias chshell="chsh -s $(command -v $SHELL) $USER"
-alias zsh="chsh -s $(command -v zsh) $USER"
-alias bash="chsh -s $(command -v bash) $USER"
+alias zsh="chsh -s $(command -v zsh) $USER && exec zsh"
+alias bash="chsh -s $(command -v bash) $USER && exec bash"
 
 # Navigation
 alias kver="uname -rs"
@@ -18,10 +18,11 @@ alias ...="cd ../.."
 alias c-='cd - >/dev/null'
 
 # Commands
-alias mv="mv -i"
-alias cp="cp -i"
-alias rm="rm -Iv"
+alias mv="mv -vi"
+alias cp="cp -vir"
+alias rm="rm -Ivr --preserve-root"
 alias mkdir="mkdir -pv"
+alias ren="mv -vi --no-copy"
 alias rmdir="rmdir -v"
 
 if command -v rg &>/dev/null; then
