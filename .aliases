@@ -38,9 +38,9 @@ else
 fi
 
 if command -v bat &>/dev/null; then
-    alias cat="bat --paging=always --style=plain --color=always --theme=TwoDark"
+    alias cat="bat --paging=always --style=plain --color=always --theme=ansi"
 elif command -v batcat &>/dev/null; then
-    alias cat="batcat --paging=always --style=plain --color=always --theme=TwoDark"
+    alias cat="batcat --paging=always --style=plain --color=always --theme=ansi"
     alias bat="batcat"
 else
     alias cat="cat -n"
@@ -236,26 +236,23 @@ if command -v apt &>/dev/null; then
     fi
     
     search() {
-        if [[ $# -eq 0 ]]; then
-            echo "Usage: search <package_name>"
-            return 1
-        fi
-        
-        local output
-        output=$(apt show "$@" 2>/dev/null)
-        if [[ -n "$output" ]]; then
-            echo "$output"
+        if command -v fzf &>/dev/null; then
+            if [[ $# -eq 0 ]]; then
+                local pkg
+                pkg=$(apt-cache search "" | fzf --multi --preview="apt show {1}" --preview-window=up:60%)
+                [[ -n "$pkg" ]] && apt show $(echo "$pkg" | awk '{print $1}')
+            else
+                local pkg
+                pkg=$(apt-cache search "$@" | fzf --multi --preview="apt show {1}" --preview-window=up:60%)
+                [[ -n "$pkg" ]] && apt show $(echo "$pkg" | awk '{print $1}')
+            fi
         else
-            echo "Package not found in repositories"
+            if [[ $# -eq 0 ]]; then
+                echo "Usage: search <package_name>"
+                return 1
+            fi
+            apt show "$@" 2>/dev/null || echo "Package not found in repositories"
         fi
-    }
-    
-    psearch() {
-        if [[ $# -eq 0 ]]; then
-            echo "Usage: psearch <pattern>"
-            return 1
-        fi
-        apt search "$@"
     }
     
     cleanup() {
@@ -289,6 +286,40 @@ if command -v apt &>/dev/null; then
         fi
         
         echo "Cleanup completed!"
+    }
+fi
+
+# MacOS
+if command -v brew &>/dev/null; then
+    alias install="brew install"
+    alias uninstall="brew uninstall"
+    alias packages="brew list --versions | less"
+    alias installed="brew info"
+    alias files="brew list --verbose"
+    alias owns="brew which"
+    alias deps="brew deps"
+    alias rdeps="brew uses --installed"
+
+    alias update="echo 'Updating Homebrew and packages...' && brew update && brew upgrade && brew cleanup && echo 'System update completed!'"
+
+    search() {
+        if command -v fzf &>/dev/null; then
+            if [[ $# -eq 0 ]]; then
+                local pkg
+                pkg=$(brew search | fzf --multi --preview="brew info {}" --preview-window=up:60%)
+                [[ -n "$pkg" ]] && brew install $pkg
+            else
+                local pkg
+                pkg=$(brew search "$@" | fzf --multi --preview="brew info {}" --preview-window=up:60%)
+                [[ -n "$pkg" ]] && brew install $pkg
+            fi
+        else
+            if [[ $# -eq 0 ]]; then
+                echo "Usage: search <package_name>"
+                return 1
+            fi
+            brew info "$@" 2>/dev/null || echo "Package not found in repositories"
+        fi
     }
 fi
 
@@ -519,6 +550,20 @@ fi
 # SSH
 if command -v w &>/dev/null && [[ -n "$USER" ]]; then
     alias users="w -h | awk '{print \$1}' | sort | uniq | wc -l"
+fi
+
+# CLI Tools
+if command -v gemini &>/dev/null; then
+    alias gem="gemini --color=auto"
+fi
+
+if command -v claude &>/dev/null; then
+    alias cc="claude "
+fi
+
+# MSI Laptop
+if command -v msi-perkeyboard &>/dev/null; then
+    alias msi-key="msi-perkeyboard --model GS65 --steady" # usage: lowercase hex
 fi
 
 # ARES
