@@ -115,3 +115,4 @@ _auto_venv() {
 
 add-zsh-hook chpwd _auto_venv
 _auto_venv
+source $HOME/export-esp.sh # ESP Development Environment
