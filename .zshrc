@@ -9,7 +9,7 @@ setopt HIST_IGNORE_ALL_DUPS HIST_REDUCE_BLANKS INC_APPEND_HISTORY SHARE_HISTORY
 setopt HIST_IGNORE_SPACE HIST_VERIFY
 
 # Filter out massive scripts and long commands from history
-zshaddhistory() { [[ ${#1} -le 200 && $1 != *$'\n'* ]] }
+# zshaddhistory() { [[ ${#1} -le 200 && $1 != *$'\n'* ]]; return 0 }
 
 # Shell Behavior
 setopt AUTO_CD AUTO_PUSHD PUSHD_IGNORE_DUPS PUSHD_SILENT
@@ -92,6 +92,11 @@ command -v uvx &>/dev/null && eval "$(uvx --generate-shell-completion zsh)"
 # Virtual Environment
 autoload -U add-zsh-hook
 
+# ESP32
+if [ -f "$HOME/export-esp.sh" ]; then
+    source $HOME/export-esp.sh
+fi
+
 _auto_venv() {
     local target_venv=""
     
@@ -115,4 +120,3 @@ _auto_venv() {
 
 add-zsh-hook chpwd _auto_venv
 _auto_venv
-source $HOME/export-esp.sh # ESP Development Environment
