@@ -20,7 +20,11 @@ alias c-='cd - >/dev/null'
 # Commands
 alias mv="mv -vi"
 alias cp="cp -vir"
-alias rm="rm -Ivr --preserve-root"
+
+case "$(uname -s)" in
+    Linux*)  alias rm="rm -Ivr --preserve-root" ;;
+    Darwin*) alias rm="rm -Iv" ;;
+esac
 alias mkdir="mkdir -pv"
 alias ren="mv -vi --no-copy"
 alias rmdir="rmdir -v"
