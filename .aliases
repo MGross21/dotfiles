@@ -326,10 +326,15 @@ elif command -v apt &>/dev/null; then
 fi
 
 # System
-alias timesync='tz=$(curl -fsSL https://worldtimeapi.org/api/ip | jq -r .timezone) && [ -n "$tz" ] && sudo timedatectl set-timezone "$tz" && sudo timedatectl set-ntp true'
-alias timezones="timedatectl list-timezones"
-alias timeset="sudo timedatectl set-time"
-alias timezoneset="sudo timedatectl set-timezone"
+if command -v timedatectl &>/dev/null; then
+    alias timesync='tz=$(curl -fsSL https://worldtimeapi.org/api/ip | jq -r .timezone) && [ -n "$tz" ] && sudo timedatectl set-timezone "$tz" && sudo timedatectl set-ntp true'
+    alias timezones="timedatectl list-timezones"
+    alias timeset="sudo timedatectl set-time"
+    alias timezoneset="sudo timedatectl set-timezone"
+elif command -v ntpdate &>/dev/null; then
+    alias timesync="sudo ntpdate pool.ntp.org"
+fi
+
 alias forcekill="killall -9"
 
 if command -v fastfetch &>/dev/null; then
@@ -451,10 +456,14 @@ if command -v wl-copy &>/dev/null && command -v wl-paste &>/dev/null; then
     }
 fi
 
-if command -v rustup &>/dev/null; then
-    alias docrs="rustup doc"
-    alias docrs-proj="rustup doc --open --document-private-items"
-fi
+if command -v cargo &>/dev/null; then
+    alias cargo="cargo --color=auto"
+    alias cr="cargo run"
+    alias cb="cargo build"
+    alias cbr="cargo build --release"
+    alias ctest="cargo test"
+    alias cdoc="cargo doc --open --no-deps"
+    alias cfmt="cargo fmt"
 
 if [[ -f "$HOME/Documents/github/pomodoro-cli/target/release/pomodoro" ]]; then
     alias pom="$HOME/Documents/github/pomodoro-cli/target/release/pomodoro"
@@ -479,6 +488,7 @@ if command -v python &>/dev/null; then
     alias pip="python -m pip --require-virtualenv"
     alias pvenv="python -m venv .venv --prompt \${PWD##*/} && source .venv/bin/activate"
     alias psync="python -m pip install --upgrade pip && (pip install -r requirements.txt || pip install -e .)"
+    alias pcompile="python -m py_compile"
 fi
 
 # UV
@@ -487,7 +497,7 @@ if command -v uv &>/dev/null; then
     alias uva="uv add"
     alias uvad="uv add --dev"
     alias uvs="uv sync -U --all-extras --all-groups --active --no-install-package uv"
-    alias lock="uv lock"
+    alias uvl="uv lock"
     alias uvr="uv run"
     alias pip="uv run pip --require-virtualenv"
     alias uvb="uv build"
