@@ -464,6 +464,7 @@ if command -v cargo &>/dev/null; then
     alias ctest="cargo test"
     alias cdoc="cargo doc --open --no-deps"
     alias cfmt="cargo fmt"
+fi
 
 if [[ -f "$HOME/Documents/github/pomodoro-cli/target/release/pomodoro" ]]; then
     alias pom="$HOME/Documents/github/pomodoro-cli/target/release/pomodoro"
