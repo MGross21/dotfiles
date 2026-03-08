@@ -1,0 +1,12 @@
+<svg style="display:none" aria-hidden="true">
+  <filter id="liquid-glass-refraction" x="0" y="0" width="100%" height="100%">
+    <feTurbulence baseFrequency="0.02" numOctaves="2" result="turbulence" />
+    <feDisplacementMap
+      in2="turbulence"
+      in="SourceGraphic"
+      scale="8"
+      xChannelSelector="R"
+      yChannelSelector="G"
+    />
+  </filter>
+</svg>

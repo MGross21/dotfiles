@@ -1,0 +1,109 @@
+/* Liquid Glass CSS Component (GTK/Waybar compatible)
+   Notes:
+   - Removed unsupported properties: position, backdrop-filter, filter, mix-blend-mode.
+   - Uses only GTK-supported CSS: background-color, background-image (gradients), border, box-shadow, transitions.
+   - Define colors for GTK theme integration; non-GTK parsers ignore @define-color but keep raw rgba fallbacks.
+*/
+
+@define-color lg_base rgba(255,255,255,0.10);
+@define-color lg_border rgba(255,255,255,0.35);
+@define-color lg_highlight rgba(255,255,255,0.22);
+@define-color lg_glow rgba(255,255,255,0.06);
+
+/* Core glass container */
+.liquid-glass {
+  background-color: @lg_base; /* Base translucent layer */
+  /* Layered gradient adds subtle depth without blur */
+  background-image: linear-gradient(145deg,
+                      rgba(255,255,255,0.18) 0%,
+                      rgba(255,255,255,0.07) 30%,
+                      rgba(255,255,255,0.05) 55%,
+                      rgba(255,255,255,0.02) 100%);
+  border: 1px solid @lg_border;
+  border-radius: 16px;
+  padding: 0.75rem 1rem;
+  color: #ffffff;
+  /* Multi-layer shadow simulates depth & inner frost */
+  box-shadow:
+    0 4px 14px rgba(0,0,0,0.35), /* outer drop */
+    inset 0 1px 2px rgba(255,255,255,0.35), /* top sheen */
+    inset 0 0 0 9999px @lg_glow; /* faint wash */
+  transition: box-shadow 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+/* Hover / focus state (Waybar modules, GTK buttons, etc.) */
+.liquid-glass:hover,
+.liquid-glass:focus,
+.liquid-glass:active {
+  background-color: alpha(@lg_highlight, 0.85);
+  box-shadow:
+    0 6px 18px rgba(0,0,0,0.45),
+    inset 0 2px 3px rgba(255,255,255,0.45),
+    inset 0 0 0 9999px alpha(@lg_glow,0.85);
+  border-color: shade(@lg_border, 1.2);
+}
+
+/* Variant: flatter glass for cramped module rows */
+.liquid-glass.flat {
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.25),
+    inset 0 1px 1px rgba(255,255,255,0.25),
+    inset 0 0 0 9999px @lg_glow;
+  padding: 0.4rem 0.7rem;
+}
+
+.liquid-glass.flat:hover,
+.liquid-glass.flat:focus {
+  background-color: alpha(@lg_highlight, 0.75);
+}
+
+/* Small badge style (e.g., workspace indicators) */
+.liquid-glass.badge {
+  border-radius: 12px;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.75rem;
+}
+
+/* Integrations:
+   Waybar: add class via "class": "liquid-glass" in module config or wrap groups with .modules-left.liquid-glass.
+   Wofi: prefix window { } with .liquid-glass by adding window.liquid-glass selector or keep separate file import.
+   GTK: add style class programmatically (C: gtk_widget_add_css_class(widget, "liquid-glass")).
+*/
+
+/* Waybar specific selectors (optional convenience) */
+window#waybar.liquid-glass {
+  padding: 4px 8px;
+}
+
+.modules-left.liquid-glass,
+.modules-center.liquid-glass,
+.modules-right.liquid-glass {
+  background-color: @lg_base;
+  background-image: linear-gradient(160deg, rgba(255,255,255,0.14), rgba(255,255,255,0.04));
+  border: 1px solid @lg_border;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.3);
+}
+
+.modules-left.liquid-glass:hover,
+.modules-center.liquid-glass:hover,
+.modules-right.liquid-glass:hover {
+  border-color: shade(@lg_border,1.25);
+}
+
+/* Tooltip adaptation */
+tooltip.liquid-glass,
+tooltip.liquid-glass * {
+  background-color: alpha(@lg_base,0.9);
+  border: 1px solid @lg_border;
+  border-radius: 10px;
+}
+/* Liquid Glass CSS Component */
+
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.15); /* Fallback for GTK */
+  /* backdrop-filter: blur(12px) saturate(180%); */
+  box-shadow:
+    0 12px 40px rgba(31, 38, 135, 0.3),
+    inset 0 6px 12px rgba(255, 255, 255, 0.4);
+}
