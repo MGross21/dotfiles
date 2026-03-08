@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PACKAGES_DIR="${SCRIPT_DIR}/../packages"
 
 
 # ██████╗  █████╗  ██████╗███╗   ███╗ █████╗ ███╗   ██╗
@@ -12,12 +14,12 @@ set -euo pipefail
 
 
 # Source the package arrays
-source ../packages/pacman.conf
+source "${PACKAGES_DIR}/pacman.conf"
 
 # Combine all arrays
 ALL_PACKAGES=(
   "${BASE[@]}"
-  "${SECURIITY[@]}"
+  "${SECURITY[@]}"
   "${GRAPHICS[@]}"
   "${TERMINAL[@]}"
   "${TERMINAL_UTILS[@]}"
@@ -45,7 +47,7 @@ sudo pacman -Syu --needed "${ALL_PACKAGES[@]}"
 #    ╚═╝   ╚═╝  ╚═╝   ╚═╝   
 
 
-source ../packages/aur.conf
+source "${PACKAGES_DIR}/aur.conf"
 
 if ! command -v yay &>/dev/null; then
     sudo pacman -S --needed --noconfirm git base-devel
