@@ -116,6 +116,7 @@ if command -v systemctl &>/dev/null; then
     alias chain="systemd-analyze critical-chain | less"
 
     alias reboot="systemctl reboot"
+    alias reboot-bios="systemctl reboot --firmware-setup"
     alias shutdown="systemctl poweroff"
     
     if command -v fzf &>/dev/null; then
@@ -501,7 +502,8 @@ if command -v uv &>/dev/null; then
     alias uvl="uv lock"
     alias uvr="uv run"
     alias pip="uv run pip --require-virtualenv"
-    alias uvb="uv build"
+    alias uvb="uv build --clear"
+    alias uvvb="uv version --bump"
     alias uvp="uv publish --token '__token__'"
     alias uvx="uvx --no-managed-python"
     alias uvi="uv init --vcs git --author-from git --no-managed-python --no-python-downloads --no-readme --no-description --no-package --bare"
