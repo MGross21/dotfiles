@@ -102,6 +102,7 @@ if command -v git &>/dev/null; then
     alias gl="git log --oneline --graph --all"
     alias glg='git log --graph --pretty=format:"%C(yellow)%h%Creset -%C(auto)%d%Creset %s %C(blue)[%an]" --abbrev-commit'
     alias gllg='git log --oneline --graph --decorate --all'
+    alias groot="git rev-parse --show-toplevel"
 fi
 
 # SystemD
@@ -143,11 +144,6 @@ if command -v pacman &>/dev/null; then
         if command -v yay &>/dev/null; then
             echo "Updating AUR packages..."
             yay -Sua --noconfirm
-        fi
-
-        if command -v spicetify &>/dev/null; then
-            echo "Updating Spicetify..."
-            spicetify update
         fi
 
         echo "System update completed!"
@@ -317,6 +313,13 @@ if command -v brew &>/dev/null; then
             brew info "$@" 2>/dev/null || echo "Package not found in repositories"
         fi
     }
+fi
+
+if command -v nixos-rebuild &>/dev/null; then
+    alias nixupdate="sudo nixos-rebuild switch --upgrade"
+    alias nixbuild="sudo nixos-rebuild switch"
+    alias nixrollback="sudo nixos-rebuild switch --rollback"
+    
 fi
 
 # Mirrors
