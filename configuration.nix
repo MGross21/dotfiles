@@ -1,118 +1,72 @@
+# Edit this configuration file to define what should be installed on
+# your system. Help is available in the configuration.nix(5) man page
+# and in the NixOS manual (accessible by running 'nixos-help').
 
 { config, pkgs, lib, ... }:
 
 {
-  # METAMEMORY
-
   imports = [
     ./hardware-configuration.nix
-    ./packages/system.nix
-    ./packages/nvidia.nix
-    ./packages/hyprland.nix
-    ./packages/services.nix
+    ./modules/boot.nix
+    ./modules/system.nix
+    ./modules/terminal.nix
+    ./modules/extras.nix
+    # ./modules/desktops/gnome.nix
+    ./modules/desktops/hyprland.nix
+    ./modules/users/mgross.nix
   ];
 
-  # System Version
-  system.stateVersion = "25.11";
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.allowBroken = false;
+  nix.settings = {
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
 
-  # BOOTLOADER
+    # Build tuning
+    cores = 0;
+    max-jobs = "auto";
 
-  boot.loader.grub = {
-    enable = true;
-    device = "/dev/sda";  # TODO: Update to your boot device
-    # "nvidia_drm.modeset=1 rd.udev.log_priority=3 vt.global_cursor_default=0 iwlwifi.enable_ini=0 iwlwifi.d3_wake_disable=1"
-    useOSProber = true;
-    # theme = pkgs.fetchurl {
-    #   url = "https://github.com/vinceliuice/Elegant-grub2-themes/releases/download/2024-10-20/Elegant-grub2-theme-2.4.zip";
-    #   sha256 = ""; # TODO: Get hash from nix-prefetch-url
-    # };
+    # Store and download tuning
+    auto-optimise-store = true;
+    download-buffer-size = 67108864;
+
+    # Binary cache sources
+    substituters = [
+      "https://cache.nixos.org/"
+    ];
+
+    # Users allowed to administer the nix-daemon/store
+    trusted-users = [
+      "root"
+      "@wheel"
+    ];
   };
 
-  boot.loader.efi.canTouchEfiVariables = true;
-
-  # NETWORKING 
-
-  networking = {
-    hostName = "nix";
-    networkmanager.enable = true;
-    nameservers = [ "1.1.1.1" "8.8.8.8" ];
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
   };
 
-  # TIME
+  nix.optimise.automatic = true;
 
-  time.timeZone = "America/Los_Angeles"; 
+  time.timeZone = "America/Los_Angeles";
+
   i18n.defaultLocale = "en_US.UTF-8";
 
-  # AUDIO
-
-  # Enable PipeWire audio
-  hardware.pulseaudio.enable = false;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    pulse.enable = true;
-    jack.enable = true;
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "en_US.UTF-8";
+    LC_IDENTIFICATION = "en_US.UTF-8";
+    LC_MEASUREMENT = "en_US.UTF-8";
+    LC_MONETARY = "en_US.UTF-8";
+    LC_NAME = "en_US.UTF-8";
+    LC_NUMERIC = "en_US.UTF-8";
+    LC_PAPER = "en_US.UTF-8";
+    LC_TELEPHONE = "en_US.UTF-8";
+    LC_TIME = "en_US.UTF-8";
   };
 
-  # Bluetooth support
-  hardware.bluetooth.enable = true;
-  services.blueman.enable = true;
+  programs.firefox.enable = true;
 
-  # SECURITY   
-
-  # UFW Firewall
-  networking.firewall.enable = false;  # TODO: Configure UFW if preferred
-  # networking.firewall.allowedTCPPorts = [ ];
-  # networking.firewall.allowedUDPPorts = [ ];
-
-  # Allow sudo without password for wheel group (optional)
-  # security.sudo.wheelNeedsPassword = false;
-
-  # KeyRing
-  services.gnome-keyring.enable = true;
-  security.pam.services.gdm.enableGnomeKeyring = true;
-
-  # USERS
-
-  users.users.mgross = {
-    isNormalUser = true;
-    extraGroups = [
-      "wheel"
-      "networkmanager"
-      "docker"
-      "audio"
-      "video"
-      "uucp"
-      "input"
-      "storage"
-      "optical"
-      "ollama"
-    ];
-    shell = pkgs.zsh;
-  };
-
-  # WM (HYPRLAND)
-  programs.hyprland.enable = true;
-  environment.sessionVariables = {
-    NIXOS_OZONE_WL = "1";  # Wayland support for Electron apps
-  };
-
-  # START   
-
-  virtualisation.docker.enable = true;
-  virtualisation.docker.enableOnBoot = true;
-
-  # SYSTEMD USER SERVICES
-  systemd.user.services = {
-    # tlp-sleep = {
-    #   description = "TLP power manager";
-    #   serviceConfig = {
-    #     Type = "oneshot";
-    #     ExecStart = "${pkgs.tlp}/bin/tlp start";
-    #   };
-    #   wantedBy = [ "multi-user.target" ];
-    # };
-  };
+  system.stateVersion = "25.11";
 }
