@@ -10,7 +10,6 @@
     ./modules/boot.nix
     ./modules/system.nix
     ./modules/terminal.nix
-    ./modules/extras.nix
     # ./modules/desktops/gnome.nix
     ./modules/desktops/hyprland.nix
     ./modules/users/mgross.nix

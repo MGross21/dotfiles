@@ -17,6 +17,7 @@
 !.config/fastfetch/
 !.config/tmux/
 !.config/ly
+!.config/xsettingsd/
 
 # Include specific files only
 !.config/alacritty.toml

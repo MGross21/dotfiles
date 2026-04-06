@@ -8,21 +8,6 @@
     histFile = "$HOME/.zsh_history";
     histSize = 50000;
 
-    plugins = [
-      {
-        name = "zsh-syntax-highlighting";
-        src = "${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting";
-      }
-      {
-        name = "zsh-autosuggestions";
-        src = "${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions";
-      }
-      {
-        name = "zsh-history-substring-search";
-        src = "${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search";
-      }
-    ];
-
     setOptions = [
       "HIST_IGNORE_ALL_DUPS"
       "HIST_REDUCE_BLANKS"
@@ -59,6 +44,10 @@
     '';
 
     interactiveShellInit = ''
+      source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+      source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+      source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+
       bindkey -e
 
       unsetopt CORRECT_ALL
@@ -240,7 +229,8 @@
       uvr = "uv run";
       uvx = "uvx --no-managed-python";
 
-      cc = "claude-code";
+      cc = "claude";
+      gem = "gemini-cli";
     };
   };
 
@@ -296,6 +286,7 @@
     # Development toolchain
     rustc
     rustup
+    rust-analyzer
     clang
     llvm
     cmake
@@ -305,6 +296,8 @@
     ktlint
     gradle
     jdk
+    # cudatoolkit
+    # unstable.ollama-cuda
 
     # Media/audio CLI utilities
     ffmpeg
@@ -315,6 +308,7 @@
     pamixer
     alsa-utils
     claude-code
+    clipse
 
 
     nixfmt

@@ -69,7 +69,7 @@ in {
 
   environment.systemPackages = with pkgs; [
     # Graphical terminal app
-    ghostty
+    unstable.ghostty
 
     # Graphical file manager stack
     thunar
@@ -99,6 +99,8 @@ in {
     libreoffice
     unstable.vscode
     unstable.wine
+    unstable.spotify
+    unstable.zoom-us
 
     # GRAPHICS & MEDIA
     libxres
@@ -114,19 +116,14 @@ in {
 
     # FONTS
     jetbrains-mono
+    ubuntu-classic
     nerd-fonts.ubuntu
     nerd-fonts.jetbrains-mono
+    nerd-fonts.symbols-only
     font-awesome
     noto-fonts
-    # May just be included in base
-    # noto-fonts-cjk-sans
-    # noto-fonts-color-emoji
-
-    # THEMING
-    nwg-look
-    papirus-icon-theme
-    gnome-themes-extra
-    materia-theme
+    noto-fonts-cjk-sans
+    noto-fonts-monochrome-emoji
 
     # SECURITY & UTILITIES
     libsecret
@@ -137,7 +134,6 @@ in {
 
     # Notifications
     dunst
-
     
     # haskellPackages.cuda
   ];
