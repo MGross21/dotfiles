@@ -7,11 +7,11 @@
 | **Component**     | **Details**                                                          |        **Notes**            |
 |-------------------|----------------------------------------------------------------------|-----------------------------|
 | **Kernel**        | [Linux](https://github.com/torvalds/linux)                           |  Year of the Linux Desktop  |
-| **Distribution**  | [Arch](https://archlinux.org)                                        |       *Arch btw*            |
+| **Distribution**  | [Arch](https://archlinux.org) / [NixOS](https://nixos.org)            |       *Arch/Nix btw*        |
 | **Window Manager**| [Hyprland](https://wiki.hyprland.org)                                |    Tiling / Wayland         |
 | **Graphics**      | [NVIDIA](https://wiki.archlinux.org/title/NVIDIA)                    |     Proprietary Drivers     |
 | **GRUB Theme**    | [Dark Mojave](https://github.com/vinceliuice/Elegant-grub2-themes)   |      Right Window           |
-| **Terminal**      | [Alacritty](https://github.com/alacritty/alacritty)                  | Fast, GPU-accelerated       |
+| **Terminal**      | [Ghostty](https://github.com/mitchellh/ghostty)                  | Fast, GPU-accelerated       |
 | **Shell**         | [Zsh](https://www.zsh.org)                                           |    Z-Shell (*"zish"*)       |
 | **Font**          | [Ubuntu](https://design.ubuntu.com/font/)                            |         *sacrilegious*      |
 | **System Theme**  | [Materia Dark Compact](https://github.com/nana-4/materia-theme)      |      Based on Adwaita       |
