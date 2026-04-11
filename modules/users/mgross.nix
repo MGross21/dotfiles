@@ -23,6 +23,7 @@ in
   };
 
   systemd.tmpfiles.rules = [
+    "L ${homeDir}/.exports - mgross users - ${homeDir}/dotfiles/.exports"
     "L ${homeDir}/.config - mgross users - ${homeDir}/dotfiles/.config"
     "L+ ${homeDir}/Pictures - mgross users - ${homeDir}/dotfiles/Pictures"
   ];
