@@ -176,7 +176,7 @@
       syslog = "journalctl -f";
       bootlog = "journalctl -b";
 
-      nixupdate = "sudo nixos-rebuild switch --upgrade -I nixos-config=./configuration.nix || sudo nixos-rebuild switch --upgrade";
+      nixupdate = "sudo nixos-rebuild switch --upgrade -I nixos-config=./configuration.nix";
       nixbuild = "sudo nixos-rebuild switch";
       nixrollback = "sudo nixos-rebuild switch --rollback";
       nixgc = "sudo nix-collect-garbage --delete-older-than 7d";
@@ -225,7 +225,7 @@
       clip = "wl-copy";
       paste = "wl-paste";
       fontreload = "fc-cache -f";
-      fontlist = "fc-list : family lang=en --format=\"%{family[0]}\\n\" | sort | uniq | less";
+      fonts = "fc-list : family lang=en --format=\"%{family[0]}\\n\" | sort | uniq | less";
       wlr = "env | grep -i wl";
 
       # Firewall and tool shortcuts

@@ -28,6 +28,11 @@ in {
       Defaults pwfeedback
     '';
   };
+
+  environment.sessionVariables = {
+    SUDO_PROMPT = "\${(L)USER} password: ";
+  };
+
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -66,6 +71,8 @@ in {
       WIFI_PWR_ON_BAT = "on";
     };
   };
+
+  services.tailscale.enable = true;
 
   nixpkgs.config.allowUnfree = true;
 
