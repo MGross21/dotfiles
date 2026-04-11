@@ -1,8 +1,10 @@
 { pkgs, lib, ... }:
 let
   unstable = import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz") {
+    system = pkgs.stdenv.hostPlatform.system;
     config.allowUnfree = true;
   };
+  isX86_64 = pkgs.stdenv.hostPlatform.isx86_64;
 in {
   networking.hostName = "msi";
   networking.networkmanager.enable = true;
@@ -67,17 +69,22 @@ in {
 
   nixpkgs.config.allowUnfree = true;
 
+  programs.thunar = {
+    enable = true;
+    plugins = with pkgs; [
+      thunar-volman
+      thunar-archive-plugin
+      thunar-media-tags-plugin
+      thunar-vcs-plugin
+      thunar-shares-plugin
+    ];
+  };
+
   environment.systemPackages = with pkgs; [
     # Graphical terminal app
     unstable.ghostty
 
     # Graphical file manager stack
-    thunar
-    thunar-volman
-    thunar-archive-plugin
-    thunar-media-tags-plugin
-    thunar-vcs-plugin
-    thunar-shares-plugin
     gvfs
     # gvfs-mtp
     # gvfs-gphoto2
@@ -89,8 +96,6 @@ in {
     unstable.firefox
     feh
     mpv
-    unstable.discord
-    unstable.steam
     unstable.obs-studio
     kicad
     gimp
@@ -98,9 +103,7 @@ in {
     gthumb
     libreoffice
     unstable.vscode
-    unstable.wine
     unstable.spotify
-    unstable.zoom-us
 
     # GRAPHICS & MEDIA
     libxres
@@ -136,5 +139,11 @@ in {
     dunst
     
     # haskellPackages.cuda
+  ] ++ lib.optionals isX86_64 (with pkgs; [
+    # x86_64-only apps
+    unstable.discord
+    unstable.steam
+    unstable.wine
+    unstable.zoom-us
   ];
 }
