@@ -145,5 +145,5 @@ in {
     unstable.steam
     unstable.wine
     unstable.zoom-us
-  ];
+  ]);
 }
