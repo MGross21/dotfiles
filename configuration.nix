@@ -6,7 +6,6 @@
 
 {
   imports = [
-    ./hardware-configuration.nix
     ./modules/boot.nix
     ./modules/system.nix
     ./modules/terminal.nix

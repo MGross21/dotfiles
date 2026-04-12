@@ -232,7 +232,7 @@
       fw = "sudo ufw";
       fws = "sudo ufw status verbose";
       sf = "fastfetch";
-      gem = "gemini --color=auto";
+      gem = "gemini";
       zed = "zeditor";
       cc = "claude";
 
@@ -355,6 +355,7 @@
     pamixer
     alsa-utils
     claude-code
+    gemini-cli
     clipse
 
 

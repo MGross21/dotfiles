@@ -23,7 +23,24 @@
 
 Use tool like Rufus to flash `.iso` to boot drive
 
-## Installation Script
+## NixOS Install (From Git)
+
+For existing NixOS systems with flakes enabled:
+
+```bash
+git clone https://github.com/MGross21/dotfiles.git
+cd dotfiles
+sudo nixos-rebuild switch --flake .#msi
+```
+
+To stay on the latest nixos-unstable revisions:
+
+```bash
+nix flake update
+sudo nixos-rebuild switch --flake .#msi
+```
+
+## Arch Installation Script
 
 Functions optimally on a clean system install.
 

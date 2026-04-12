@@ -1,12 +1,7 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, unstable, ... }:
 let
-  unstable = import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz") {
-    system = pkgs.stdenv.hostPlatform.system;
-    config.allowUnfree = true;
-  };
   isX86_64 = pkgs.stdenv.hostPlatform.isx86_64;
 in {
-  networking.hostName = "msi";
   networking.networkmanager.enable = true;
 
   services.openssh.enable = true;
