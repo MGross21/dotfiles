@@ -15,7 +15,10 @@
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.extraModulePackages = [ config.boot.kernelPackages.msi-ec ];
-  boot.kernelModules = [ "msi-ec" "nvidia-drm" ];
+  boot.kernelModules = [
+    "msi-ec"
+    "nvidia-drm"
+  ];
   boot.kernelParams = [ "mem_sleep_default=deep" ];
 
   hardware.graphics.enable = true;
@@ -35,7 +38,7 @@
 
   hardware.graphics.enable32Bit = true;
 
-# Ensure 32-bit support packages
+  # Ensure 32-bit support packages
   environment.systemPackages = with pkgs; [
     libva
     libva-vdpau-driver

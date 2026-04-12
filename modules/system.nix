@@ -1,7 +1,13 @@
-{ pkgs, lib, unstable, ... }:
+{
+  pkgs,
+  lib,
+  unstable,
+  ...
+}:
 let
   isX86_64 = pkgs.stdenv.hostPlatform.isx86_64;
-in {
+in
+{
   networking.networkmanager.enable = true;
 
   services.openssh.enable = true;
@@ -84,66 +90,72 @@ in {
     ];
   };
 
-  environment.systemPackages = with pkgs; [
-    # Graphical terminal app
-    unstable.ghostty
+  environment.systemPackages =
+    with pkgs;
+    [
+      # Graphical terminal app
+      unstable.ghostty
 
-    # Graphical file manager stack
-    gvfs
-    tumbler
+      # Graphical file manager stack
+      gvfs
+      tumbler
 
-    # APPLICATIONS
-    unstable.firefox
-    feh
-    mpv
-    unstable.obs-studio
-    kicad
-    gimp
-    rawtherapee
-    gthumb
-    libreoffice
-    unstable.vscode
-    unstable.spotify
+      # APPLICATIONS
+      unstable.firefox
+      feh
+      mpv
+      unstable.obs-studio
+      kicad
+      gimp
+      rawtherapee
+      gthumb
+      libreoffice
+      unstable.vscode
+      unstable.spotify
 
-    # GRAPHICS & MEDIA
-    libxres
-    gamemode
-    xwayland
-    qt5.qtbase
-    qt5.qtwayland
-    qt6.qtbase
-    qt6.qtwayland
+      # GRAPHICS & MEDIA
+      libxres
+      gamemode
+      xwayland
+      qt5.qtbase
+      qt5.qtwayland
+      qt6.qtbase
+      qt6.qtwayland
 
-    # AUDIO
-    pavucontrol
+      # AUDIO
+      pavucontrol
 
-    # FONTS
-    jetbrains-mono
-    ubuntu-classic
-    nerd-fonts.ubuntu
-    nerd-fonts.jetbrains-mono
-    nerd-fonts.symbols-only
-    font-awesome
-    noto-fonts
-    noto-fonts-cjk-sans
-    noto-fonts-monochrome-emoji
+      # FONTS
+      jetbrains-mono
+      ubuntu-classic
+      nerd-fonts.ubuntu
+      nerd-fonts.jetbrains-mono
+      nerd-fonts.symbols-only
+      font-awesome
+      noto-fonts
+      noto-fonts-cjk-sans
+      noto-fonts-monochrome-emoji
 
-    # SECURITY & UTILITIES
-    libsecret
-    seahorse
-    hyprpolkitagent
-    polkit_gnome
-    mcontrolcenter
+      # SECURITY & UTILITIES
+      libsecret
+      seahorse
+      hyprpolkitagent
+      polkit_gnome
+      mcontrolcenter
 
-    # Notifications
-    dunst
-    
-    # haskellPackages.cuda
-  ] ++ lib.optionals isX86_64 (with pkgs; [
-    # x86_64-only apps
-    unstable.discord
-    unstable.steam
-    unstable.wine
-    unstable.zoom-us
-  ]);
+      # Notifications
+      dunst
+
+      # haskellPackages.cuda
+    ]
+    ++ lib.optionals isX86_64 (
+      with pkgs;
+      [
+        # x86_64-only apps
+        unstable.discord
+        unstable.steam
+        unstable.wine
+        unstable.zoom-us
+      ]
+    );
 }

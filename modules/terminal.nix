@@ -358,7 +358,6 @@
     gemini-cli
     clipse
 
-
     nixfmt
     neovim
     efibootmgr

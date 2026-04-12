@@ -6,7 +6,13 @@
     nixpkgs-unstable.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, ... }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixpkgs-unstable,
+      ...
+    }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
@@ -17,7 +23,10 @@
         inherit system;
         config.allowUnfree = true;
       };
-    in {
+    in
+    {
+      formatter.${system} = pkgs.nixpkgs-fmt;
+
       # Host entries (managed by new_host_nix.sh)
       nixosConfigurations.msi = nixpkgs.lib.nixosSystem {
         inherit system;

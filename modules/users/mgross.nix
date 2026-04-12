@@ -30,17 +30,17 @@ in
 
   # Keep argv.json user-owned on NixOS to avoid root-owned VS Code config files.
   system.activationScripts.vscodeArgvJson.text = ''
-    if [ -L "${homeDir}/.config/Code/argv.json" ]; then
-      rm -f "${homeDir}/.config/Code/argv.json"
-    fi
+        if [ -L "${homeDir}/.config/Code/argv.json" ]; then
+          rm -f "${homeDir}/.config/Code/argv.json"
+        fi
 
-    install -d -m 0700 -o mgross -g users "${homeDir}/.config/Code"
-    cat > "${homeDir}/.config/Code/argv.json" <<'EOF'
-{
-  "password-store": "gnome-libsecret"
-}
-EOF
-    chown mgross:users "${homeDir}/.config/Code/argv.json"
-    chmod 0600 "${homeDir}/.config/Code/argv.json"
+        install -d -m 0700 -o mgross -g users "${homeDir}/.config/Code"
+        cat > "${homeDir}/.config/Code/argv.json" <<'EOF'
+    {
+      "password-store": "gnome-libsecret"
+    }
+    EOF
+        chown mgross:users "${homeDir}/.config/Code/argv.json"
+        chmod 0600 "${homeDir}/.config/Code/argv.json"
   '';
 }

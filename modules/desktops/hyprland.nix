@@ -1,9 +1,14 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   unstable = import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz") {
     config.allowUnfree = true;
   };
-in 
+in
 {
   # HYPRLAND
   programs.hyprland = {
@@ -14,10 +19,13 @@ in
   # XDG Desktop Portal for sandboxed applications
   xdg.portal = {
     enable = true;
-    extraPortals = lib.mkForce (with pkgs; [
-      xdg-desktop-portal-hyprland
-      xdg-desktop-portal-gtk
-    ]);
+    extraPortals = lib.mkForce (
+      with pkgs;
+      [
+        xdg-desktop-portal-hyprland
+        xdg-desktop-portal-gtk
+      ]
+    );
   };
   programs.xwayland.enable = true;
 
@@ -111,7 +119,7 @@ in
     xsessions = "${config.services.displayManager.sessionData.desktops}/share/xsessions";
   };
 
-  # Wayland required packages  
+  # Wayland required packages
   environment.systemPackages = with unstable; [
     hyprland
     hyprlock
@@ -123,7 +131,7 @@ in
     # hyprcursor # I dont like this
 
     ly
-    
+
     waybar
     wofi
     brightnessctl

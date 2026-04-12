@@ -265,7 +265,11 @@ in
             settings-version = mkInt32 2;
           };
           "org/gnome/shell" = {
-            enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "blur-my-shell@aunetx" "user-theme@gnome-shell-extensions.gcampax.github.com" ];
+            enabled-extensions = [
+              "dash-to-dock@micxgx.gmail.com"
+              "blur-my-shell@aunetx"
+              "user-theme@gnome-shell-extensions.gcampax.github.com"
+            ];
           };
         };
       }
