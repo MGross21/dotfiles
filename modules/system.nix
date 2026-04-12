@@ -11,6 +11,8 @@ in {
 
   services.openssh.enable = true;
   services.gnome.gnome-keyring.enable = true;
+  services.udisks2.enable = true;
+  services.gvfs.enable = true;
 
   services.printing.enable = true;
 
@@ -93,10 +95,6 @@ in {
 
     # Graphical file manager stack
     gvfs
-    # gvfs-mtp
-    # gvfs-gphoto2
-    # gvfs-afc
-    # gvfs-smb
     tumbler
 
     # APPLICATIONS
