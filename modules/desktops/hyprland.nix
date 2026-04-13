@@ -2,13 +2,9 @@
   config,
   pkgs,
   lib,
+  unstable ? pkgs,
   ...
 }:
-let
-  unstable = import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz") {
-    config.allowUnfree = true;
-  };
-in
 {
   # HYPRLAND
   programs.hyprland = {

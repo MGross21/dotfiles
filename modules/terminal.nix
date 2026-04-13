@@ -2,9 +2,29 @@
 {
   programs.git.enable = true;
 
+  programs.fzf = {
+    fuzzyCompletion = true;
+    keybindings = true;
+  };
+
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
+    autosuggestions = {
+      enable = true;
+      highlightStyle = "fg=8";
+      strategy = [ "history" "completion" "match_prev_cmd" ];
+      async = true;
+    };
+    syntaxHighlighting = {
+      enable = true;
+      highlighters = [ "main" "brackets" "pattern" "cursor" "regexp" "root" "line" ];
+    };
     histFile = "$HOME/.zsh_history";
     histSize = 50000;
 
@@ -49,8 +69,6 @@
       fi
       [[ -f "$HOME/.paths" ]] && source "$HOME/.paths"
 
-      source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-      source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
       source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 
       bindkey -e
@@ -90,9 +108,39 @@
           ssh ares
         }
       fi
-      if command -v fzf >/dev/null 2>&1; then
-        source <(fzf --zsh 2>/dev/null) 2>/dev/null
+      if command -v uv >/dev/null 2>&1; then
+        eval "$(uv generate-shell-completion zsh 2>/dev/null)"
       fi
+
+      if command -v uvx >/dev/null 2>&1; then
+        eval "$(uvx --generate-shell-completion zsh 2>/dev/null)"
+      fi
+
+      [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ '
+
+      autoload -U add-zsh-hook
+
+      _auto_venv() {
+        local target_venv=""
+        local dir="$PWD"
+
+        while [[ "$dir" != "/" ]]; do
+          if [[ -f "$dir/.venv/bin/activate" ]]; then
+            target_venv="$dir/.venv"
+            break
+          fi
+          dir="''${dir:h}"
+        done
+
+        if [[ -n "$target_venv" ]]; then
+          [[ "$VIRTUAL_ENV" != "$target_venv" ]] && source "$target_venv/bin/activate"
+        elif [[ -n "$VIRTUAL_ENV" ]]; then
+          deactivate 2>/dev/null
+        fi
+      }
+
+      add-zsh-hook chpwd _auto_venv
+      _auto_venv
     '';
 
     shellAliases = {
@@ -298,15 +346,12 @@
     zsh
     tmux
     zsh-completions
-    zsh-syntax-highlighting
-    zsh-autosuggestions
     zsh-history-substring-search
 
     # Terminal utilities
     gh
     less
     fzf
-    zoxide
     neovim
     htop
     btop
