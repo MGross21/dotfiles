@@ -9,7 +9,24 @@
 
   programs.zoxide = {
     enable = true;
+    flags = [ "--cmd" "cd" ];
     enableZshIntegration = true;
+  };
+
+  environment.sessionVariables = {
+    EDITOR = "nvim";
+    PAGER = "less";
+    LESS = "-R -i -w -M -z-4";
+    # ANDROID_SDK_ROOT = "/opt/android-sdk";
+    CLICOLOR = "1";
+    COLORTERM = "truecolor";
+    FZF_DEFAULT_COMMAND = "fd --type f --follow --exclude .git --exclude node_modules --exclude __pycache__ --exclude .venv";
+    FZF_CTRL_T_COMMAND = "fd --follow --exclude .git --exclude node_modules --exclude __pycache__ --exclude .venv";
+    FZF_ALT_C_COMMAND = "fd --type d --follow --exclude .git --exclude node_modules --exclude __pycache__ --exclude .venv";
+    FZF_DEFAULT_OPTS = "--height=40% --layout=reverse --border --color=fg:#a1b0b8,bg:#151515,hl:#fc595f --color=fg+:#f5f5f5,bg+:#252525,hl+:#df9395 --color=info:#fc595f,prompt:#832e31,pointer:#a63c40,marker:#d3494e,spinner:#ba8586,header:#5d6f71";
+    FZF_CTRL_T_OPTS = "--preview 'bat --style=numbers --color=always --line-range :100 {}' --bind 'ctrl-/:toggle-preview'";
+    FZF_CTRL_R_OPTS = "--preview 'echo {}' --preview-window=up:3";
+    FZF_ALT_C_OPTS = "--preview 'tree -C {} | head -50'";
   };
 
   programs.zsh = {
@@ -64,10 +81,22 @@
     '';
 
     interactiveShellInit = ''
-      if [[ -d "$HOME" ]] && [[ -f "$HOME/.exports" ]]; then
-        source "$HOME/.exports"
-      fi
       [[ -f "$HOME/.paths" ]] && source "$HOME/.paths"
+
+      if command -v vivid >/dev/null 2>&1; then
+        theme="tomorrow-night-burns"
+        if [[ "$TERM" == "linux" ]]; then
+          export LS_COLORS="$(vivid -m 8-bit generate "$theme")"
+        else
+          export LS_COLORS="$(vivid generate "$theme")"
+        fi
+      fi
+
+      if [[ -n "$TMUX" ]]; then
+        export TERM=tmux-256color
+      elif [[ "$TERM" == "xterm" ]] || [[ "$TERM" == "xterm-color" ]]; then
+        export TERM=xterm-256color
+      fi
 
       source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 

@@ -39,6 +39,10 @@ in
 
   environment.sessionVariables = {
     SUDO_PROMPT = "\${(L)USER} password: ";
+    MOZ_DBUS_REMOTE = "1";
+    MOZ_ENABLE_WAYLAND = "1";
+    MOZ_GTK_TITLEBAR_DECORATION = "client";
+    MOZ_DISABLE_SPLASH = "1";
   };
 
   environment.extraOutputsToInstall = lib.mkForce [
