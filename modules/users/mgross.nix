@@ -12,6 +12,7 @@ in
       "docker"
       "audio"
       "video"
+      "dialout"
       "uucp"
       "input"
       "storage"

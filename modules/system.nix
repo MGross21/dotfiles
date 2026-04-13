@@ -10,6 +10,11 @@ in
 {
   networking.networkmanager.enable = true;
 
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+
   services.openssh.enable = true;
   services.gnome.gnome-keyring.enable = true;
   services.udisks2.enable = true;
@@ -35,6 +40,11 @@ in
   environment.sessionVariables = {
     SUDO_PROMPT = "\${(L)USER} password: ";
   };
+
+  environment.extraOutputsToInstall = lib.mkForce [
+    "man"
+    "info"
+  ];
 
   services.pipewire = {
     enable = true;
@@ -76,6 +86,8 @@ in
   };
 
   services.tailscale.enable = true;
+
+  virtualisation.docker.enable = true;
 
   nixpkgs.config.allowUnfree = true;
 

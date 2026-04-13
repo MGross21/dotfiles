@@ -265,7 +265,7 @@
       hyprlog = "journalctl -xe | grep Hyprland";
       hyprconfig = "$EDITOR $HOME/.config/hypr/";
       monitors = "hyprctl monitors all";
-      logout = "hyprctl dispatch exit";
+      logout = "uwsm stop || hyprctl dispatch exit";
       nightmode = "hyprsunset --temperature 3000";
       paperreload = "pkill hyprpaper; (hyprpaper & disown)";
       screenshot = "hyprshot -m region --clipboard-only";
@@ -364,6 +364,7 @@
     ripgrep
     speedtest-cli
     jq
+    impala
     poppler
     poppler_data
     fontconfig
@@ -379,6 +380,8 @@
     rustc
     rustup
     rust-analyzer
+    espflash
+    gnumake
     clang
     llvm
     cmake
@@ -400,14 +403,18 @@
     pamixer
     alsa-utils
     claude-code
+    claude-monitor
     gemini-cli
     clipse
 
     nixfmt
     neovim
     efibootmgr
-    python315
+    python311
+    python312
+    python313
     python314
+    python315
     cargo
     tailscale
     mpv
