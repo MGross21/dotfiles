@@ -29,16 +29,16 @@ in
 
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
-  security.sudo.enable = false;
-  security."sudo-rs" = {
+  security.sudo = {
     enable = true;
     extraConfig = ''
       Defaults pwfeedback
+      Defaults passprompt="%u password: "
     '';
   };
 
   environment.sessionVariables = {
-    SUDO_PROMPT = "\${(L)USER} password: ";
+    SUDO_PROMPT = "%u password: ";
     MOZ_DBUS_REMOTE = "1";
     MOZ_ENABLE_WAYLAND = "1";
     MOZ_GTK_TITLEBAR_DECORATION = "client";
@@ -93,6 +93,8 @@ in
 
   virtualisation.docker.enable = true;
 
+  programs.nix-ld.enable = true;
+
   nixpkgs.config.allowUnfree = true;
 
   programs.thunar = {
@@ -113,13 +115,11 @@ in
       unstable.ghostty
 
       # Graphical file manager stack
-      gvfs
       tumbler
 
       # APPLICATIONS
       unstable.firefox
       feh
-      mpv
       unstable.obs-studio
       kicad
       gimp

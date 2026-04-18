@@ -253,8 +253,8 @@
       syslog = "journalctl -f";
       bootlog = "journalctl -b";
 
-      nixupdate = "sudo nixos-rebuild switch --upgrade -I nixos-config=./configuration.nix";
-      nixbuild = "sudo nixos-rebuild switch";
+      update = "sudo nixos-rebuild switch --upgrade";
+      nixrebuild = "sudo nixos-rebuild switch";
       nixrollback = "sudo nixos-rebuild switch --rollback";
       nixgc = "sudo nix-collect-garbage --delete-older-than 7d";
 
@@ -318,17 +318,17 @@
       p = "python";
       pip = "uv pip --require-virtualenv";
       pycompile = "uv python -m py_compile";
-      uvenv = "uv venv --clear --no-managed-python && source ./.venv/bin/activate";
+      uvenv = "uv venv --clear && source ./.venv/bin/activate";
       uva = "uv add";
       uvad = "uv add --dev";
       uvs = "uv sync -U --all-extras --all-groups --active --no-install-package uv";
       uvl = "uv lock";
-      uvr = "uv run --no-managed-python";
+      uvr = "uv run";
       uvb = "uv build --clear";
       uvvb = "uv version --bump";
       uvp = "uv publish --token '__token__'";
-      uvx = "uvx --no-managed-python";
-      uvi = "uv init --vcs git --author-from git --no-managed-python --no-python-downloads --no-readme --no-description --no-package --bare";
+      uvx = "uvx";
+      uvi = "uv init --vcs git --author-from git --no-readme --no-description --no-package --bare";
       activate = "source $PWD/.venv/bin/activate";
 
       # Rust, media, and Android
@@ -361,10 +361,7 @@
 
   environment.systemPackages = with pkgs; [
     # Core utilities
-    networkmanager
     openvpn
-    sudo-rs
-    git
     wget
     zip
     unzip
@@ -372,7 +369,6 @@
     curl
 
     # Shell and terminal workflow
-    zsh
     tmux
     zsh-completions
     zsh-history-substring-search
@@ -399,14 +395,12 @@
     fontconfig
     vivid
     cava
-    docker
     docker-compose
     man-db
     tldr
     bluetui
 
     # Development toolchain
-    rustc
     rustup
     rust-analyzer
     espflash
@@ -424,11 +418,8 @@
     # unstable.ollama-cuda
 
     # Media/audio CLI utilities
-    ffmpeg
     ffmpeg-full
     vulkan-tools
-    pipewire
-    wireplumber
     pamixer
     alsa-utils
     claude-code
@@ -437,15 +428,8 @@
     clipse
 
     nixfmt
-    neovim
     efibootmgr
-    python311
-    python312
-    python313
-    python314
-    python315
-    cargo
-    tailscale
+    python3
     mpv
 
     # Android CLI

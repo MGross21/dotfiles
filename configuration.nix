@@ -9,8 +9,15 @@
   ...
 }:
 
+let
+  unstable = import (builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz") {
+    system = pkgs.stdenv.hostPlatform.system;
+    config = pkgs.config;
+  };
+in
 {
   imports = [
+    ./hosts/msi/hardware-configuration.nix
     ./modules/boot.nix
     ./modules/system.nix
     ./modules/terminal.nix
@@ -18,6 +25,8 @@
     ./modules/desktops/hyprland.nix
     ./modules/users/mgross.nix
   ];
+
+  _module.args.unstable = unstable;
 
   nix.settings = {
     experimental-features = [
@@ -37,6 +46,9 @@
     substituters = [
       "https://cache.nixos.org/"
     ];
+
+    http-connections = 50;
+    narinfo-cache-negative-ttl = 0;
 
     # Users allowed to administer the nix-daemon/store
     trusted-users = [
