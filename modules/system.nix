@@ -10,12 +10,29 @@ in
 {
   networking.networkmanager.enable = true;
 
+  hardware.enableRedistributableFirmware = true;
+  hardware.firmware = with pkgs; [
+    sof-firmware
+  ];
+
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
   };
 
   services.openssh.enable = true;
+  programs.ssh.extraConfig = ''
+    Host *
+      SetEnv TERM=xterm-256color
+      ConnectTimeout 10
+      ConnectionAttempts 2
+      ServerAliveInterval 60
+      ServerAliveCountMax 3
+      ControlMaster auto
+      ControlPath ~/.ssh/cm-%C
+      ControlPersist 10m
+      AddKeysToAgent yes
+  '';
   services.gnome.gnome-keyring.enable = true;
   services.udisks2.enable = true;
   services.gvfs.enable = true;
@@ -54,7 +71,9 @@ in
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
+    jack.enable = true;
     pulse.enable = true;
+    wireplumber.enable = true;
   };
 
   services.logind.settings.Login = {
@@ -170,7 +189,6 @@ in
         # x86_64-only apps
         unstable.discord
         unstable.steam
-        unstable.wine
         unstable.zoom-us
       ]
     );
