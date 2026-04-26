@@ -65,6 +65,14 @@ in
 
   nix.optimise.automatic = true;
 
+  system.autoUpgrade = {
+    enable = true;
+    flake = "github:MGross21/dotfiles#msi";
+    flags = [ "--update-input" "nixpkgs" ];
+    dates = "daily";
+    allowReboot = false;
+  };
+
   time.timeZone = "America/Los_Angeles";
 
   i18n.defaultLocale = "en_US.UTF-8";

@@ -283,10 +283,11 @@
       syslog = "journalctl -f";
       bootlog = "journalctl -b";
 
-      update = "sudo nixos-rebuild switch --upgrade";
-      nixrebuild = "sudo nixos-rebuild switch";
-      nixrollback = "sudo nixos-rebuild switch --rollback";
+      update = "nix flake update --flake ~/dotfiles && sudo nixos-rebuild switch --flake ~/dotfiles#msi";
+      nixrebuild = "sudo nixos-rebuild switch --flake ~/dotfiles#msi";
+      nixrollback = "sudo nixos-rebuild switch --flake ~/dotfiles#msi --rollback";
       nixgc = "sudo nix-collect-garbage --delete-older-than 7d";
+      nixhash = "nix-prefetch-url --unpack --type sha256";
 
       # Diagnostics and network
       forcekill = "killall -9";
