@@ -1,6 +1,7 @@
 # Dotfiles & Installation
 
-![Desktop Preview](Pictures/screenshots/version3.png)
+![Desktop Preview Blank](Pictures/screenshots/version3_1.png)
+![Desktop Preview Apps](Pictures/screenshots/version3_1_desktop.png)
 
 ## System Info
 

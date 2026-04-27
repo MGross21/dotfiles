@@ -53,7 +53,7 @@
     FZF_DEFAULT_COMMAND = "fd --type f --follow --exclude .git --exclude node_modules --exclude __pycache__ --exclude .venv";
     FZF_CTRL_T_COMMAND = "fd --follow --exclude .git --exclude node_modules --exclude __pycache__ --exclude .venv";
     FZF_ALT_C_COMMAND = "fd --type d --follow --exclude .git --exclude node_modules --exclude __pycache__ --exclude .venv";
-    FZF_DEFAULT_OPTS = "--height=40% --layout=reverse --border --color=fg:#a1b0b8,bg:#151515,hl:#fc595f --color=fg+:#f5f5f5,bg+:#252525,hl+:#df9395 --color=info:#fc595f,prompt:#832e31,pointer:#a63c40,marker:#d3494e,spinner:#ba8586,header:#5d6f71";
+    FZF_DEFAULT_OPTS = "--height=~80% --layout=reverse --border --color=fg:#a1b0b8,bg:#151515,hl:#fc595f --color=fg+:#f5f5f5,bg+:#252525,hl+:#df9395 --color=info:#fc595f,prompt:#832e31,pointer:#a63c40,marker:#d3494e,spinner:#ba8586,header:#5d6f71";
     FZF_CTRL_T_OPTS = "--preview 'bat --style=numbers --color=always --line-range :100 {}' --bind 'ctrl-/:toggle-preview'";
     FZF_CTRL_R_OPTS = "--preview 'echo {}' --preview-window=up:3";
     FZF_ALT_C_OPTS = "--preview 'tree -C {} | head -50'";
@@ -288,6 +288,7 @@
       nixrollback = "sudo nixos-rebuild switch --flake ~/dotfiles#msi --rollback";
       nixgc = "sudo nix-collect-garbage --delete-older-than 7d";
       nixhash = "nix-prefetch-url --unpack --type sha256";
+      search = "nix-search-tv print | fzf --preview 'nix-search-tv preview {}' --scheme history";
 
       # Diagnostics and network
       forcekill = "killall -9";
@@ -456,6 +457,7 @@
     claude-monitor
     gemini-cli
     clipse
+    spotify-player
 
     nixfmt
     efibootmgr

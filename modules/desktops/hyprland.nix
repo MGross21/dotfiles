@@ -143,7 +143,6 @@
     gnome-themes-extra
     materia-theme
     tela-circle-icon-theme
-    papirus-icon-theme
 
     apple-cursor
   ];

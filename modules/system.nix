@@ -6,6 +6,19 @@
 }:
 let
   isX86_64 = pkgs.stdenv.hostPlatform.isx86_64;
+
+  papirus-red = pkgs.runCommand "papirus-icon-theme-red" {
+    nativeBuildInputs = [ pkgs.papirus-folders ];
+  } ''
+    tmpdir=$(mktemp -d)
+    cp -r ${pkgs.papirus-icon-theme}/share/icons/. $tmpdir/
+    chmod -R u+w $tmpdir
+    DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus -C red
+    DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus-Dark -C red
+    DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus-Light -C red
+    mkdir -p $out/share/icons
+    cp -r $tmpdir/. $out/share/icons/
+  '';
 in
 {
   networking.networkmanager.enable = true;
@@ -136,6 +149,10 @@ in
       # Graphical file manager stack
       tumbler
 
+      # THEMING
+      papirus-red
+      papirus-folders
+
       # APPLICATIONS
       unstable.firefox
       feh
@@ -160,17 +177,6 @@ in
       # AUDIO
       pavucontrol
 
-      # FONTS
-      jetbrains-mono
-      ubuntu-classic
-      nerd-fonts.ubuntu
-      nerd-fonts.jetbrains-mono
-      nerd-fonts.symbols-only
-      font-awesome
-      noto-fonts
-      noto-fonts-cjk-sans
-      noto-fonts-monochrome-emoji
-
       # SECURITY & UTILITIES
       libsecret
       seahorse
@@ -180,6 +186,9 @@ in
 
       # Notifications
       dunst
+
+      # Search
+      nix-search-tv
 
       # haskellPackages.cuda
     ]
@@ -192,4 +201,16 @@ in
         unstable.zoom-us
       ]
     );
+
+  fonts.packages = with pkgs; [
+    jetbrains-mono
+    ubuntu-classic
+    nerd-fonts.ubuntu
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.symbols-only
+    font-awesome
+    noto-fonts
+    noto-fonts-cjk-sans
+    noto-fonts-monochrome-emoji
+  ];
 }
