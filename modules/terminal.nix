@@ -282,6 +282,8 @@
       userservices = "systemctl --user list-unit-files --type=service";
       syslog = "journalctl -f";
       bootlog = "journalctl -b";
+      largestfiles = "dust -n 20 /";
+      largestdirs = "ncdu /";
 
       update = "nix flake update --flake ~/dotfiles && sudo nixos-rebuild switch --flake ~/dotfiles#msi";
       nixrebuild = "sudo nixos-rebuild switch --flake ~/dotfiles#msi";
@@ -430,6 +432,9 @@
     man-db
     tldr
     bluetui
+    ncdu
+    dust
+    gitui
 
     # Development toolchain
     rustup
@@ -462,7 +467,7 @@
     nixfmt
     efibootmgr
     python3
-    mpv
+    mpv-unwrapped
 
     # Android CLI
     android-tools

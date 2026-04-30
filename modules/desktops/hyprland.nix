@@ -2,26 +2,24 @@
   config,
   pkgs,
   lib,
-  unstable ? pkgs,
   ...
 }:
 {
   # HYPRLAND
   programs.hyprland = {
     enable = true;
-    package = unstable.hyprland;
+    package = pkgs.hyprland;
   };
 
   # XDG Desktop Portal for sandboxed applications
   xdg.portal = {
     enable = true;
-    extraPortals = lib.mkForce (
-      with pkgs;
-      [
-        xdg-desktop-portal-hyprland
-        xdg-desktop-portal-gtk
-      ]
-    );
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-hyprland
+    ];
+    config.common.default = [
+      "hyprland"
+    ];
   };
   programs.xwayland.enable = true;
 
@@ -116,7 +114,7 @@
   };
 
   # Wayland required packages
-  environment.systemPackages = with unstable; [
+  environment.systemPackages = with pkgs; [
     hyprland
     hyprlock
     hypridle

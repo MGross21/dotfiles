@@ -3,7 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-unstable.follows = "nixpkgs";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    hyprland.url = "github:hyprwm/Hyprland";
   };
 
   outputs =
@@ -11,6 +12,7 @@
       self,
       nixpkgs,
       nixpkgs-unstable,
+      hyprland,
       ...
     }:
     let
@@ -18,6 +20,9 @@
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
+        overlays = [
+          (_: prev: { hyprland = hyprland.packages.${system}.hyprland; })
+        ];
       };
       unstable = import nixpkgs-unstable {
         inherit system;

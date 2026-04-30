@@ -22,6 +22,8 @@ let
 in
 {
   networking.networkmanager.enable = true;
+  networking.firewall.allowedUDPPorts = [ 8081 ];
+  networking.firewall.allowedTCPPorts = [ 24800 ];
 
   hardware.enableRedistributableFirmware = true;
   hardware.firmware = with pkgs; [
@@ -154,6 +156,7 @@ in
       papirus-folders
 
       # APPLICATIONS
+      spicetify-cli
       unstable.firefox
       feh
       unstable.obs-studio
@@ -164,6 +167,7 @@ in
       libreoffice
       unstable.vscode
       unstable.spotify
+      deskflow
 
       # GRAPHICS & MEDIA
       libxres

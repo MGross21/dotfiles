@@ -34,8 +34,10 @@ in
       "flakes"
     ];
 
+    warn-dirty = false;
+
     # Build tuning
-    cores = 0;
+    cores = 0; # all available
     max-jobs = "auto";
 
     # Store and download tuning
@@ -45,6 +47,20 @@ in
     # Binary cache sources
     substituters = [
       "https://cache.nixos.org/"
+      "https://nix-community.cachix.org"
+      "https://hyprland.cachix.org"
+      "https://nix-gaming.cachix.org"
+      "https://nixpkgs-wayland.cachix.org"
+      "https://cuda-maintainers.cachix.org"
+    ];
+
+    trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCUSDs="
+      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
+      "nixpkgs-wayland.cachix.org-1:3lwxazbmo/Kp5EbFd4aq+Z6ATkSTt6+yJIFQFwkqQQ8="
+      "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
     ];
 
     http-connections = 50;
