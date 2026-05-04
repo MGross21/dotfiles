@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
   boot.loader = {
     systemd-boot.enable = false;
@@ -15,9 +15,10 @@
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.extraModulePackages = [ config.boot.kernelPackages.msi-ec ];
-  boot.kernelModules = [
+  boot.kernelModules = lib.mkBefore [
     "msi-ec"
     "nvidia-drm"
+    "acpi_backlight"
   ];
   boot.kernelParams = [ "mem_sleep_default=deep" ];
 

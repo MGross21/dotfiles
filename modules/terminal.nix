@@ -288,6 +288,7 @@
       update = "nix flake update --flake ~/dotfiles && sudo nixos-rebuild switch --flake ~/dotfiles#msi";
       nixrebuild = "sudo nixos-rebuild switch --flake ~/dotfiles#msi";
       nixrollback = "sudo nixos-rebuild switch --flake ~/dotfiles#msi --rollback";
+      nixgens = "nixos-rebuild list-generations --flake ~/dotfiles#msi";
       nixgc = "sudo nix-collect-garbage --delete-older-than 7d";
       nixhash = "nix-prefetch-url --unpack --type sha256";
       search = "nix-search-tv print | fzf --preview 'nix-search-tv preview {}' --scheme history";
