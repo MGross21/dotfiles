@@ -2,6 +2,7 @@
 
 ![Desktop Preview Blank](Pictures/screenshots/version3_1.png)
 ![Desktop Preview Apps](Pictures/screenshots/version3_1_desktop.png)
+![Login Screen](Pictures/screenshots/version3_1_login.png)
 
 ## System Info
 
