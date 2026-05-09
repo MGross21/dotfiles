@@ -9,6 +9,8 @@
   programs.hyprland = {
     enable = true;
     package = pkgs.hyprland;
+    withUWSM = true;
+    xwayland.enable = true;
   };
 
   # XDG Desktop Portal for sandboxed applications
@@ -21,7 +23,6 @@
       "hyprland"
     ];
   };
-  programs.xwayland.enable = true;
 
   services.displayManager.ly.enable = true;
   services.displayManager.ly.settings = {
