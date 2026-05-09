@@ -92,9 +92,9 @@ in
   };
 
   services.logind.settings.Login = {
-    LidSwitch = "ignore";
-    LidSwitchExternalPower = "ignore";
-    LidSwitchDocked = "ignore";
+    HandleLidSwitch = "ignore";
+    HandleLidSwitchExternalPower = "ignore";
+    HandleLidSwitchDocked = "ignore";
     IdleAction = "ignore";
     IdleActionSec = "0";
   };
