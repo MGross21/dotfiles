@@ -3,6 +3,7 @@
 ![Desktop Preview Blank](Pictures/screenshots/version3_1.png)
 ![Desktop Preview Apps](Pictures/screenshots/version3_1_desktop.png)
 ![Login Screen](Pictures/screenshots/version3_1_login.png)
+![GRUB Theme](Pictures/screenshots/version3_1_boot.png)
 
 ## System Info
 
@@ -11,13 +12,14 @@
 | **Kernel**        | [Linux](https://github.com/torvalds/linux)                           |  Year of the Linux Desktop  |
 | **Distribution**  | [Arch](https://archlinux.org) / [NixOS](https://nixos.org)            |       *Arch/Nix btw*        |
 | **Window Manager**| [Hyprland](https://wiki.hyprland.org)                                |    Tiling / Wayland         |
-| **Graphics**      | [NVIDIA](https://wiki.archlinux.org/title/NVIDIA)                    |     Proprietary Drivers     |
-| **GRUB Theme**    | [Dark Mojave](https://github.com/vinceliuice/Elegant-grub2-themes)   |      Right Window           |
+| **Graphics**      | [NVIDIA](https://wiki.archlinux.org/title/NVIDIA)                    |     Open Kernel Modules     |
+| **GRUB Theme**    | [Sekiro](https://github.com/AbijithBalaji/sekiro_grub_theme)         |      From the Ashes         |
 | **Terminal**      | [Ghostty](https://github.com/mitchellh/ghostty)                  | Fast, GPU-accelerated       |
 | **Shell**         | [Zsh](https://www.zsh.org)                                           |    Z-Shell (*"zish"*)       |
 | **Font**          | [Ubuntu](https://design.ubuntu.com/font/)                            |         *sacrilegious*      |
 | **System Theme**  | [Materia Dark Compact](https://github.com/nana-4/materia-theme)      |      Based on Adwaita       |
-| **Icon Theme**   | [Tela Circle](https://github.com/vinceliuice/Tela-circle-icon-theme)  |       Red, Dark             |
+| **Icon Theme**    | [Papirus](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme) |       Red, Dark             |
+| **Login Manager** | [Ly](https://codeberg.org/fairyglade/ly)                             |      TUI Login Manager      |
 
 ## Download ISO
 
