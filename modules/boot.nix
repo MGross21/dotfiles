@@ -1,4 +1,21 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
+let
+  sekiro-grub-theme = pkgs.stdenv.mkDerivation {
+    pname = "sekiro-grub-theme";
+    version = "unstable";
+    src = pkgs.fetchFromGitHub {
+      owner = "AbijithBalaji";
+      repo = "sekiro_grub_theme";
+      rev = "main";
+      sha256 = "sha256-uXwDjb0+ViQvdesG5gefC5zFAiFs/FfDfeI5t7vP+Qc=";
+    };
+    dontBuild = true;
+    installPhase = ''
+      mkdir -p $out
+      cp -r Sekiro/. $out/
+    '';
+  };
+in
 {
   boot.loader = {
     systemd-boot.enable = false;
@@ -8,44 +25,11 @@
       efiSupport = true;
       device = "nodev";
       efiInstallAsRemovable = true;
+      theme = sekiro-grub-theme;
     };
 
     efi.canTouchEfiVariables = false;
   };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.extraModulePackages = [ config.boot.kernelPackages.msi-ec ];
-  boot.kernelModules = lib.mkBefore [
-    "msi-ec"
-    "nvidia-drm"
-    "acpi_backlight"
-  ];
-  boot.kernelParams = [ "mem_sleep_default=deep" ];
-
-  hardware.graphics.enable = true;
-  hardware.nvidia = {
-    open = true;
-    modesetting.enable = true;
-    powerManagement.enable = true;
-    powerManagement.finegrained = true;
-    nvidiaSettings = true;
-    prime = {
-      offload.enable = true;
-      intelBusId = "PCI:0:2:0";
-      nvidiaBusId = "PCI:1:0:0";
-    };
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
-  };
-
-  hardware.graphics.enable32Bit = true;
-
-  # Ensure 32-bit support packages
-  environment.systemPackages = with pkgs; [
-    libva
-    libva-vdpau-driver
-    libvdpau-va-gl
-  ];
-
-  services.xserver.videoDrivers = [ "nvidia" ];
-  boot.blacklistedKernelModules = [ "nouveau" ];
 }
