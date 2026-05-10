@@ -28,9 +28,12 @@ in
   imports = [
     ./hardware-configuration.nix
     ../../configuration.nix
+    ../../modules/disko.nix
   ];
 
   networking.hostName = "msi";
+
+  disko.devices.disk.main.device = "/dev/nvme0n1";
 
   system.autoUpgrade = {
     enable = true;

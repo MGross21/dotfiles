@@ -16,6 +16,10 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     hyprland.url = "github:hyprwm/Hyprland";
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -24,6 +28,7 @@
       nixpkgs,
       nixpkgs-unstable,
       hyprland,
+      disko,
       ...
     }:
     let
@@ -50,6 +55,7 @@
           inherit unstable;
         };
         modules = [
+          disko.nixosModules.disko
           ./hosts/msi/default.nix
         ];
       };

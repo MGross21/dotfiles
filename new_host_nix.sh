@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: ./new_host_nix.sh [--host NAME] [--yes]
+Usage: ./new_host_nix.sh [--host NAME] [--disk DEVICE] [--yes]
 
 Creates:
   hosts/<host>/default.nix
@@ -18,6 +18,10 @@ Host resolution order:
   4) $HOST
   5) hostname
 
+Disk resolution order:
+  1) --disk DEVICE  (e.g. /dev/nvme0n1, /dev/sda)
+  2) interactive prompt
+
 By default, prompts before writing files.
 Use --yes to skip prompts.
 EOF
@@ -25,11 +29,16 @@ EOF
 
 confirm=true
 host_arg=""
+disk_arg=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --host)
       host_arg="${2:-}"
+      shift 2
+      ;;
+    --disk)
+      disk_arg="${2:-}"
       shift 2
       ;;
     --yes|-y)
@@ -80,6 +89,19 @@ resolve_host() {
   hostname
 }
 
+resolve_disk() {
+  if [[ -n "$disk_arg" ]]; then
+    printf '%s\n' "$disk_arg"
+    return
+  fi
+
+  echo "Available block devices:" >&2
+  lsblk -d -o NAME,SIZE,MODEL 2>/dev/null | grep -v "^loop" >&2 || true
+  echo "" >&2
+  read -r -p "Target disk device (e.g. /dev/nvme0n1, /dev/sda): " disk_input
+  printf '%s\n' "$disk_input"
+}
+
 host="$(resolve_host)"
 
 if [[ ! "$host" =~ ^[a-zA-Z0-9._-]+$ ]]; then
@@ -101,9 +123,17 @@ host_dir="$repo_root/hosts/$host"
 default_file="$host_dir/default.nix"
 hw_file="$host_dir/hardware-configuration.nix"
 
+disk="$(resolve_disk)"
+
+if [[ ! "$disk" =~ ^/dev/ ]]; then
+  echo "Invalid disk device: $disk (must start with /dev/)" >&2
+  exit 1
+fi
+
 if [[ "$confirm" == true ]]; then
   echo "About to create/update host: $host"
   echo "  Directory: $host_dir"
+  echo "  Disk:      $disk"
   read -r -p "Continue? [y/N] " answer
   if [[ ! "$answer" =~ ^[Yy]$ ]]; then
     echo "Aborted."
@@ -122,9 +152,12 @@ else
   imports = [
     ./hardware-configuration.nix
     ../../configuration.nix
+    ../../modules/disko.nix
   ];
 
   networking.hostName = "$host";
+
+  disko.devices.disk.main.device = "$disk";
 }
 EOF
   echo "Created: $default_file"
@@ -138,7 +171,7 @@ else
     echo "hardware-configuration.nix already exists: $hw_file"
   else
     cat > "$hw_file" <<'EOF'
-# Placeholder file. Generate this on the target machine with:
+# Placeholder — generate on target machine with:
 # sudo nixos-generate-config --show-hardware-config > hosts/<host>/hardware-configuration.nix
 { ... }:
 {
@@ -158,6 +191,7 @@ else
           inherit unstable;
         };
         modules = [
+          disko.nixosModules.disko
           ./hosts/${host}/default.nix
         ];
       };
@@ -187,4 +221,13 @@ fi
 
 echo
 echo "Done."
-echo "Build with: sudo nixos-rebuild switch --flake .#$host"
+echo ""
+echo "Deploy to new machine (from this machine, target booted into NixOS minimal ISO):"
+echo ""
+echo "  # On target — enable SSH:"
+echo "  systemctl start sshd && passwd"
+echo ""
+echo "  # From this machine:"
+echo "  nix run github:nix-community/nixos-anywhere -- --flake path:$repo_root#$host root@<target-ip>"
+echo ""
+echo "Or rebuild locally: sudo nixos-rebuild switch --flake path:$repo_root#$host"
