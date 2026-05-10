@@ -1,31 +1,19 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running 'nixos-help').
-
 {
-  config,
   pkgs,
   lib,
+  unstable,
   ...
 }:
-
-let
-  unstable = import (builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz") {
-    system = pkgs.stdenv.hostPlatform.system;
-    config = pkgs.config;
-  };
-in
 {
+  _module.args.theme = import ./themes/tomorrow-night-burns.nix;
+
   imports = [
     ./modules/boot.nix
     ./modules/system.nix
     ./modules/terminal.nix
-    # ./modules/desktops/gnome.nix
     ./modules/desktops/hyprland.nix
     ./modules/users/mgross.nix
   ];
-
-  _module.args.unstable = unstable;
 
   nix.settings = {
     experimental-features = [
@@ -35,11 +23,9 @@ in
 
     warn-dirty = false;
 
-    # Build tuning
-    cores = 0; # all available
+    cores = 0;
     max-jobs = "auto";
 
-    # Store and download tuning
     auto-optimise-store = true;
     download-buffer-size = 67108864;
     accept-flake-config = true;
@@ -47,7 +33,6 @@ in
     http-connections = 50;
     narinfo-cache-negative-ttl = 0;
 
-    # Users allowed to administer the nix-daemon/store
     trusted-users = [
       "root"
       "@wheel"
@@ -61,14 +46,6 @@ in
   };
 
   nix.optimise.automatic = true;
-
-  system.autoUpgrade = {
-    enable = true;
-    flake = "github:MGross21/dotfiles#msi";
-    flags = [ "--update-input" "nixpkgs" ];
-    dates = "daily";
-    allowReboot = false;
-  };
 
   time.timeZone = "America/Los_Angeles";
 
@@ -85,8 +62,6 @@ in
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
   };
-
-  programs.firefox.enable = true;
 
   system.stateVersion = "25.11";
 }

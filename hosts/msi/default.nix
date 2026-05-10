@@ -32,6 +32,14 @@ in
 
   networking.hostName = "msi";
 
+  system.autoUpgrade = {
+    enable = true;
+    flake = "github:MGross21/dotfiles#msi";
+    flags = [ "--update-input" "nixpkgs" ];
+    dates = "daily";
+    allowReboot = false;
+  };
+
   # MSI-specific kernel modules
   boot.kernelModules = lib.mkBefore [
     "nvidia-drm"

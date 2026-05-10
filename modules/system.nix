@@ -216,6 +216,8 @@ in
       ]
     );
 
+  programs.firefox.enable = true;
+
   fonts.packages = with pkgs; [
     jetbrains-mono
     ubuntu-classic

@@ -48,7 +48,6 @@
         inherit system;
         specialArgs = {
           inherit unstable;
-          theme = import ./themes/tomorrow-night-burns.nix;
         };
         modules = [
           ./hosts/msi/default.nix
