@@ -17,7 +17,6 @@ let
 in
 {
   imports = [
-    ./hosts/msi/hardware-configuration.nix
     ./modules/boot.nix
     ./modules/system.nix
     ./modules/terminal.nix
