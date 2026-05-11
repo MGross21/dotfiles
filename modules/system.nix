@@ -4,26 +4,9 @@
   unstable,
   ...
 }:
-let
-  isX86_64 = pkgs.stdenv.hostPlatform.isx86_64;
-
-  papirus-red = pkgs.runCommand "papirus-icon-theme-red" {
-    nativeBuildInputs = [ pkgs.papirus-folders ];
-  } ''
-    tmpdir=$(mktemp -d)
-    cp -r ${pkgs.papirus-icon-theme}/share/icons/. $tmpdir/
-    chmod -R u+w $tmpdir
-    DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus -C red
-    DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus-Dark -C red
-    DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus-Light -C red
-    mkdir -p $out/share/icons
-    cp -r $tmpdir/. $out/share/icons/
-  '';
-in
 {
   networking.networkmanager.enable = true;
   networking.firewall.allowedUDPPorts = [ 8081 ];
-  networking.firewall.allowedTCPPorts = [ 24800 ];
 
   hardware.enableRedistributableFirmware = true;
   hardware.firmware = with pkgs; [
@@ -48,19 +31,11 @@ in
       ControlPersist 10m
       AddKeysToAgent yes
   '';
+
   services.gnome.gnome-keyring.enable = true;
-  services.udisks2.enable = true;
-  services.gvfs.enable = true;
 
-  services.printing.enable = true;
+  security.pam.services.login.enableGnomeKeyring = true;
 
-  security.pam.services = {
-    login.enableGnomeKeyring = true;
-    ly.enableGnomeKeyring = true;
-  };
-
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
   security.sudo = {
     enable = true;
     extraConfig = ''
@@ -71,33 +46,12 @@ in
 
   environment.sessionVariables = {
     SUDO_PROMPT = "%u password: ";
-    MOZ_DBUS_REMOTE = "1";
-    MOZ_ENABLE_WAYLAND = "1";
-    MOZ_GTK_TITLEBAR_DECORATION = "client";
-    MOZ_DISABLE_SPLASH = "1";
   };
 
   environment.extraOutputsToInstall = lib.mkForce [
     "man"
     "info"
   ];
-
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    jack.enable = true;
-    pulse.enable = true;
-    wireplumber.enable = true;
-  };
-
-  services.logind.settings.Login = {
-    HandleLidSwitch = "ignore";
-    HandleLidSwitchExternalPower = "ignore";
-    HandleLidSwitchDocked = "ignore";
-    IdleAction = "ignore";
-    IdleActionSec = "0";
-  };
 
   services.power-profiles-daemon.enable = false;
   services.tlp = {
@@ -129,7 +83,6 @@ in
       SOUND_POWER_SAVE_CONTROLLER = "Y";
 
       NMI_WATCHDOG = 0;
-
     };
   };
 
@@ -140,93 +93,4 @@ in
   programs.nix-ld.enable = true;
 
   nixpkgs.config.allowUnfree = true;
-
-  programs.thunar = {
-    enable = true;
-    plugins = with pkgs; [
-      thunar-volman
-      thunar-archive-plugin
-      thunar-media-tags-plugin
-      thunar-vcs-plugin
-      thunar-shares-plugin
-    ];
-  };
-
-  environment.systemPackages =
-    with pkgs;
-    [
-      # Graphical terminal app
-      unstable.ghostty
-
-      # Graphical file manager stack
-      tumbler
-
-      # THEMING
-      papirus-red
-      papirus-folders
-
-      # APPLICATIONS
-      spicetify-cli
-      unstable.firefox
-      feh
-      unstable.obs-studio
-      kicad
-      gimp
-      rawtherapee
-      gthumb
-      libreoffice
-      unstable.vscode
-      unstable.spotify
-      deskflow
-
-      # GRAPHICS & MEDIA
-      libxres
-      gamemode
-      xwayland
-      qt5.qtbase
-      qt5.qtwayland
-      qt6.qtbase
-      qt6.qtwayland
-
-      # AUDIO
-      pavucontrol
-
-      # SECURITY & UTILITIES
-      libsecret
-      seahorse
-      hyprpolkitagent
-      polkit_gnome
-      mcontrolcenter
-
-      # Notifications
-      dunst
-
-      # Search
-      nix-search-tv
-
-      # haskellPackages.cuda
-    ]
-    ++ lib.optionals isX86_64 (
-      with pkgs;
-      [
-        # x86_64-only apps
-        unstable.discord
-        unstable.steam
-        unstable.zoom-us
-      ]
-    );
-
-  programs.firefox.enable = true;
-
-  fonts.packages = with pkgs; [
-    jetbrains-mono
-    ubuntu-classic
-    nerd-fonts.ubuntu
-    nerd-fonts.jetbrains-mono
-    nerd-fonts.symbols-only
-    font-awesome
-    noto-fonts
-    noto-fonts-cjk-sans
-    noto-fonts-monochrome-emoji
-  ];
 }

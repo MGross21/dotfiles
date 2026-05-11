@@ -11,7 +11,6 @@
     ./modules/boot.nix
     ./modules/system.nix
     ./modules/terminal.nix
-    ./modules/desktops/hyprland.nix
     ./modules/users/mgross.nix
   ];
 

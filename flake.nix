@@ -59,6 +59,16 @@
           ./hosts/msi/default.nix
         ];
       };
+      nixosConfigurations.dell = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = {
+          inherit unstable;
+        };
+        modules = [
+          disko.nixosModules.disko
+          ./hosts/dell/default.nix
+        ];
+      };
       # End host entries
     };
 }

@@ -248,6 +248,7 @@
       cat = "bat --paging=auto --style=plain --color=always --theme=ansi";
       bat = "bat";
       ping = "ping -c 3";
+      dd = "dd bs=4M status=progress conv=fsync,noerror";
 
       # Listing and editor
       ls = "eza --color=auto --icons";

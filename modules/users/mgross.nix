@@ -6,6 +6,7 @@ in
   users.users.mgross = {
     isNormalUser = true;
     description = "Michael Gross";
+    initialPassword = "changeme";
     extraGroups = [
       "wheel"
       "networkmanager"

@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: ./new_host_nix.sh [--host NAME] [--disk DEVICE] [--yes]
+Usage: ./new_host_nix.sh [--host NAME] [--disk DEVICE] [--desktop] [--no-desktop] [--yes]
 
 Creates:
   hosts/<host>/default.nix
@@ -30,6 +30,7 @@ EOF
 confirm=true
 host_arg=""
 disk_arg=""
+desktop_arg=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -40,6 +41,14 @@ while [[ $# -gt 0 ]]; do
     --disk)
       disk_arg="${2:-}"
       shift 2
+      ;;
+    --desktop)
+      desktop_arg="yes"
+      shift
+      ;;
+    --no-desktop)
+      desktop_arg="no"
+      shift
       ;;
     --yes|-y)
       confirm=false
@@ -130,10 +139,20 @@ if [[ ! "$disk" =~ ^/dev/ ]]; then
   exit 1
 fi
 
+if [[ -z "$desktop_arg" ]]; then
+  read -r -p "Include desktop (Hyprland, GUI apps)? [y/N] " desktop_answer
+  if [[ "$desktop_answer" =~ ^[Yy]$ ]]; then
+    desktop_arg="yes"
+  else
+    desktop_arg="no"
+  fi
+fi
+
 if [[ "$confirm" == true ]]; then
   echo "About to create/update host: $host"
   echo "  Directory: $host_dir"
   echo "  Disk:      $disk"
+  echo "  Desktop:   $desktop_arg"
   read -r -p "Continue? [y/N] " answer
   if [[ ! "$answer" =~ ^[Yy]$ ]]; then
     echo "Aborted."
@@ -146,12 +165,17 @@ mkdir -p "$host_dir"
 if [[ -f "$default_file" ]]; then
   echo "default.nix already exists: $default_file"
 else
+  desktop_import=""
+  if [[ "$desktop_arg" == "yes" ]]; then
+    desktop_import=$'\n    ../../modules/desktop.nix'
+  fi
+
   cat > "$default_file" <<EOF
 { ... }:
 {
   imports = [
     ./hardware-configuration.nix
-    ../../configuration.nix
+    ../../configuration.nix${desktop_import}
     ../../modules/disko.nix
   ];
 
@@ -171,10 +195,15 @@ else
     echo "hardware-configuration.nix already exists: $hw_file"
   else
     cat > "$hw_file" <<'EOF'
-# Placeholder — generate on target machine with:
-# sudo nixos-generate-config --show-hardware-config > hosts/<host>/hardware-configuration.nix
-{ ... }:
+# Generated post-install on target. Run:
+# nixos-generate-config --show-hardware-config --no-filesystems
+# and replace this file with the output.
+{ config, lib, modulesPath, ... }:
 {
+  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
 EOF
     echo "Created placeholder: $hw_file"
