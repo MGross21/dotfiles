@@ -1,4 +1,5 @@
 -- https://wiki.hypr.land/Configuring/Start/
+pcall(dofile, "/etc/hypr/colors.lua")
 
 require("module.monitors")
 require("module.workspaces")

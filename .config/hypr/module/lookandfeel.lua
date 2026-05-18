@@ -6,8 +6,8 @@ hl.config({
         gaps_out = 0,
         border_size = 1,
         col = {
-            active_border = "rgba(fc595fff)",
-            inactive_border = "rgba(00000000)",
+            active_border   = THEME_ACTIVE   or "rgba(fc595fff)",  -- set by /etc/hypr/colors.lua when lua config is active
+            inactive_border = THEME_INACTIVE or "rgba(00000000)",
         },
         resize_on_border = true,
         allow_tearing = false,
@@ -41,7 +41,6 @@ hl.config({
     },
 
     dwindle = {
-        pseudotile = true,
         preserve_split = true,
     },
 
@@ -61,7 +60,6 @@ hl.config({
         force_default_wallpaper = 0,
         disable_hyprland_logo = true,
         vrr = 1,
-        vfr = true,
     },
 })
 
