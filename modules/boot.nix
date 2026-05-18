@@ -26,6 +26,7 @@ in
       device = "nodev";
       efiInstallAsRemovable = true;
       theme = sekiro-grub-theme;
+      copyKernels = true;
     };
 
     efi.canTouchEfiVariables = false;
