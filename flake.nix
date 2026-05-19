@@ -14,7 +14,6 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     hyprland.url = "github:hyprwm/Hyprland";
     disko = {
       url = "github:nix-community/disko";
@@ -30,7 +29,6 @@
     {
       self,
       nixpkgs,
-      nixpkgs-unstable,
       hyprland,
       disko,
       stylix,
@@ -39,13 +37,6 @@
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-        overlays = [
-          (_: prev: { hyprland = hyprland.packages.${system}.hyprland; })
-        ];
-      };
-      unstable = import nixpkgs-unstable {
         inherit system;
         config.allowUnfree = true;
       };
@@ -104,7 +95,7 @@
       };
     in
     {
-      formatter.${system} = pkgs.nixfmt-rfc-style;
+      formatter.${system} = pkgs.nixfmt;
 
       nixosConfigurations.installer = installerSystem;
       packages.${system}.installer  = installerSystem.config.system.build.isoImage;
@@ -112,23 +103,25 @@
       # Host entries (managed by new_host_nix.sh)
       nixosConfigurations.msi = nixpkgs.lib.nixosSystem {
         inherit system;
-        specialArgs = {
-          inherit unstable;
-        };
         modules = [
           stylix.nixosModules.stylix
           disko.nixosModules.disko
+          {
+            programs.hyprland.package = hyprland.packages.${system}.hyprland;
+            programs.hyprland.portalPackage = hyprland.packages.${system}.xdg-desktop-portal-hyprland;
+          }
           ./hosts/msi/default.nix
         ];
       };
       nixosConfigurations.dell = nixpkgs.lib.nixosSystem {
         inherit system;
-        specialArgs = {
-          inherit unstable;
-        };
         modules = [
           stylix.nixosModules.stylix
           disko.nixosModules.disko
+          {
+            programs.hyprland.package = hyprland.packages.${system}.hyprland;
+            programs.hyprland.portalPackage = hyprland.packages.${system}.xdg-desktop-portal-hyprland;
+          }
           ./hosts/dell/default.nix
         ];
       };

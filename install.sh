@@ -1,5 +1,5 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
 for script in ./scripts/*.sh; do
   [ -e "$script" ] || continue

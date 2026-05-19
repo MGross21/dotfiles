@@ -1,7 +1,6 @@
 {
   pkgs,
   lib,
-  unstable,
   ...
 }:
 let
@@ -68,23 +67,22 @@ in
   environment.systemPackages =
     with pkgs;
     [
-      unstable.ghostty
+      ghostty
       tumbler
 
       papirus-red
       papirus-folders
 
       spicetify-cli
-      unstable.firefox
       feh
-      unstable.obs-studio
+      obs-studio
       kicad
       gimp
       rawtherapee
       gthumb
       libreoffice
-      unstable.vscode
-      unstable.spotify
+      vscode
+      spotify
       deskflow
 
       libxres
@@ -109,9 +107,9 @@ in
     ++ lib.optionals isX86_64 (
       with pkgs;
       [
-        unstable.discord
-        unstable.steam
-        unstable.zoom-us
+        discord
+        steam
+        zoom-us
       ]
     );
 

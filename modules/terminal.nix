@@ -537,7 +537,7 @@
     clipse
     spotify-player
 
-    nixfmt-rfc-style
+    nixfmt
     efibootmgr
     python3
     mpv-unwrapped

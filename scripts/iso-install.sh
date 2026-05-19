@@ -35,20 +35,18 @@ echo -e "${NC}"
 # ── Wait for dotfiles ────────────────────────────────────────────────────────
 if [[ ! -d "$DOTFILES_DIR/.git" ]]; then
   info "Dotfiles not found — cloning..."
-  if ! ping -c1 -W3 github.com &>/dev/null; then
-    die "No network. Connect and re-run."
-  fi
+  ping -c1 -W3 github.com &>/dev/null || die "No network. Connect and re-run."
   git clone "$DOTFILES_REPO" "$DOTFILES_DIR" || die "Clone failed"
 fi
 ok "Dotfiles ready at $DOTFILES_DIR"
 
 # ── Disk selection ───────────────────────────────────────────────────────────
-echo ""
+echo
 info "Available disks:"
-echo ""
+echo
 lsblk -d -o NAME,SIZE,MODEL,TRAN --noheadings | grep -v "^loop" | \
   awk '{printf "  /dev/%-10s %6s  %-30s %s\n", $1, $2, $3, $4}'
-echo ""
+echo
 
 while true; do
   read -rp "$(echo -e "${BOLD}Target disk (e.g. /dev/nvme0n1): ${NC}")" DISK
@@ -58,14 +56,14 @@ while true; do
 done
 
 # ── Host config selection ────────────────────────────────────────────────────
-echo ""
+echo
 info "Available host configs:"
-mapfile -t HOSTS < <(ls "$DOTFILES_DIR/hosts/")
+mapfile -t HOSTS < <(find "$DOTFILES_DIR/hosts" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort)
 for i in "${!HOSTS[@]}"; do
   echo "  $((i+1))) ${HOSTS[$i]}"
 done
 echo "  $((${#HOSTS[@]}+1))) Enter new hostname"
-echo ""
+echo
 
 while true; do
   read -rp "$(echo -e "${BOLD}Select [1-$((${#HOSTS[@]}+1))]: ${NC}")" CHOICE
@@ -83,45 +81,40 @@ while true; do
 done
 
 # ── Confirm ──────────────────────────────────────────────────────────────────
-echo ""
+echo
 echo -e "${BOLD}Summary:${NC}"
 echo "  Disk:   $DISK"
 echo "  Host:   $HOST"
 echo "  Flake:  $DOTFILES_DIR#$HOST"
-echo ""
+echo
 echo -e "${RED}${BOLD}WARNING: $DISK will be COMPLETELY AND IRREVERSIBLY ERASED.${NC}"
-echo ""
+echo
 read -rp "Type the disk path to confirm ($(basename "$DISK")): " CONFIRM
 [[ "$CONFIRM" == "$(basename "$DISK")" ]] || die "Confirmation mismatch — aborted"
 
 # ── Partition with disko ─────────────────────────────────────────────────────
-echo ""
+echo
 info "Partitioning $DISK with disko..."
 nix run github:nix-community/disko -- \
   --mode disko \
   --flake "$DOTFILES_DIR#$HOST" \
-  --arg diskoFile "\"$DOTFILES_DIR/modules/disko.nix\"" \
-  2>&1 || \
-nix run github:nix-community/disko -- \
-  --mode disko \
-  --flake "$DOTFILES_DIR#$HOST" \
-  2>&1 || die "Disko failed"
+  || die "Disko failed"
 ok "Disk partitioned and mounted at $MNT"
 
 # ── Install ──────────────────────────────────────────────────────────────────
-echo ""
+echo
 info "Installing NixOS ($HOST)..."
 nixos-install \
   --flake "$DOTFILES_DIR#$HOST" \
   --root "$MNT" \
   --no-root-passwd \
-  2>&1 || die "nixos-install failed"
+  || die "nixos-install failed"
 ok "Installation complete"
 
 # ── Done ─────────────────────────────────────────────────────────────────────
-echo ""
+echo
 echo -e "${GREEN}${BOLD}Installation successful!${NC}"
-echo ""
+echo
 read -rp "Reboot now? [Y/n] " REBOOT
 if [[ ! "$REBOOT" =~ ^[Nn]$ ]]; then
   info "Rebooting..."
