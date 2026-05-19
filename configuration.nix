@@ -5,9 +5,8 @@
   ...
 }:
 {
-  _module.args.theme = import ./themes/tomorrow-night-burns.nix;
-
   imports = [
+    ./modules/theme.nix
     ./modules/boot.nix
     ./modules/system.nix
     ./modules/terminal.nix

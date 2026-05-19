@@ -1,7 +1,5 @@
-{ pkgs, theme, ... }:
+{ pkgs, ... }:
 {
-  console.colors = theme.ansi;
-
   programs.tmux = {
     enable = true;
     baseIndex = 1;
@@ -164,12 +162,13 @@
       [[ -f "$HOME/.paths" ]] && source "$HOME/.paths"
 
       if command -v vivid >/dev/null 2>&1; then
-        theme="tomorrow-night-burns"
+        _vivid_theme="''${VIVID_THEME:-tomorrow-night}"
         if [[ "$TERM" == "linux" ]]; then
-          export LS_COLORS="$(vivid -m 8-bit generate "$theme")"
+          export LS_COLORS="$(vivid -m 8-bit generate "$_vivid_theme")"
         else
-          export LS_COLORS="$(vivid generate "$theme")"
+          export LS_COLORS="$(vivid generate "$_vivid_theme")"
         fi
+        unset _vivid_theme
       fi
 
       if [[ -n "$TMUX" ]]; then
@@ -399,6 +398,7 @@
       soundtest = "speaker-test -c 8 -t wav";
       hyprreload = "hyprctl reload";
       hyprlog = "journalctl -xe | grep Hyprland";
+      hyprlogs = "tail -f /run/user/$UID/hypr/*/hyprland.log";
       hyprconfig = "$EDITOR $HOME/.config/hypr/";
       monitors = "hyprctl monitors all";
       logout = "uwsm stop || hyprctl dispatch exit";

@@ -188,7 +188,7 @@ EOF
 fi
 
 if command -v nixos-generate-config >/dev/null 2>&1; then
-  nixos-generate-config --show-hardware-config > "$hw_file"
+  nixos-generate-config --show-hardware-config --no-filesystems > "$hw_file"
   echo "Generated: $hw_file"
 else
   if [[ -f "$hw_file" ]]; then
@@ -220,6 +220,7 @@ else
           inherit unstable;
         };
         modules = [
+          stylix.nixosModules.stylix
           disko.nixosModules.disko
           ./hosts/${host}/default.nix
         ];

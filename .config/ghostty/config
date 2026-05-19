@@ -3,10 +3,7 @@ font-size = 11
 
 shell-integration = zsh
 
-theme = Tomorrow Night Burns
-
-background = "#000000"
-foreground = "#ffffff"
+config-file = /etc/ghostty-theme.conf
 
 background-opacity = 0.2
 background-blur = true

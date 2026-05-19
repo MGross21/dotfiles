@@ -1,5 +1,6 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, theme, ... }:
 let
+  accentHex = lib.removePrefix "#" theme.blue;
   msi-perkeyrgb = pkgs.python3Packages.buildPythonApplication {
     pname = "msi-perkeyrgb";
     version = "2.1";
@@ -105,4 +106,15 @@ in
   };
 
   programs.zsh.shellAliases.keycolor = "msi-perkeyrgb --model GS65 -s";
+
+  systemd.user.services.keyboard-theme = {
+    description   = "Apply keyboard RGB from active theme";
+    wantedBy      = [ "graphical-session.target" ];
+    after         = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type            = "oneshot";
+      RemainAfterExit = true;
+      ExecStart       = "${msi-perkeyrgb}/bin/msi-perkeyrgb --model GS65 -s ${accentHex}";
+    };
+  };
 }

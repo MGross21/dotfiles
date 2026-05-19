@@ -20,6 +20,10 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -29,6 +33,7 @@
       nixpkgs-unstable,
       hyprland,
       disko,
+      stylix,
       ...
     }:
     let
@@ -55,6 +60,7 @@
           inherit unstable;
         };
         modules = [
+          stylix.nixosModules.stylix
           disko.nixosModules.disko
           ./hosts/msi/default.nix
         ];
@@ -65,6 +71,7 @@
           inherit unstable;
         };
         modules = [
+          stylix.nixosModules.stylix
           disko.nixosModules.disko
           ./hosts/dell/default.nix
         ];

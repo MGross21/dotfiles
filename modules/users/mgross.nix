@@ -1,6 +1,12 @@
 { config, pkgs, ... }:
 let
   homeDir = config.users.users.mgross.home;
+  vscodeTheme = pkgs.fetchFromGitHub {
+    owner = "MGross21";
+    repo  = "vscode-tomorrow-night-burns";
+    rev   = "fa722503c82a455c4131071a0b101aeecbb68313";
+    sha256 = "05g6a9nr8nqf2aj4gcvblxpp8i86n12y41b3hvfknjgijxliip2b";
+  };
 in
 {
   users.users.mgross = {
@@ -28,6 +34,12 @@ in
     "L ${homeDir}/.config - mgross users - ${homeDir}/dotfiles/.config"
     "L+ ${homeDir}/Pictures - mgross users - ${homeDir}/dotfiles/Pictures"
   ];
+
+  system.activationScripts.vscodeTheme.text = ''
+    install -d -m 0700 -o mgross -g users "${homeDir}/.vscode/extensions"
+    ln -sfn ${vscodeTheme} "${homeDir}/.vscode/extensions/alii.vscode-tomorrow-night-burns-master"
+    chown -h mgross:users "${homeDir}/.vscode/extensions/alii.vscode-tomorrow-night-burns-master"
+  '';
 
   # Keep argv.json user-owned on NixOS to avoid root-owned VS Code config files.
   system.activationScripts.vscodeArgvJson.text = ''
