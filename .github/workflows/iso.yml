@@ -1,0 +1,68 @@
+name: Build Installer ISO
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'flake.nix'
+      - 'flake.lock'
+      - 'configuration.nix'
+      - 'modules/**'
+      - 'themes/**'
+      - '.github/workflows/iso.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v27
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config   = true
+            max-jobs              = 2
+            cores                 = 2
+            narinfo-cache-negative-ttl = 0
+            extra-substituters    = https://nix-community.cachix.org https://hyprland.cachix.org
+            extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=
+
+      # Caches the entire Nix store between runs — biggest speed gain
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+
+      - name: Build ISO
+        run: nix build .#installer --out-link result -L --keep-going
+
+      - name: Compress ISO
+        run: |
+          ISO=$(ls result/iso/nixos-*.iso)
+          zstd -19 -T0 --no-progress "$ISO" -o installer.iso.zst
+          echo "Original:   $(du -sh "$ISO" | cut -f1)"
+          echo "Compressed: $(du -sh installer.iso.zst | cut -f1)"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nixos-installer-${{ github.sha }}
+          path: installer.iso.zst
+          compression-level: 0   # already zstd compressed
+          retention-days: 14
+
+      - name: Release
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: installer-latest
+          name: Installer ISO (latest)
+          files: installer.iso.zst
+          body: |
+            Built from ${{ github.sha }}.
+            Boots with SSH + dotfiles pre-cloned at /root/dotfiles.
+
+            Flash: `zstd -d installer.iso.zst | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync`
