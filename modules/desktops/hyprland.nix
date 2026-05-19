@@ -136,20 +136,7 @@
   # environment.variables.LIBVA_DRIVER_NAME = "nvidia";
   # environment.variables.LIBVA_DRIVERS_PATH = "${pkgs.libva}/lib/${ /* arch */ }";
 
-  # Polkit agent for authentication
-  systemd.user.services.polkit-gnome-authentication-agent-1 = {
-    description = "GNOME PolicyKit authentication agent";
-    wantedBy = [ "graphical-session.target" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-      Restart = "on-failure";
-      RestartSec = 1;
-      TimeoutStopSec = 10;
-    };
-  };
-
-  systemd.user.services.xsettingsd = {
+systemd.user.services.xsettingsd = {
     description = "XSettings daemon for GTK theme consistency";
     wantedBy = [ "graphical-session.target" ];
     after = [ "graphical-session.target" ];

@@ -100,7 +100,6 @@ in
       libsecret
       seahorse
       hyprpolkitagent
-      polkit_gnome
       mcontrolcenter
 
       dunst
