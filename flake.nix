@@ -104,7 +104,7 @@
       };
     in
     {
-      formatter.${system} = pkgs.nixpkgs-fmt;
+      formatter.${system} = pkgs.nixfmt-rfc-style;
 
       nixosConfigurations.installer = installerSystem;
       packages.${system}.installer  = installerSystem.config.system.build.isoImage;

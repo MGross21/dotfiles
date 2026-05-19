@@ -326,8 +326,8 @@
       grhh = "git reset --hard HEAD";
       gf = "git fetch --all --prune --prune-tags --progress";
       gp = "git push";
-      gpu = "git pull";
-      gpuo = "git pull origin";
+      gpu = "git pull --progress --multiple";
+      gpuo = "git pull origin --progress --multiple";
       gst = "git stash";
       gtag = "git tag";
       gtags = "git tag -l";
@@ -356,11 +356,11 @@
       largestfiles = "dust -n 20 /";
       largestdirs = "ncdu /";
 
-      update = "nix flake update --flake ~/dotfiles && sudo nixos-rebuild switch --flake path:$HOME/dotfiles#msi";
-      nixrebuild = "sudo nixos-rebuild switch --flake path:$HOME/dotfiles#msi";
-      nixrollback = "sudo nixos-rebuild switch --flake path:$HOME/dotfiles#msi --rollback";
-      nixgens = "nixos-rebuild list-generations --flake path:$HOME/dotfiles#msi";
-      nixgc = "sudo nix-collect-garbage --delete-older-than 7d";
+      update = "nix flake update --flake ~/dotfiles && nh os switch ~/dotfiles";
+      nixrebuild = "nh os switch ~/dotfiles";
+      nixrollback = "sudo nixos-rebuild switch --flake path:$HOME/dotfiles#$(hostname) --rollback";
+      nixgens = "nixos-rebuild list-generations --flake path:$HOME/dotfiles#$(hostname)";
+      nixgc = "nh clean all";
       nixhash = "nix-prefetch-url --unpack --type sha256";
       search = "nix-search-tv print | fzf --preview 'nix-search-tv preview {}' --scheme history";
 
@@ -537,7 +537,7 @@
     clipse
     spotify-player
 
-    nixfmt
+    nixfmt-rfc-style
     efibootmgr
     python3
     mpv-unwrapped

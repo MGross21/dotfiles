@@ -99,6 +99,8 @@ in
     ${pkgs.util-linux}/bin/rfkill unblock wifi
   '';
 
+  services.displayManager.ly.settings.battery_id = "BAT1";
+
   # Battery charge thresholds (this battery)
   services.tlp.settings = {
     START_CHARGE_THRESH_BAT0 = 20;

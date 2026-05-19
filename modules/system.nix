@@ -92,5 +92,12 @@
 
   programs.nix-ld.enable = true;
 
+  programs.nh = {
+    enable = true;
+    flake = "/home/mgross/dotfiles";
+    clean.enable = true;
+    clean.extraArgs = "--keep-since 7d --keep 5";
+  };
+
   nixpkgs.config.allowUnfree = true;
 }
