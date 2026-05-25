@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   sekiro-grub-theme = pkgs.stdenv.mkDerivation {
     pname = "sekiro-grub-theme";
@@ -15,6 +20,28 @@ let
       cp -r Sekiro/. $out/
     '';
   };
+
+  elegant-mojave-grub-theme = pkgs.stdenv.mkDerivation {
+    pname = "elegant-mojave-grub-theme";
+    version = "unstable";
+    src = pkgs.fetchFromGitHub {
+      owner = "vinceliuice";
+      repo = "Elegant-grub2-themes";
+      rev = "main";
+      sha256 = "09yhkqc130nqi9pncxin8f00fkqv6rrk5dml0vm1lb37gic4pdkx";
+    };
+    nativeBuildInputs = [ pkgs.imagemagick ];
+    buildPhase = ''
+      tmpdir=$(mktemp -d)
+      bash generate.sh -d "$tmpdir" -t mojave -i right
+      mkdir -p "$out"
+      cp -r "$tmpdir"/Elegant-mojave-window-right-dark/. "$out/"
+    '';
+    dontInstall = true;
+  };
+
+  grubTheme =
+    if config.theming.name == "tokyo-night" then elegant-mojave-grub-theme else sekiro-grub-theme;
 in
 {
   boot.loader = {
@@ -25,7 +52,7 @@ in
       efiSupport = true;
       device = "nodev";
       efiInstallAsRemovable = true;
-      theme = sekiro-grub-theme;
+      theme = grubTheme;
       copyKernels = true;
     };
 

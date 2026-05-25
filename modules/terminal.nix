@@ -87,7 +87,10 @@
 
   programs.zoxide = {
     enable = true;
-    flags = [ "--cmd" "cd" ];
+    flags = [
+      "--cmd"
+      "cd"
+    ];
     enableZshIntegration = true;
   };
 
@@ -113,12 +116,24 @@
     autosuggestions = {
       enable = true;
       highlightStyle = "fg=8";
-      strategy = [ "history" "completion" "match_prev_cmd" ];
+      strategy = [
+        "history"
+        "completion"
+        "match_prev_cmd"
+      ];
       async = true;
     };
     syntaxHighlighting = {
       enable = true;
-      highlighters = [ "main" "brackets" "pattern" "cursor" "regexp" "root" "line" ];
+      highlighters = [
+        "main"
+        "brackets"
+        "pattern"
+        "cursor"
+        "regexp"
+        "root"
+        "line"
+      ];
     };
     histFile = "$HOME/.zsh_history";
     histSize = 50000;
@@ -162,7 +177,7 @@
       [[ -f "$HOME/.paths" ]] && source "$HOME/.paths"
 
       if command -v vivid >/dev/null 2>&1; then
-        _vivid_theme="''${VIVID_THEME:-tomorrow-night}"
+        _vivid_theme="''${VIVID_THEME:-tomorrow-night-burns}"
         if [[ "$TERM" == "linux" ]]; then
           export LS_COLORS="$(vivid -m 8-bit generate "$_vivid_theme")"
         else

@@ -39,7 +39,7 @@
       "return-type": "plain",
       "format": "{}",
       "tooltip": false,
-      "interval": 1,
+      "interval": "once",
       "exec-on-event": ["activewindow"]
     },
 

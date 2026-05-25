@@ -6,18 +6,21 @@
 let
   isX86_64 = pkgs.stdenv.hostPlatform.isx86_64;
 
-  papirus-red = pkgs.runCommand "papirus-icon-theme-red" {
-    nativeBuildInputs = [ pkgs.papirus-folders ];
-  } ''
-    tmpdir=$(mktemp -d)
-    cp -r ${pkgs.papirus-icon-theme}/share/icons/. $tmpdir/
-    chmod -R u+w $tmpdir
-    DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus -C red
-    DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus-Dark -C red
-    DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus-Light -C red
-    mkdir -p $out/share/icons
-    cp -r $tmpdir/. $out/share/icons/
-  '';
+  papirus-red =
+    pkgs.runCommand "papirus-icon-theme-red"
+      {
+        nativeBuildInputs = [ pkgs.papirus-folders ];
+      }
+      ''
+        tmpdir=$(mktemp -d)
+        cp -r ${pkgs.papirus-icon-theme}/share/icons/. $tmpdir/
+        chmod -R u+w $tmpdir
+        DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus -C red
+        DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus-Dark -C red
+        DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus-Light -C red
+        mkdir -p $out/share/icons
+        cp -r $tmpdir/. $out/share/icons/
+      '';
 in
 {
   imports = [
@@ -80,7 +83,6 @@ in
       gimp
       rawtherapee
       gthumb
-      libreoffice
       vscode
       spotify
       deskflow
@@ -109,7 +111,6 @@ in
       [
         discord
         steam
-        zoom-us
       ]
     );
 
