@@ -46,14 +46,6 @@ jobs:
           echo "Original:   $(du -sh "$ISO" | cut -f1)"
           echo "Compressed: $(du -sh installer.iso.zst | cut -f1)"
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: nixos-installer-${{ github.sha }}
-          path: installer.iso.zst
-          compression-level: 0   # already zstd compressed
-          retention-days: 14
-
       - name: Move installer-latest tag
         if: github.ref == 'refs/heads/main'
         run: |
