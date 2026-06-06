@@ -54,6 +54,12 @@ jobs:
           compression-level: 0   # already zstd compressed
           retention-days: 14
 
+      - name: Move installer-latest tag
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git tag -f installer-latest
+          git push -f origin installer-latest
+
       - name: Release
         if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
