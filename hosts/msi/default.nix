@@ -56,7 +56,7 @@ in
 
   boot.extraModprobeConfig = ''
     options iwlwifi power_save=0
-    options iwlmvm power_scheme=1
+    options iwlmvm power_scheme=1 d0i3_disable=1 uapsd_disable=1
     options ec_sys write_support=1
     options snd_hda_intel power_save=1
     options snd_hda_intel power_save_controller=y
@@ -93,18 +93,28 @@ in
     KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="1122", MODE="0666"
   '';
 
-  # AX210 (0x2725) hard-crashes if it enters D3cold on suspend — block it and reload cleanly
-  powerManagement.powerDownCommands = ''
-    echo 0 > /sys/bus/pci/devices/0000:3d:00.0/d3cold_allowed
-    ${pkgs.kmod}/bin/modprobe -r iwlmvm || true
-    ${pkgs.kmod}/bin/modprobe -r iwlwifi || true
-  '';
-  powerManagement.resumeCommands = ''
-    ${pkgs.kmod}/bin/modprobe iwlwifi
-    sleep 1
-    ${pkgs.kmod}/bin/modprobe iwlmvm
-    ${pkgs.util-linux}/bin/rfkill unblock wifi
-  '';
+  # AX210 (0x2725) enters D3cold on suspend and hard-crashes — unload before sleep, reload after.
+  # powerManagement.powerDownCommands runs at shutdown, not suspend — use sleep.target hook instead.
+  systemd.services.ax210-suspend = {
+    description = "Unload AX210 WiFi driver before suspend, reload after resume";
+    before = [ "sleep.target" ];
+    wantedBy = [ "sleep.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeShellScript "ax210-pre-suspend" ''
+        echo 0 > /sys/bus/pci/devices/0000:3d:00.0/d3cold_allowed
+        ${pkgs.kmod}/bin/modprobe -r iwlmvm || true
+        ${pkgs.kmod}/bin/modprobe -r iwlwifi || true
+      '';
+      ExecStop = pkgs.writeShellScript "ax210-post-resume" ''
+        ${pkgs.kmod}/bin/modprobe iwlwifi
+        sleep 2
+        ${pkgs.kmod}/bin/modprobe iwlmvm
+        ${pkgs.util-linux}/bin/rfkill unblock wifi
+      '';
+    };
+  };
 
   services.displayManager.ly.settings.battery_id = "BAT1";
   services.thermald.enable = true;

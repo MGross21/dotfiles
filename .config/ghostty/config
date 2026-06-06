@@ -13,7 +13,7 @@ window-padding-y = 5
 window-padding-balance = true
 
 link-previews = true
-desktop-notifications = true
+desktop-notifications = false
 
 title = terminal
 class = g.terminal

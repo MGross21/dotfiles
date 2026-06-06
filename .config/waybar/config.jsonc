@@ -28,10 +28,24 @@
         "interval": 3
     },
 
-    "battery":{
+    "battery": {
       "exec-if": "test -d /sys/class/power_supply/BAT*",
+      "bat": "BAT1",
+      "interval": 5,
+      "states": {
+        "warning": 30,
+        "critical": 15
+      },
       "format": "{icon} {capacity}%",
-      "format-icons": [" "," "," "," "," "]
+      "format-charging": "{icon} {capacity}%",
+      "format-plugged": "{icon} {capacity}%",
+      "format-not-charging": "{icon} {capacity}%",
+      "format-full": "{icon}",
+      "format-icons": [" "," "," "," "," "],
+      "tooltip-format": "{time} remaining\nHealth: {health}%",
+      "tooltip-format-charging": "Full in {time}\nHealth: {health}%",
+      "tooltip-format-not-charging": "not charging (TLP)\nHealth: {health}%",
+      "tooltip-format-full": "Full\nHealth: {health}%"
     },
 
     "custom/window": {
@@ -92,7 +106,7 @@
     "clock": {
       "format": "{:%I:%M %p | %a %b %d}",
       "tooltip-format": "<tt><big>{calendar}</big></tt>",
-      "on-click": "alacritty --hold -o window.dimensions.columns=32 -o window.dimensions.lines=10 -e cal -3Ss"
+      "on-click": "ghostty --wait-after-command -e cal -3Ss"
     },
 
     // System Tray

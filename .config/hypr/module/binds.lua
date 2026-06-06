@@ -5,6 +5,7 @@ local mainMod = vars.mainMod
 local term = vars.terminal
 local fm = vars.fileManager
 local menu = vars.menu
+local browser = vars.browser
 
 hl.bind(mainMod .. " + return", hl.dsp.exec_cmd(term))
 hl.bind(mainMod .. " + C", hl.dsp.window.close())
@@ -16,6 +17,7 @@ hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + O", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(term .. " -e clipse | wl-copy"))
 hl.bind(mainMod .. " + semicolon", hl.dsp.exec_cmd("hyprlock"))
+hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(browser))
 
 -- Move focus with mainMod + vim motion keys
 hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))

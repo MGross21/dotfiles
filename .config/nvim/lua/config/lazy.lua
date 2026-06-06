@@ -24,17 +24,17 @@ vim.g.maplocalleader = "\\"
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
-    -- import your plugins
     { import = "plugins" },
   },
-  -- Performance optimizations
   defaults = { lazy = true },
-  install = { colorscheme = { "tomorrow-night-burns" } },
+  install = { colorscheme = { "tokyonight-storm", "tomorrow-night-burns" } },
   checker = { enabled = true },
 })
 
--- Debug statement to confirm colorscheme file is loaded
-print("Loading Tomorrow Night Burns colorscheme...")
-
--- Simplify colorscheme loading
-vim.cmd("colorscheme tomorrow-night-burns")
+-- Load colorscheme from NixOS theme system, fallback to tomorrow-night-burns
+local theme_file = "/etc/nvim-theme.lua"
+if vim.fn.filereadable(theme_file) == 1 then
+  vim.cmd("source " .. theme_file)
+else
+  vim.cmd("colorscheme tomorrow-night-burns")
+end

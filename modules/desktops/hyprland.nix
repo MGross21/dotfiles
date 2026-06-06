@@ -24,9 +24,9 @@
     auth_fails = 10;
     bigclock = "en";
     bigclock_12hr = true;
-    brightness_down_cmd = "brightnessctl -q -n s 10%-";
+    brightness_down_cmd = "${pkgs.brightnessctl}/bin/brightnessctl -q -n s 10%-";
     brightness_down_key = "F5";
-    brightness_up_cmd = "brightnessctl -q -n s +10%";
+    brightness_up_cmd = "${pkgs.brightnessctl}/bin/brightnessctl -q -n s +10%";
     brightness_up_key = "F6";
     clear_password = true;
     cmatrix_min_codepoint = "0x21";
@@ -81,10 +81,16 @@
   # environment.variables.LIBVA_DRIVER_NAME = "nvidia";
   # environment.variables.LIBVA_DRIVERS_PATH = "${pkgs.libva}/lib/${ /* arch */ }";
 
-  systemd.user.services.hyprpaper.serviceConfig = {
-    ExecStart = lib.mkForce "${pkgs.hyprpaper}/bin/hyprpaper -c /etc/hypr/hyprpaper.conf";
-    Restart = lib.mkForce "always";
-    RestartSec = "1";
+  systemd.user.services.hyprpaper = {
+    description = "Hyprpaper wallpaper daemon";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.hyprpaper}/bin/hyprpaper -c /etc/hypr/hyprpaper.conf";
+      Restart = "on-failure";
+      Slice = "session.slice";
+    };
   };
 
   systemd.user.paths.hyprpaper-theme = {
@@ -97,7 +103,7 @@
     description = "Restart hyprpaper on theme change";
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "${pkgs.procps}/bin/pkill -x hyprpaper || true";
+      ExecStart = "${pkgs.systemd}/bin/systemctl --user restart hyprpaper.service";
     };
   };
 
@@ -107,7 +113,7 @@
     after = [ "graphical-session.target" ];
     serviceConfig = {
       Type = "simple";
-      ExecStart = "${pkgs.xsettingsd}/bin/xsettingsd";
+      ExecStart = "${pkgs.xsettingsd}/bin/xsettingsd -c /etc/xsettingsd/xsettingsd.conf";
       Restart = "on-failure";
     };
   };

@@ -5,6 +5,12 @@
 }:
 {
   networking.networkmanager.enable = true;
+  networking.networkmanager.settings = {
+    wifi = {
+      "bg-scan" = false;
+      "scan-rand-mac-address" = "no";
+    };
+  };
   networking.firewall.allowedUDPPorts = [ 8081 ];
 
   hardware.enableRedistributableFirmware = true;

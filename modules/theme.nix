@@ -8,6 +8,10 @@ let
       wallpaper = wp ../Pictures/wallpapers/windows11_red.png;
       ghostty = "Tomorrow Night Burns";
       vivid = "tomorrow-night-burns";
+      gtk = "Materia-dark-compact";
+      icons = "Papirus-Dark";
+      cursor = "macOS";
+      nvim = "tomorrow-night-burns";
     };
     tokyo-night = {
       nix = import ../themes/tokyo-night.nix;
@@ -15,6 +19,10 @@ let
       wallpaper = wp ../Pictures/wallpapers/cosmic_bg.jpg;
       ghostty = "TokyoNight";
       vivid = "tokyonight-night";
+      gtk = "Materia-dark-compact";
+      icons = "Papirus-Dark";
+      cursor = "macOS";
+      nvim = "tokyonight-storm";
     };
   };
 
@@ -90,5 +98,23 @@ in
 
     # ── vivid LS_COLORS theme name ─────────────────────────────────────
     environment.variables.VIVID_THEME = data.vivid;
+
+    # ── xsettingsd (GTK theme, icons, cursor for Wayland apps) ──────────
+    environment.etc."xsettingsd/xsettingsd.conf".text = ''
+      Net/ThemeName "${data.gtk}"
+      Net/IconThemeName "${data.icons}"
+      Gtk/CursorThemeName "${data.cursor}"
+      Net/EnableEventSounds 1
+      EnableInputFeedbackSounds 0
+      Xft/Antialias 1
+      Xft/Hinting 1
+      Xft/HintStyle "hintslight"
+      Xft/RGBA "rgb"
+    '';
+
+    # ── nvim colorscheme (sourced by lazy.lua at startup) ────────────────
+    environment.etc."nvim-theme.lua".text = ''
+      vim.cmd("colorscheme ${data.nvim}")
+    '';
   };
 }
