@@ -1,11 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-THEME_PATH=$(find /nix/store -maxdepth 1 -name "*sekiro-grub-theme*" -not -name "*.drv" | sort | tail -1)
+PATTERN="${1:-*grub-theme*}"
 
-if [[ -z "$THEME_PATH" ]]; then
-  echo "Sekiro theme not in nix store. Run: nh os switch ~/dotfiles" >&2
-  exit 1
+# Accept full path or search nix store by pattern
+if [[ -d "$PATTERN" ]]; then
+  THEME_PATH="$PATTERN"
+else
+  mapfile -t MATCHES < <(find /nix/store -maxdepth 1 -name "$PATTERN" -not -name "*.drv" | sort)
+
+  if [[ ${#MATCHES[@]} -eq 0 ]]; then
+    echo "No GRUB theme matching '$PATTERN' in nix store. Run: nh os switch ~/dotfiles" >&2
+    exit 1
+  elif [[ ${#MATCHES[@]} -gt 1 ]]; then
+    echo "Multiple themes found — pass a name to narrow it down:" >&2
+    printf '  %s\n' "${MATCHES[@]}" >&2
+    exit 1
+  fi
+
+  THEME_PATH="${MATCHES[0]}"
 fi
 
 GRUB_CFG_SRC=$(sudo find /boot -name "grub.cfg" 2>/dev/null | head -1)
