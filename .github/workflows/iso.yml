@@ -46,18 +46,13 @@ jobs:
           echo "Original:   $(du -sh "$ISO" | cut -f1)"
           echo "Compressed: $(du -sh installer.iso.zst | cut -f1)"
 
-      - name: Move installer-latest tag
-        if: github.ref == 'refs/heads/main'
-        run: |
-          git tag -f installer-latest
-          git push -f origin installer-latest
-
       - name: Release
         if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: installer-latest
           name: Installer ISO (latest)
+          make_latest: true
           files: installer.iso.zst
           body: |
             Built from ${{ github.sha }}.
