@@ -116,5 +116,60 @@ in
     environment.etc."nvim-theme.lua".text = ''
       vim.cmd("colorscheme ${data.nvim}")
     '';
+
+    # ── hyprlock (wallpaper + accent colors follow active theme) ──────────
+    environment.etc."hypr/hyprlock.conf".text = ''
+      general {
+          layer = overlay
+      }
+
+      background {
+          monitor =
+          path = ${toString data.wallpaper}
+          blur_size = 3
+          blur_passes = 5
+      }
+
+      image {
+          monitor =
+          path = $HOME/Pictures/profiles/man_on_moon.jpeg
+          size = 120
+          halign = center
+          valign = center
+          position = 0, 150
+      }
+
+      input-field {
+          monitor =
+          size = 320, 50
+          halign = center
+          valign = center
+          position = 0, 0
+          outline_thickness = 1
+          dots_size = 0.3
+          dots_spacing = 0.3
+          dots_center = true
+          fade_on_empty = true
+          font_family = JetBrainsMono Nerd Font
+          font_size = 18
+          inner_color = rgba(${rm t.red}66)
+          outline_color = rgba(${rm t.blue}e6)
+          check_color = rgba(00c86400)
+          fail_color = rgba(ff323200)
+          text_color = rgba(ffffffe6)
+      }
+
+      label {
+          monitor =
+          text = cmd[update:1000] date '+%I:%M %p'
+          halign = center
+          valign = center
+          position = 0, -100
+          font_family = JetBrainsMono Nerd Font
+          font_size = 30
+          font_weight = bold
+          color = rgba(${rm t.blue}e6)
+      }
+    '';
   };
 }

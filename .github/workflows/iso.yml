@@ -33,7 +33,6 @@ jobs:
             extra-substituters    = https://nix-community.cachix.org https://hyprland.cachix.org
             extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=
 
-      # Caches the entire Nix store between runs — biggest speed gain
       - uses: DeterminateSystems/magic-nix-cache-action@v8
 
       - name: Build ISO
@@ -48,14 +47,13 @@ jobs:
 
       - name: Release
         if: github.ref == 'refs/heads/main'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: installer-latest
-          name: Installer ISO (latest)
-          make_latest: true
-          files: installer.iso.zst
-          body: |
-            Built from ${{ github.sha }}.
-            Boots with SSH + dotfiles pre-cloned at /root/dotfiles.
-
-            Flash: `zstd -d installer.iso.zst | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync`
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete installer-latest --yes 2>/dev/null || true
+          gh api repos/${{ github.repository }}/git/refs/tags/installer-latest -X DELETE 2>/dev/null || true
+          printf 'Built from ${{ github.sha }}.\nBoots with SSH + dotfiles pre-cloned at /root/dotfiles.\n\nFlash: `zstd -d installer.iso.zst | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync`\n' > notes.md
+          gh release create installer-latest installer.iso.zst \
+            --title "Installer ISO (latest)" \
+            --latest \
+            --notes-file notes.md
