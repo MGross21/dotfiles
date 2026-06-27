@@ -14,8 +14,12 @@
 
   xdg.portal = {
     enable = true;
-    config.common.default = [ "hyprland" ];
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+    ];
+    config.common.default = [ "hyprland" "gtk" ];
   };
+
 
   services.displayManager.ly.enable = true;
   services.displayManager.ly.settings = {
@@ -85,17 +89,18 @@
     description = "Hyprpaper wallpaper daemon";
     wantedBy = [ "graphical-session.target" ];
     after = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
     serviceConfig = {
       Type = "simple";
       ExecStart = "${pkgs.hyprpaper}/bin/hyprpaper -c /etc/hypr/hyprpaper.conf";
       Restart = "on-failure";
-      Slice = "session.slice";
     };
   };
 
   systemd.user.paths.hyprpaper-theme = {
     wantedBy = [ "graphical-session.target" ];
     after = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
     pathConfig.PathChanged = "/etc/hypr/hyprpaper.conf";
   };
 
@@ -111,10 +116,12 @@
     description = "XSettings daemon for GTK theme consistency";
     wantedBy = [ "graphical-session.target" ];
     after = [ "graphical-session.target" ];
+    unitConfig.ConditionEnvironment = "DISPLAY";
     serviceConfig = {
       Type = "simple";
       ExecStart = "${pkgs.xsettingsd}/bin/xsettingsd -c /etc/xsettingsd/xsettingsd.conf";
       Restart = "on-failure";
+      RestartSec = "3";
     };
   };
 }

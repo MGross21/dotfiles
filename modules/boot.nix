@@ -11,7 +11,7 @@ let
     src = pkgs.fetchFromGitHub {
       owner = "AbijithBalaji";
       repo = "sekiro_grub_theme";
-      rev = "main";
+      rev = "1b1e3840e9c378f4400bed2a8940f4ded364ba3f";
       sha256 = "sha256-uXwDjb0+ViQvdesG5gefC5zFAiFs/FfDfeI5t7vP+Qc=";
     };
     dontBuild = true;
@@ -27,8 +27,8 @@ let
     src = pkgs.fetchFromGitHub {
       owner = "vinceliuice";
       repo = "Elegant-grub2-themes";
-      rev = "main";
-      sha256 = "09yhkqc130nqi9pncxin8f00fkqv6rrk5dml0vm1lb37gic4pdkx";
+      rev = "f8a8d41c8f306f8bdfae41db1a425cf0a2451477";
+      sha256 = "sha256-4yPldMZ7g6FrGGvoF2oxvS6cGlM2X/ALX0mfq/Dax8c=";
     };
     nativeBuildInputs = [ pkgs.imagemagick ];
     buildPhase = ''

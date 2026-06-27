@@ -311,6 +311,7 @@
       bat = "bat";
       ping = "ping -c 3";
       dd = "dd bs=4M status=progress conv=fsync,noerror";
+      bc = "bc -ql";
 
       # Listing and editor
       ls = "eza --color=auto --icons";
@@ -418,7 +419,7 @@
       monitors = "hyprctl monitors all";
       logout = "uwsm stop || hyprctl dispatch exit";
       nightmode = "hyprsunset --temperature 3000";
-      paperreload = "pkill hyprpaper; (hyprpaper & disown)";
+      paperreload = "systemctl --user restart hyprpaper";
       screenshot = "hyprshot -m region --clipboard-only";
       barreload = "pkill waybar; (waybar & disown)";
       clip = "wl-copy";
@@ -523,9 +524,13 @@
     dust
     gitui
     yazi
+    bc
 
     # Development toolchain
-    rustup
+    cargo
+    rustc
+    rustfmt
+    clippy
     rust-analyzer
     espflash
     gnumake
@@ -533,6 +538,7 @@
     llvm
     cmake
     uv
+    pixi
     nodejs
     kotlin
     ktlint
@@ -568,4 +574,5 @@
     # Extras
     fbcat
   ];
+
 }
