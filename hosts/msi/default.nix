@@ -42,6 +42,7 @@ in
   networking.hostName = "msi";
   theming.name = "tomorrow-night-burns";
 
+  boot.initrd.kernelModules = [ "i915" ]; # early KMS — plymouth splash from boot start, no text flash
   boot.kernelModules = lib.mkBefore [
     "nvidia-drm"
     "ec_sys" # required by MControlCenter for EC access
@@ -53,6 +54,13 @@ in
     "i915.enable_fbc=1" # framebuffer compression — less VRAM bandwidth
     "nmi_watchdog=0" # prevents periodic NMI wakeups from interrupting sleep
     "mitigations=off" # single-user trusted machine — disable CPU vuln mitigations for perf
+    "quiet" # suppress kernel log spam at boot (Plymouth splash covers it)
+    "udev.log_level=3"
+    "rd.udev.log_level=3" # quiet initrd udev
+    "rd.systemd.show_status=false" # no initrd unit status text
+    "systemd.show_status=false" # no stage-2 unit status text
+    "vt.global_cursor_default=0" # kill blinking console cursor
+    "plymouth.ignore-serial-consoles"
   ];
 
   boot.extraModprobeConfig = ''

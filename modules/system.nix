@@ -93,4 +93,12 @@
   };
 
   nixpkgs.config.allowUnfree = true;
+
+  programs.ccache.enable = true; # C/C++ object cache across rebuilds
+
+  environment.systemPackages = with pkgs; [
+    mold # fastest linker (opt in per project: -fuse-ld=mold)
+    ccache # C/C++ compile cache
+    sccache # Rust/C/C++ compile cache
+  ];
 }

@@ -14,19 +14,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    hyprland.url = "github:hyprwm/Hyprland";
-    hyprlock = {
-      url = "github:hyprwm/hyprlock";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hyprpaper = {
-      url = "github:hyprwm/hyprpaper";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hypridle = {
-      url = "github:hyprwm/hypridle";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # hypr stack from nixpkgs (Hydra-cached, no compile)
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -41,10 +29,6 @@
     {
       self,
       nixpkgs,
-      hyprland,
-      hyprlock,
-      hyprpaper,
-      hypridle,
       disko,
       stylix,
       ...
@@ -54,13 +38,6 @@
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-      };
-
-      # Pin hypr ecosystem tools to flake (match flake-built hyprland, avoid lib skew)
-      hyprOverlay = final: prev: {
-        hyprlock = hyprlock.packages.${system}.hyprlock;
-        hyprpaper = hyprpaper.packages.${system}.hyprpaper;
-        hypridle = hypridle.packages.${system}.hypridle;
       };
 
       installerSystem = nixpkgs.lib.nixosSystem {
@@ -139,11 +116,6 @@
         modules = [
           stylix.nixosModules.stylix
           disko.nixosModules.disko
-          {
-            nixpkgs.overlays = [ hyprOverlay ];
-            programs.hyprland.package = hyprland.packages.${system}.hyprland;
-            programs.hyprland.portalPackage = hyprland.packages.${system}.xdg-desktop-portal-hyprland;
-          }
           ./hosts/msi/default.nix
         ];
       };
@@ -152,11 +124,6 @@
         modules = [
           stylix.nixosModules.stylix
           disko.nixosModules.disko
-          {
-            nixpkgs.overlays = [ hyprOverlay ];
-            programs.hyprland.package = hyprland.packages.${system}.hyprland;
-            programs.hyprland.portalPackage = hyprland.packages.${system}.xdg-desktop-portal-hyprland;
-          }
           ./hosts/dell/default.nix
         ];
       };
