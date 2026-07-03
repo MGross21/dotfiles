@@ -46,6 +46,7 @@ in
 {
   boot.loader = {
     systemd-boot.enable = false;
+    timeout = 0;
 
     grub = {
       enable = true;
@@ -60,4 +61,13 @@ in
   };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  # Faster, parallel initrd with zstd compression
+  boot.initrd.systemd.enable = true;
+  boot.initrd.compressor = "zstd";
+  boot.initrd.compressorArgs = [ "-19" "-T0" ];
+
+  # Don't block boot waiting for network to come online (docker requires
+  # network-online.target -> this held up graphical.target ~5s)
+  systemd.services.NetworkManager-wait-online.enable = false;
 }

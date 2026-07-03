@@ -40,7 +40,7 @@ in
   ];
 
   networking.hostName = "msi";
-  theming.name = "tokyo-night";
+  theming.name = "tomorrow-night-burns";
 
   boot.kernelModules = lib.mkBefore [
     "nvidia-drm"
@@ -52,6 +52,7 @@ in
     "i915.enable_psr=2" # UHD 630 panel self-refresh — reduces display power draw
     "i915.enable_fbc=1" # framebuffer compression — less VRAM bandwidth
     "nmi_watchdog=0" # prevents periodic NMI wakeups from interrupting sleep
+    "mitigations=off" # single-user trusted machine — disable CPU vuln mitigations for perf
   ];
 
   boot.extraModprobeConfig = ''
