@@ -14,7 +14,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # hypr stack from nixpkgs (Hydra-cached, no compile)
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -29,6 +29,7 @@
     {
       self,
       nixpkgs,
+      nixpkgs-unstable,
       disko,
       stylix,
       ...
@@ -36,6 +37,10 @@
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
+      unstable = import nixpkgs-unstable {
         inherit system;
         config.allowUnfree = true;
       };
@@ -68,8 +73,13 @@
                 vim
                 parted
                 gptfdisk
+                disko.packages.${system}.disko-install
                 (pkgs.writeShellScriptBin "nixos-install-interactive" (builtins.readFile ./scripts/iso-install.sh))
               ];
+
+              # NetworkManager for wifi setup (nmtui) on the live ISO
+              networking.networkmanager.enable = true;
+              networking.wireless.enable = lib.mkForce false;
 
               documentation.enable = false;
               documentation.nixos.enable = false;
@@ -77,7 +87,7 @@
               hardware.enableAllFirmware = lib.mkForce false;
               hardware.enableRedistributableFirmware = true;
 
-              image.fileName = "nixos_${config.system.stateVersion}_${pkgs.stdenv.hostPlatform.system}.iso";
+              isoImage.isoName = "nixos_${config.system.stateVersion}_${pkgs.stdenv.hostPlatform.system}.iso";
               isoImage.squashfsCompression = "zstd -Xcompression-level 19";
               isoImage.includeSystemBuildDependencies = false;
 
@@ -87,18 +97,6 @@
                   nixos-install-interactive
                 fi
               '';
-
-              systemd.services.clone-dotfiles = {
-                description = "Clone dotfiles";
-                wantedBy = [ "multi-user.target" ];
-                after = [ "network-online.target" ];
-                wants = [ "network-online.target" ];
-                serviceConfig = {
-                  Type = "oneshot";
-                  RemainAfterExit = true;
-                  ExecStart = "${pkgs.git}/bin/git clone https://github.com/MGross21/dotfiles /root/dotfiles";
-                };
-              };
             }
           )
         ];
@@ -113,6 +111,7 @@
       # Host entries (managed by new_host_nix.sh)
       nixosConfigurations.msi = nixpkgs.lib.nixosSystem {
         inherit system;
+        specialArgs = { inherit unstable; };
         modules = [
           stylix.nixosModules.stylix
           disko.nixosModules.disko
@@ -121,6 +120,7 @@
       };
       nixosConfigurations.dell = nixpkgs.lib.nixosSystem {
         inherit system;
+        specialArgs = { inherit unstable; };
         modules = [
           stylix.nixosModules.stylix
           disko.nixosModules.disko
