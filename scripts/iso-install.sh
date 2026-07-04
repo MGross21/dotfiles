@@ -92,23 +92,14 @@ echo
 read -rp "Type the disk path to confirm ($(basename "$DISK")): " CONFIRM
 [[ "$CONFIRM" == "$(basename "$DISK")" ]] || die "Confirmation mismatch — aborted"
 
-# ── Partition with disko ─────────────────────────────────────────────────────
+# ── Partition + install with disko-install ───────────────────────────────────
 echo
-info "Partitioning $DISK with disko..."
-nix run github:nix-community/disko -- \
-  --mode disko \
+info "Partitioning $DISK and installing NixOS ($HOST)..."
+disko-install \
   --flake "$DOTFILES_DIR#$HOST" \
-  || die "Disko failed"
-ok "Disk partitioned and mounted at $MNT"
-
-# ── Install ──────────────────────────────────────────────────────────────────
-echo
-info "Installing NixOS ($HOST)..."
-nixos-install \
-  --flake "$DOTFILES_DIR#$HOST" \
-  --root "$MNT" \
-  --no-root-passwd \
-  || die "nixos-install failed"
+  --disk main "$DISK" \
+  --write-efi-boot-entries \
+  || die "disko-install failed"
 ok "Installation complete"
 
 # ── Done ─────────────────────────────────────────────────────────────────────

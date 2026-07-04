@@ -40,7 +40,7 @@ jobs:
 
       - name: Compress ISO
         run: |
-          ISO=$(ls result/iso/nixos-*.iso)
+          ISO=$(ls result/iso/*.iso)
           zstd -19 -T0 --no-progress "$ISO" -o installer.iso.zst
           echo "Original:   $(du -sh "$ISO" | cut -f1)"
           echo "Compressed: $(du -sh installer.iso.zst | cut -f1)"
@@ -52,7 +52,7 @@ jobs:
         run: |
           gh release delete installer-latest --yes 2>/dev/null || true
           gh api repos/${{ github.repository }}/git/refs/tags/installer-latest -X DELETE 2>/dev/null || true
-          printf 'Built from ${{ github.sha }}.\nBoots with SSH + dotfiles pre-cloned at /root/dotfiles.\n\nFlash: `zstd -d installer.iso.zst | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync`\n' > notes.md
+          printf 'Built from ${{ github.sha }}.\nAuto-launches the interactive installer on tty1 (disko-install). SSH enabled; nmtui for wifi.\n\nFlash: `zstd -d installer.iso.zst | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync`\n' > notes.md
           gh release create installer-latest installer.iso.zst \
             --title "Installer ISO (latest)" \
             --latest \

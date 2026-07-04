@@ -1,8 +1,10 @@
-{ ... }:
+{ lib, ... }:
 {
   disko.devices = {
     disk.main = {
       type = "disk";
+      # Overridden per-host, or at install by `disko-install --disk main <dev>`
+      device = lib.mkDefault "/dev/disk/by-id/PLACEHOLDER";
       content = {
         type = "gpt";
         partitions = {
