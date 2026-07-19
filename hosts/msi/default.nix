@@ -152,8 +152,8 @@ in
     PLATFORM_PROFILE_ON_AC = "performance";
     PLATFORM_PROFILE_ON_BAT = "low-power";
 
-    START_CHARGE_THRESH_BAT0 = 20;
-    STOP_CHARGE_THRESH_BAT0 = 80;
+    START_CHARGE_THRESH_BAT1 = 20;
+    STOP_CHARGE_THRESH_BAT1 = 80;
 
     USB_AUTOSUSPEND = lib.mkForce 0; # system.nix sets 1 — HID devices drop with autosuspend
   };

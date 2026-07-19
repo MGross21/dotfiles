@@ -376,7 +376,7 @@
       nixrebuild = "nh os switch ~/dotfiles";
       nixrollback = "sudo nixos-rebuild switch --flake path:$HOME/dotfiles#$(hostname) --rollback";
       nixgens = "nixos-rebuild list-generations --flake path:$HOME/dotfiles#$(hostname)";
-      nixgc = "nh clean all";
+      nixgc = "nh clean all --keep 2";
       nixhash = "nix-prefetch-url --unpack --type sha256";
       search = "nix-search-tv print | fzf --preview 'nix-search-tv preview {}' --scheme history";
 

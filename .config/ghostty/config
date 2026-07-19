@@ -3,7 +3,9 @@ font-size = 11
 
 shell-integration = zsh
 
-config-file = /etc/ghostty-theme.conf
+theme = Tomorrow Night Burns
+# Optional Override Config File
+config-file = ?/etc/ghostty-theme.conf
 
 background-opacity = 0.2
 background-blur = true
@@ -22,6 +24,9 @@ term=ghostty
 
 window-decoration = auto
 window-theme = auto
+
+# Launch Parameters
+gtk-single-instance = true
 
 # Behaviors
 quit-after-last-window-closed=true
