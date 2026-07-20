@@ -67,6 +67,24 @@
               };
               boot.zfs.forceImportRoot = false;
 
+              # Flakes needed by disko-install / nixos-install --flake and by the
+              # closure-size query in the installer script. Not enabled by the
+              # minimal ISO base otherwise.
+              nix.settings = {
+                experimental-features = [ "nix-command" "flakes" ];
+                accept-flake-config = true;
+              };
+              nix.extraOptions = ''
+                warn-dirty = false
+              '';
+
+              # Compressed RAM swap so the in-RAM /nix store overlay does not
+              # OOM ("no space left on device") while building the closure.
+              zramSwap = {
+                enable = true;
+                memoryPercent = 150;
+              };
+
               environment.systemPackages = with pkgs; [
                 git
                 curl
