@@ -8,6 +8,7 @@
     ./modules/theme.nix
     ./modules/boot.nix
     ./modules/system.nix
+    ./modules/dev.nix
     ./modules/terminal.nix
     ./modules/users/mgross.nix
   ];

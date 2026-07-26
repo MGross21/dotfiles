@@ -4,8 +4,7 @@
   lib,
   ...
 }:
-{
-  # HYPRLAND
+lib.mkIf (config.desktop.environment == "hyprland") {
   programs.hyprland = {
     enable = true;
     withUWSM = true;
@@ -17,9 +16,11 @@
     extraPortals = [
       pkgs.xdg-desktop-portal-gtk
     ];
-    config.common.default = [ "hyprland" "gtk" ];
+    config.common.default = [
+      "hyprland"
+      "gtk"
+    ];
   };
-
 
   services.displayManager.ly.enable = true;
   services.displayManager.ly.settings = {

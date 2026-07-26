@@ -41,6 +41,21 @@ in
 
   networking.hostName = "msi";
   theming.name = "tomorrow-night-burns";
+  desktop.environment = "hyprland";
+
+  dev = {
+    rust.enable = true;
+    python.enable = true;
+    js.enable = true;
+    jvm.enable = true;
+    android.enable = true;
+  };
+
+  apps = {
+    creative.enable = true;
+    media.enable = true;
+    gaming.enable = true;
+  };
 
   boot.initrd.kernelModules = [ "i915" ]; # early KMS for plymouth
   boot.kernelModules = lib.mkBefore [

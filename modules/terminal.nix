@@ -314,10 +314,10 @@
       bc = "bc -ql";
 
       # Listing and editor
-      ls = "eza --color=auto --icons";
-      la = "eza -a --color=auto --icons";
-      ll = "eza -lah --color=auto --icons";
-      tree = "eza --tree --level=3 --color=auto --icons";
+      ls = "eza --color=auto --icons=auto";
+      la = "eza -a --color=auto --icons=auto";
+      ll = "eza -lah --color=auto --icons=auto";
+      tree = "eza --tree --level=3 --color=auto --icons=auto";
       vim = "$EDITOR";
       vi = "$EDITOR";
       v = "$EDITOR";
@@ -345,6 +345,7 @@
       gpu = "git pull --progress --multiple";
       gpuo = "git pull origin --progress --multiple";
       gst = "git stash";
+      grbom = "git rebase origin/main";
       gtag = "git tag";
       gtags = "git tag -l";
       gcp = "git cherry-pick";
@@ -526,27 +527,6 @@
     yazi
     bc
 
-    # Development toolchain
-    cargo
-    rustc
-    rustfmt
-    clippy
-    rust-analyzer
-    espflash
-    gnumake
-    clang
-    llvm
-    cmake
-    uv
-    pixi
-    nodejs
-    kotlin
-    ktlint
-    gradle
-    jdk
-    # cudatoolkit
-    # unstable.ollama-cuda
-
     # Media/audio CLI utilities
     ffmpeg-full
     vulkan-tools
@@ -558,13 +538,9 @@
     clipse
     spotify-player
 
-    nixfmt
     efibootmgr
-    python3
     mpv-unwrapped
 
-    # Android CLI
-    android-tools
     wl-clipboard
     usbutils
     pciutils

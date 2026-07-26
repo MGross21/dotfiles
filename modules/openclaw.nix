@@ -237,6 +237,7 @@ in
         UMask = "0077";
         CapabilityBoundingSet = "";
         AmbientCapabilities = "";
+        EnvironmentFile = cfg.environmentFiles;
         ReadWritePaths = [ cfg.stateDir ];
         ReadOnlyPaths = [ "/run/secrets" ];
         RestrictAddressFamilies = [
@@ -250,7 +251,6 @@ in
         OPENCLAW_CONFIG_PATH = cfg.configPath;
         OPENCLAW_STATE_DIR = cfg.stateDir;
       };
-      environmentFiles = cfg.environmentFiles;
     };
   };
 }

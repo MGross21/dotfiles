@@ -1,5 +1,5 @@
 {
-  description = "MGross21 dotfiles NixOS configuration";
+  description = "Michael's NixOS configuration";
 
   nixConfig = {
     extra-substituters = [
@@ -23,6 +23,10 @@
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    openclaw = {
+      url = "github:openclaw/nix-openclaw";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -32,6 +36,7 @@
       nixpkgs-unstable,
       disko,
       stylix,
+      openclaw,
       ...
     }:
     let
@@ -105,7 +110,7 @@
               hardware.enableAllFirmware = lib.mkForce false;
               hardware.enableRedistributableFirmware = true;
 
-              isoImage.isoName = "nixos_${config.system.stateVersion}_${pkgs.stdenv.hostPlatform.system}.iso";
+              image.baseName = lib.mkForce "nixos_${config.system.nixos.release}_${pkgs.stdenv.hostPlatform.system}";
               isoImage.squashfsCompression = "zstd -Xcompression-level 19";
               isoImage.includeSystemBuildDependencies = false;
 
@@ -138,7 +143,10 @@
       };
       nixosConfigurations.dell = nixpkgs.lib.nixosSystem {
         inherit system;
-        specialArgs = { inherit unstable; };
+        specialArgs = {
+          inherit unstable;
+          openclaw-gateway = openclaw.packages.${system}.openclaw-gateway;
+        };
         modules = [
           stylix.nixosModules.stylix
           disko.nixosModules.disko

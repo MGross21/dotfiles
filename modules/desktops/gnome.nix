@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   macTahoeDay = pkgs.fetchurl {
     url = "https://raw.githubusercontent.com/vinceliuice/MacTahoe-gtk-theme/refs/heads/main/wallpaper/MacTahoe-day.jpeg";
@@ -168,7 +173,7 @@ let
     '';
   };
 in
-{
+lib.mkIf (config.desktop.environment == "gnome") {
   programs.xwayland.enable = true;
 
   services = {

@@ -11,7 +11,11 @@
       "scan-rand-mac-address" = "no";
     };
   };
-  networking.firewall.allowedUDPPorts = [ 8081 ];
+  # Firewall — central port whitelist for all hosts
+  networking.firewall = {
+    allowedTCPPorts = [ 8080 ]; # ukvm data transport
+    allowedUDPPorts = [ 8081 ]; # ukvm
+  };
 
   hardware.enableRedistributableFirmware = true;
   hardware.firmware = with pkgs; [

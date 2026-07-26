@@ -4,8 +4,6 @@
   ...
 }:
 let
-  isX86_64 = pkgs.stdenv.hostPlatform.isx86_64;
-
   papirus-red =
     pkgs.runCommand "papirus-icon-theme-red"
       {
@@ -25,67 +23,65 @@ in
 {
   imports = [
     ./desktops/hyprland.nix
+    ./desktops/gnome.nix
+    ./apps.nix
   ];
 
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    jack.enable = true;
-    pulse.enable = true;
-    wireplumber.enable = true;
-  };
-
-  services.udisks2.enable = true;
-  services.gvfs.enable = true;
-  services.printing.enable = true;
-
-  security.pam.services.ly.enableGnomeKeyring = true;
-
-  networking.firewall.allowedTCPPorts = [ 24800 ];
-
-  environment.sessionVariables = {
-    MOZ_DBUS_REMOTE = "1";
-    MOZ_ENABLE_WAYLAND = "1";
-    MOZ_GTK_TITLEBAR_DECORATION = "client";
-    MOZ_DISABLE_SPLASH = "1";
-  };
-
-  programs.thunar = {
-    enable = true;
-    plugins = with pkgs; [
-      thunar-volman
-      thunar-archive-plugin
-      thunar-media-tags-plugin
-      thunar-vcs-plugin
-      thunar-shares-plugin
+  options.desktop.environment = lib.mkOption {
+    type = lib.types.enum [
+      "hyprland"
+      "gnome"
     ];
+    default = "hyprland";
+    description = "Active desktop environment.";
   };
 
-  programs.firefox.enable = true;
+  config = {
+    services.pulseaudio.enable = false;
+    security.rtkit.enable = true;
 
-  environment.systemPackages =
-    with pkgs;
-    [
+    services.pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      jack.enable = true;
+      pulse.enable = true;
+      wireplumber.enable = true;
+    };
+
+    services.udisks2.enable = true;
+    services.gvfs.enable = true;
+    services.printing.enable = true;
+
+    security.pam.services.ly.enableGnomeKeyring = true;
+
+    environment.sessionVariables = {
+      MOZ_DBUS_REMOTE = "1";
+      MOZ_ENABLE_WAYLAND = "1";
+      MOZ_GTK_TITLEBAR_DECORATION = "client";
+      MOZ_DISABLE_SPLASH = "1";
+    };
+
+    programs.thunar = {
+      enable = true;
+      plugins = with pkgs; [
+        thunar-volman
+        thunar-archive-plugin
+        thunar-media-tags-plugin
+        thunar-vcs-plugin
+        thunar-shares-plugin
+      ];
+    };
+
+    programs.firefox.enable = true;
+
+    # Desktop infrastructure / theming (user apps live in apps.nix)
+    environment.systemPackages = with pkgs; [
       ghostty
       tumbler
 
       papirus-red
       papirus-folders
-
-      spicetify-cli
-      feh
-      obs-studio
-      kicad
-      gimp
-      rawtherapee
-      gthumb
-      vscode
-      spotify
-      deskflow
 
       libxres
       gamemode
@@ -105,24 +101,18 @@ in
       dunst
 
       nix-search-tv
-    ]
-    ++ lib.optionals isX86_64 (
-      with pkgs;
-      [
-        discord
-        steam
-      ]
-    );
+    ];
 
-  fonts.packages = with pkgs; [
-    jetbrains-mono
-    ubuntu-classic
-    nerd-fonts.ubuntu
-    nerd-fonts.jetbrains-mono
-    nerd-fonts.symbols-only
-    font-awesome
-    noto-fonts
-    noto-fonts-cjk-sans
-    noto-fonts-monochrome-emoji
-  ];
+    fonts.packages = with pkgs; [
+      jetbrains-mono
+      ubuntu-classic
+      nerd-fonts.ubuntu
+      nerd-fonts.jetbrains-mono
+      nerd-fonts.symbols-only
+      font-awesome
+      noto-fonts
+      noto-fonts-cjk-sans
+      noto-fonts-monochrome-emoji
+    ];
+  };
 }
