@@ -15,6 +15,8 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # materia-theme: dropped from unstable (GTK2 murrine dep)
+    nixpkgs-materia.url = "github:NixOS/nixpkgs/nixos-25.05";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -27,6 +29,15 @@
       url = "github:openclaw/nix-openclaw";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # MacTahoe themes float on main; bump with `nix flake update mactahoe-*`
+    mactahoe-gtk = {
+      url = "github:vinceliuice/MacTahoe-gtk-theme";
+      flake = false;
+    };
+    mactahoe-icons = {
+      url = "github:vinceliuice/MacTahoe-icon-theme";
+      flake = false;
+    };
   };
 
   outputs =
@@ -34,13 +45,20 @@
       self,
       nixpkgs,
       nixpkgs-unstable,
+      nixpkgs-materia,
       disko,
       stylix,
       openclaw,
+      mactahoe-gtk,
+      mactahoe-icons,
       ...
     }:
     let
       system = "x86_64-linux";
+      # materia-theme from 25.05 onto current pkgs
+      materiaOverlay = final: prev: {
+        materia-theme = nixpkgs-materia.legacyPackages.${prev.stdenv.hostPlatform.system}.materia-theme;
+      };
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
@@ -76,7 +94,10 @@
               # closure-size query in the installer script. Not enabled by the
               # minimal ISO base otherwise.
               nix.settings = {
-                experimental-features = [ "nix-command" "flakes" ];
+                experimental-features = [
+                  "nix-command"
+                  "flakes"
+                ];
                 accept-flake-config = true;
               };
               nix.extraOptions = ''
@@ -134,8 +155,11 @@
       # Host entries (managed by new_host_nix.sh)
       nixosConfigurations.msi = nixpkgs.lib.nixosSystem {
         inherit system;
-        specialArgs = { inherit unstable; };
+        specialArgs = { inherit unstable mactahoe-gtk mactahoe-icons; };
         modules = [
+          {
+            nixpkgs.overlays = [ materiaOverlay ];
+          }
           stylix.nixosModules.stylix
           disko.nixosModules.disko
           ./hosts/msi/default.nix
@@ -144,10 +168,13 @@
       nixosConfigurations.dell = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = {
-          inherit unstable;
+          inherit unstable mactahoe-gtk mactahoe-icons;
           openclaw-gateway = openclaw.packages.${system}.openclaw-gateway;
         };
         modules = [
+          {
+            nixpkgs.overlays = [ materiaOverlay ];
+          }
           stylix.nixosModules.stylix
           disko.nixosModules.disko
           ./hosts/dell/default.nix

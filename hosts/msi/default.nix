@@ -47,12 +47,12 @@ in
     rust.enable = true;
     python.enable = true;
     js.enable = true;
-    jvm.enable = true;
-    android.enable = true;
+    jvm.enable = false;
+    android.enable = false;
   };
 
   apps = {
-    creative.enable = true;
+    creative.enable = false;
     media.enable = true;
     gaming.enable = true;
   };

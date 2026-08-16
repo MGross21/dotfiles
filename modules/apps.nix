@@ -19,7 +19,6 @@ in
     with pkgs;
     [
       vscode
-      deskflow
     ]
     ++ lib.optionals cfg.creative.enable [
       obs-studio

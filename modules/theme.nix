@@ -49,7 +49,7 @@ in
       polarity = "dark";
       targets = {
         console.enable = true; # vconsole 16-color palette
-        grub.enable = false; # keep Sekiro grub theme
+        regreet.enable = false; # unused DM (ly), silence rename warning
       };
     };
 

@@ -534,7 +534,6 @@
     alsa-utils
     claude-code
     claude-monitor
-    gemini-cli
     clipse
     spotify-player
 

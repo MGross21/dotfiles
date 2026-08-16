@@ -2,31 +2,32 @@
   config,
   pkgs,
   lib,
+  mactahoe-gtk,
+  mactahoe-icons,
   ...
 }:
 let
-  macTahoeDay = pkgs.fetchurl {
-    url = "https://raw.githubusercontent.com/vinceliuice/MacTahoe-gtk-theme/refs/heads/main/wallpaper/MacTahoe-day.jpeg";
-    hash = "sha256-2WkJEdId97WUpfIAh0qHhfrDEZ1pHi4//9UqlROIeOI=";
-  };
-  macTahoeNight = pkgs.fetchurl {
-    url = "https://raw.githubusercontent.com/vinceliuice/MacTahoe-gtk-theme/refs/heads/main/wallpaper/MacTahoe-night.jpeg";
-    hash = "sha256-2OT/lQEYiquKT6n5UVvtgl63OrH7ZazKMKnitwjMKWU=";
-  };
-
-  quietInkscape = pkgs.writeShellScriptBin "inkscape" ''
-    exec ${pkgs.inkscape}/bin/inkscape "$@" 2>/dev/null
+  # cursor build.sh rasterizes SVGs with `inkscape -o out.png -w W -h H in.svg`.
+  # Shim it to rsvg-convert (tiny, cached) so we skip building inkscape from source.
+  inkscapeShim = pkgs.writeShellScriptBin "inkscape" ''
+    out= w= h= svg=
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        -o) out="$2"; shift 2 ;;
+        -w) w="$2"; shift 2 ;;
+        -h) h="$2"; shift 2 ;;
+        *.svg) svg="$1"; shift ;;
+        *) shift ;;
+      esac
+    done
+    [ -n "$h" ] || h="$w"
+    exec ${pkgs.librsvg}/bin/rsvg-convert -w "$w" -h "$h" -o "$out" "$svg"
   '';
 
   macTahoeGtkTheme = pkgs.stdenvNoCC.mkDerivation {
     pname = "MacTahoe-gtk-theme";
     version = "unstable-2024";
-    src = pkgs.fetchFromGitHub {
-      owner = "vinceliuice";
-      repo = "MacTahoe-gtk-theme";
-      rev = "main";
-      hash = "sha256-xS/RAPAREzteA6BRL3ZGrKk8Uml6/AjZRGQGQCOCrek=";
-    };
+    src = mactahoe-gtk;
 
     nativeBuildInputs = with pkgs; [
       bash
@@ -46,7 +47,6 @@ let
       glib
       libxml2
       optipng
-      inkscape
     ];
 
     postPatch = ''
@@ -61,7 +61,6 @@ let
       export XDG_CACHE_HOME="$TMPDIR/cache"
       export XDG_CONFIG_HOME="$TMPDIR/config"
       export PATH="${pkgs.glibc.bin}/bin:${pkgs.shadow}/bin:$PATH"
-      export PATH="${quietInkscape}/bin:$PATH"
       mkdir -p "$HOME"
       mkdir -p "$XDG_CACHE_HOME" "$XDG_CONFIG_HOME"
       runHook postBuild
@@ -69,7 +68,6 @@ let
 
     installPhase = ''
       runHook preInstall
-      export PATH="${quietInkscape}/bin:$PATH"
       mkdir -p "$out/share/themes"
       unset name
       bash ./install.sh -d "$out/share/themes" -n MacTahoe -t default -c dark
@@ -81,12 +79,10 @@ let
   macTahoeIconTheme = pkgs.stdenvNoCC.mkDerivation {
     pname = "MacTahoe-icon-theme";
     version = "unstable-2024";
-    src = pkgs.fetchFromGitHub {
-      owner = "vinceliuice";
-      repo = "MacTahoe-icon-theme";
-      rev = "main";
-      hash = "sha256-a21zLinYTG6fpdQhKcn/3GzVUKd0bQOnY74609C5I7k=";
-    };
+    src = mactahoe-icons;
+
+    # upstream ships a dangling symbolic-icon alias (globe->network-workgroup)
+    dontCheckForBrokenSymlinks = true;
 
     nativeBuildInputs = with pkgs; [
       bash
@@ -101,14 +97,12 @@ let
     buildPhase = ''
       runHook preBuild
       export HOME="$TMPDIR/home"
-      export PATH="${quietInkscape}/bin:$PATH"
       mkdir -p "$HOME"
       runHook postBuild
     '';
 
     installPhase = ''
       runHook preInstall
-      export PATH="${quietInkscape}/bin:$PATH"
       mkdir -p "$out/share/icons"
       unset name
       bash ./install.sh -d "$out/share/icons" -n MacTahoe -t default
@@ -120,20 +114,14 @@ let
   macTahoeCursorTheme = pkgs.stdenvNoCC.mkDerivation {
     pname = "MacTahoe-cursor-theme";
     version = "unstable-2024";
-    src = pkgs.fetchFromGitHub {
-      owner = "vinceliuice";
-      repo = "MacTahoe-icon-theme";
-      rev = "main";
-      hash = "sha256-a21zLinYTG6fpdQhKcn/3GzVUKd0bQOnY74609C5I7k=";
-    };
+    src = mactahoe-icons;
 
     nativeBuildInputs = with pkgs; [
       bash
       which
       findutils
       xcursorgen
-      inkscape
-      fontconfig
+      inkscapeShim # rsvg-backed inkscape stand-in
     ];
 
     dontConfigure = true;
@@ -142,8 +130,6 @@ let
       export HOME="$TMPDIR/home"
       export XDG_CACHE_HOME="$TMPDIR/cache"
       export XDG_CONFIG_HOME="$TMPDIR/config"
-      export FONTCONFIG_FILE="${pkgs.fontconfig.out}/etc/fonts/fonts.conf"
-      export PATH="${quietInkscape}/bin:$PATH"
       mkdir -p "$HOME" "$XDG_CACHE_HOME" "$XDG_CONFIG_HOME"
       cd cursors
       bash ./build.sh
@@ -172,6 +158,7 @@ let
       runHook postInstall
     '';
   };
+
 in
 lib.mkIf (config.desktop.environment == "gnome") {
   programs.xwayland.enable = true;
@@ -179,7 +166,6 @@ lib.mkIf (config.desktop.environment == "gnome") {
   services = {
     desktopManager.gnome.enable = true;
     displayManager.gdm.enable = true;
-    displayManager.gdm.wayland = true;
     gnome.core-apps.enable = false;
     gnome.games.enable = false;
     gnome.core-developer-tools.enable = false;
@@ -221,13 +207,14 @@ lib.mkIf (config.desktop.environment == "gnome") {
             icon-theme = "MacTahoe";
             cursor-theme = "MacTahoe-cursors";
           };
+          # wallpaper follows active theme, same source as hyprland (stylix.image)
           "org/gnome/desktop/background" = {
-            picture-uri = "file://${macTahoeDay}";
-            picture-uri-dark = "file://${macTahoeNight}";
+            picture-uri = "file://${config.stylix.image}";
+            picture-uri-dark = "file://${config.stylix.image}";
           };
           "org/gnome/desktop/screensaver" = {
-            picture-uri = "file://${macTahoeDay}";
-            picture-uri-dark = "file://${macTahoeNight}";
+            picture-uri = "file://${config.stylix.image}";
+            picture-uri-dark = "file://${config.stylix.image}";
           };
           "org/gnome/desktop/session" = with lib.gvariant; {
             idle-delay = mkUint32 0;
