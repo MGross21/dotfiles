@@ -1,10 +1,12 @@
 -- https://wiki.hypr.land/Configuring/Basics/Window-Rules/
 
+-- ignore_alpha must stay below the bar's glass alpha or the blur is skipped
+-- in exactly the regions meant to show it.
 hl.layer_rule({
-    name         = "lr-waybar",
-    match        = { namespace = "waybar" },
+    name         = "lr-quickshell",
+    match        = { namespace = "quickshell-bar" },
     blur         = true,
-    ignore_alpha = 0.6,
+    ignore_alpha = 0.05,
     no_anim      = true,
 })
 

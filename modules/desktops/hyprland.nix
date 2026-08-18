@@ -63,19 +63,19 @@ lib.mkIf (config.desktop.environment == "hyprland") {
 
     ly
 
-    waybar
+    quickshell
     wofi
     brightnessctl
     playerctl
     kooha
     nwg-displays
     uwsm
-    networkmanagerapplet
     xsettingsd
 
     # THEMING
     nwg-look
     gnome-themes-extra
+    adwaita-icon-theme # symbolic icons for the bar
     materia-theme
     tela-circle-icon-theme
 
@@ -85,6 +85,30 @@ lib.mkIf (config.desktop.environment == "hyprland") {
   # For NVIDIA + Hyprland, you may need:
   # environment.variables.LIBVA_DRIVER_NAME = "nvidia";
   # environment.variables.LIBVA_DRIVERS_PATH = "${pkgs.libva}/lib/${ /* arch */ }";
+
+  systemd.user.services.quickshell = {
+    description = "Quickshell bar";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
+    # Commands the bar's modules spawn.
+    path = with pkgs; [
+      bash
+      coreutils
+      gawk
+      gnused
+      systemd
+      networkmanager # nmcli backs the network widget
+      ghostty
+      hyprlock
+    ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.quickshell}/bin/qs -c bar";
+      Restart = "on-failure";
+      RestartSec = "3";
+    };
+  };
 
   systemd.user.services.hyprpaper = {
     description = "Hyprpaper wallpaper daemon";

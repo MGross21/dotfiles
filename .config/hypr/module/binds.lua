@@ -70,5 +70,5 @@ hl.bind("Print", hl.dsp.exec_cmd('hyprshot -z -m output -d "~/Pictures/screensho
 hl.bind("ALT + Print", hl.dsp.exec_cmd('hyprshot -z -m window -d "~/Pictures/screenshots/" --clipboard-only'))
 hl.bind("ALT + SHIFT + Print", hl.dsp.exec_cmd('hyprshot -z -m region -d "~/Pictures/screenshots/" --clipboard-only'))
 
--- Waybar toggle
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("pkill -USR1 waybar"))
+-- Bar toggle
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("qs -c bar ipc call bar toggle"))

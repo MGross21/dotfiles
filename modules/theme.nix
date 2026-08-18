@@ -1,6 +1,11 @@
 { config, lib, ... }:
 let
-  wp = path: builtins.path { inherit path; name = baseNameOf path; };
+  wp =
+    path:
+    builtins.path {
+      inherit path;
+      name = baseNameOf path;
+    };
   themes = {
     tomorrow-night-burns = {
       nix = import ../themes/tomorrow-night-burns.nix;
@@ -12,6 +17,13 @@ let
       icons = "Papirus-Dark";
       cursor = "macOS";
       nvim = "tomorrow-night-burns";
+      # Bar UI roles. This palette is all red, so only `badge` reads as urgent.
+      qs = with (import ../themes/tomorrow-night-burns.nix); {
+        accent = blue;
+        good = green;
+        warn = yellow;
+        urgent = badge;
+      };
     };
     tokyo-night = {
       nix = import ../themes/tokyo-night.nix;
@@ -23,6 +35,13 @@ let
       icons = "Papirus-Dark";
       cursor = "macOS";
       nvim = "tokyonight-storm";
+      # `badge` here is the accent blue, so urgent takes `red`.
+      qs = with (import ../themes/tokyo-night.nix); {
+        accent = blue;
+        good = green;
+        warn = yellow;
+        urgent = red;
+      };
     };
   };
 
@@ -77,6 +96,19 @@ in
       THEME_INACTIVE = "rgba(00000000)"
       THEME_SHADOW   = "rgba(${rm t.black}b3)"
     '';
+
+    # ── quickshell bar palette ─────────────────────────────────────────
+    environment.etc."quickshell/colors.json".text = builtins.toJSON {
+      base = t.bg;
+      fg = t.white;
+      fgDim = t.brightBlack;
+      inherit (data.qs)
+        accent
+        good
+        warn
+        urgent
+        ;
+    };
 
     # ── ghostty built-in theme ─────────────────────────────────────────
     environment.etc."ghostty-theme.conf".text = ''

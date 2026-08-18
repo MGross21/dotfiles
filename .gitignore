@@ -12,12 +12,12 @@
 !.config/hypr/
 !.config/nvim/
 !.config/vivid/
-!.config/waybar/
 !.config/wofi/
 !.config/fastfetch/
 !.config/yazi/
 !.config/ly
 !.config/xsettingsd/
+!.config/quickshell/
 
 # Include specific files only
 !.config/alacritty.toml

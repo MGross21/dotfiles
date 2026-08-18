@@ -422,7 +422,7 @@
       nightmode = "hyprsunset --temperature 3000";
       paperreload = "systemctl --user restart hyprpaper";
       screenshot = "hyprshot -m region --clipboard-only";
-      barreload = "pkill waybar; (waybar & disown)";
+      barreload = "systemctl --user restart quickshell";
       clip = "wl-copy";
       paste = "wl-paste";
       fontreload = "fc-cache -f";
