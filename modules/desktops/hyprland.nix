@@ -42,6 +42,7 @@ lib.mkIf (config.desktop.environment == "hyprland") {
     gameoflife_entropy_interval = 10;
     gameoflife_frame_delay = 6;
     gameoflife_initial_density = 0.4;
+    input_len = 24;
     path = "/run/current-system/sw/bin";
     restart_cmd = "/run/current-system/systemd/bin/systemctl reboot";
     save = true;

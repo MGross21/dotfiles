@@ -1,9 +1,9 @@
 local M = {}
 
-M.terminal = "ghostty"
+M.terminal = "ghostty +new-window"
 M.fileManager = "thunar"
 M.menu = "wofi -IG --show drun"
 M.mainMod = "SUPER"
-M.browser = "firefox --new-instance --browser"
+M.browser = "firefox"
 
 return M

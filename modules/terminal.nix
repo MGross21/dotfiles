@@ -419,7 +419,6 @@
       hyprconfig = "$EDITOR $HOME/.config/hypr/";
       monitors = "hyprctl monitors all";
       logout = "uwsm stop || hyprctl dispatch exit";
-      nightmode = "hyprsunset --temperature 3000";
       paperreload = "systemctl --user restart hyprpaper";
       screenshot = "hyprshot -m region --clipboard-only";
       barreload = "systemctl --user restart quickshell";

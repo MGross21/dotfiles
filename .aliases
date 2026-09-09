@@ -361,14 +361,10 @@ if command -v hyprctl &>/dev/null; then
     alias hyprconfig="${EDITOR} $HOME/.config/hypr/"
     alias monitors="hyprctl monitors all"
 
-    if commmand -v uwsm &>/dev/null; then
-        alias logout="loginctl terminate-user $USER"
+    if command -v uwsm &>/dev/null; then
+        alias logout="uwsm stop"
     else
         alias logout="hyprctl dispatch exit"
-    fi
-    
-    if command -v hyprsunset &>/dev/null; then
-        alias nightmode="hyprsunset --temperature 3000"
     fi
     
     if command -v hyprpaper &>/dev/null; then

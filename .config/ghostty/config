@@ -18,7 +18,6 @@ link-previews = true
 desktop-notifications = false
 
 title = terminal
-class = g.terminal
 gtk-quick-terminal-namespace = terminal
 term=ghostty
 
@@ -29,7 +28,7 @@ window-theme = auto
 gtk-single-instance = true
 
 # Behaviors
-quit-after-last-window-closed=true
+quit-after-last-window-closed = false
 clipboard-paste-protection=true
 
 # MacOS

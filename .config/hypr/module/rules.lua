@@ -24,7 +24,7 @@ hl.layer_rule({
 
 hl.window_rule({
     name   = "windowrule-1",
-    match  = { class = "^(terminal|g.terminal)$" },
+    match  = { class = "^(terminal|g\\.terminal|com\\.mitchellh\\.ghostty)$" },
     float  = true,
     size   = "800 600",
     center = true,
