@@ -53,10 +53,26 @@ Singleton {
     readonly property real rimAlpha: 0.16
     readonly property real trackAlpha: 0.18
 
+    // Depth cues for Glass; the compositor's edge effects do not reach an
+    // island (see hypr/module/glass.lua).
+    readonly property real sheenAlpha: 0.9 // scales `alpha`
+    readonly property real outlineAlpha: 0.10
+    readonly property real shadowAlpha: 0.28
+
+    // Popouts float over app windows, not the wallpaper: opaque enough to read
+    // against anything.
+    readonly property real popoutAlpha: 0.88
+
     readonly property color transparent: "transparent"
 
     function surface(a: real): color {
         return Qt.rgba(1, 1, 1, a);
+    }
+
+    // Black rather than an unset alpha on `surface`: the bottom rim of a glass
+    // slab occludes, it does not stop reflecting.
+    function shade(a: real): color {
+        return Qt.rgba(0, 0, 0, a);
     }
 
     function tinted(c: color, a: real): color {
@@ -99,12 +115,14 @@ Singleton {
     readonly property int easeStandard: Easing.OutCubic
     readonly property int easeEmphasized: Easing.OutBack
 
-    // Severity ramp shared by every gauge and readout.
+    // Severity ramp shared by every gauge and readout. Idle sits on `fg` so a
+    // resting gauge reads as neutral alongside the bar's text and icons; only a
+    // threshold crossing spends color.
     function severity(value: real, warnAt: real, critAt: real): color {
         if (value >= critAt)
             return root.urgent;
         if (value >= warnAt)
-            return root.warn;
-        return root.accent;
+            return root.accent;
+        return root.fg;
     }
 }

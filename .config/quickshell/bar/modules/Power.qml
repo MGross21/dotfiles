@@ -9,7 +9,7 @@ StatusPill {
     icon: Icons.shutdown
     tone: popout.visible ? Theme.urgent : Theme.fg
     active: popout.visible
-    onClicked: popout.visible = !popout.visible
+    onClicked: popout.toggle()
 
     PowerPopout {
         id: popout

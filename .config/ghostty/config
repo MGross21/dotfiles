@@ -7,8 +7,13 @@ theme = Tomorrow Night Burns
 # Optional Override Config File
 config-file = ?/etc/ghostty-theme.conf
 
-background-opacity = 0.2
-background-blur = true
+# hyprglass draws the substrate but cannot supply text contrast: its
+# adaptive_dim is gated on backdrop luminance and evaluates to ~0 on this
+# wallpaper, so the cell background carries it.
+background-opacity = 0.35
+# hyprglass sets `noblur` on every window it glasses (manage_window_blur), so
+# this request is overridden anyway.
+background-blur = false
 
 window-padding-x = 5
 window-padding-y = 5

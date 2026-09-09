@@ -47,6 +47,12 @@ Item {
             fillColor: Theme.transparent
             capStyle: ShapePath.RoundCap
 
+            Behavior on strokeColor {
+                ColorAnimation {
+                    duration: Theme.durBase
+                }
+            }
+
             PathAngleArc {
                 id: arc
                 centerX: root.width / 2

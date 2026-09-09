@@ -104,7 +104,6 @@ in
     ];
 
     fonts.packages = with pkgs; [
-      jetbrains-mono
       ubuntu-classic
       nerd-fonts.ubuntu
       nerd-fonts.jetbrains-mono

@@ -12,7 +12,7 @@ StatusPill {
     active: popout.visible
     // `h` with AP is 12-hour; bare `hh` renders 24-hour.
     text: Qt.formatDateTime(clock.date, "h:mm AP  ·  ddd d MMM")
-    onClicked: popout.visible = !popout.visible
+    onClicked: popout.toggle()
 
     SystemClock {
         id: clock

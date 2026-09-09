@@ -56,7 +56,7 @@ Row {
                         item.secondaryActivate();
                     } else if (event.button === Qt.RightButton || item.onlyMenu) {
                         if (item.hasMenu)
-                            menu.visible = !menu.visible;
+                            menu.toggle();
                     } else {
                         item.activate();
                     }

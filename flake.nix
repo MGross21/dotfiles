@@ -29,6 +29,14 @@
       url = "github:openclaw/nix-openclaw";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Hyprland plugin: pinned to a tag, not main. The plugin ABI is tied to the
+    # Hyprland release it was built against -- `.hyprland-version` in the repo
+    # says which. v0.7.0 targets 0.56.0 and compiles clean against nixpkgs'
+    # 0.56.2. Bump this in lockstep with nixpkgs' hyprland, not on its own.
+    hyprglass = {
+      url = "github:hyprnux/hyprglass/v0.7.0";
+      flake = false;
+    };
     # MacTahoe themes float on main; bump with `nix flake update mactahoe-*`
     mactahoe-gtk = {
       url = "github:vinceliuice/MacTahoe-gtk-theme";
@@ -49,6 +57,7 @@
       disko,
       stylix,
       openclaw,
+      hyprglass,
       mactahoe-gtk,
       mactahoe-icons,
       ...
@@ -155,7 +164,14 @@
       # Host entries (managed by new_host_nix.sh)
       nixosConfigurations.msi = nixpkgs.lib.nixosSystem {
         inherit system;
-        specialArgs = { inherit unstable mactahoe-gtk mactahoe-icons; };
+        specialArgs = {
+          inherit
+            unstable
+            hyprglass
+            mactahoe-gtk
+            mactahoe-icons
+            ;
+        };
         modules = [
           {
             nixpkgs.overlays = [ materiaOverlay ];
@@ -168,7 +184,12 @@
       nixosConfigurations.dell = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = {
-          inherit unstable mactahoe-gtk mactahoe-icons;
+          inherit
+            unstable
+            hyprglass
+            mactahoe-gtk
+            mactahoe-icons
+            ;
           openclaw-gateway = openclaw.packages.${system}.openclaw-gateway;
         };
         modules = [

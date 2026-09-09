@@ -20,7 +20,7 @@ StatusPill {
     text: `${percent}%`
     tone: low ? Theme.urgent : Theme.fg
     active: popout.visible
-    onClicked: popout.visible = !popout.visible
+    onClicked: popout.toggle()
 
     BatteryPopout {
         id: popout

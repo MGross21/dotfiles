@@ -14,7 +14,7 @@ StatusPill {
     // lightness, so a dim color would come back out bright.
     opacity: Network.connected ? 1.0 : 0.55
     active: popout.visible
-    onClicked: popout.visible = !popout.visible
+    onClicked: popout.toggle()
 
     NetworkPopout {
         id: popout

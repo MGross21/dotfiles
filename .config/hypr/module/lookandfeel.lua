@@ -33,6 +33,14 @@ hl.config({
             ignore_opacity = false,
             vibrancy = 0.5,
             vibrancy_darkness = 0,
+            -- The bar's popouts are xdg-popups, not part of the layer surface,
+            -- so the quickshell-bar layer_rule does not reach them. Without
+            -- these they render over raw desktop and the text is unreadable.
+            -- popups_ignorealpha must stay under the popout glass alpha
+            -- (Theme.surfaceHoverAlpha, 0.18) or the blur is skipped exactly
+            -- where it is needed; the 0.2 default is already above it.
+            popups = true,
+            popups_ignorealpha = 0.05,
         },
     },
 

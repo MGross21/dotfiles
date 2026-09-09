@@ -1,11 +1,10 @@
 import QtQuick
 import Quickshell
-import Quickshell.Hyprland
 import "../config"
 
-// Base dropdown. Dismissal uses hyprland_focus_grab_v1 via HyprlandFocusGrab
-// rather than a full-screen click-catcher layer -- the compositor tells us when
-// the user clicked away, so the popup never has to steal input from the desktop.
+// Base dropdown. grabFocus is quickshell's xdg-popup grab: dismisses on an
+// outside click, and that click is consumed -- so opening a different pill's
+// popout takes a second click.
 PopupWindow {
     id: root
 
@@ -13,19 +12,26 @@ PopupWindow {
     default property alias content: holder.data
     property int padding: 12
 
+    // The anchor rect spans the invoking item's full width, so the popup centers
+    // under it instead of under its left edge -- without the width the anchor
+    // point is a zero-width box at x=0 and a wide popup hangs off to the right.
+    // SlideX then pulls the right-hand popouts back on screen when centering
+    // would overflow the edge.
     anchor.item: anchorItem
     anchor.rect.y: (anchorItem?.height ?? 0) + 6
+    anchor.rect.width: anchorItem?.width ?? 0
+    anchor.edges: Edges.Bottom
     anchor.gravity: Edges.Bottom
+    anchor.adjustment: PopupAdjustment.SlideX
 
     implicitWidth: holder.implicitWidth + padding * 2
     implicitHeight: holder.implicitHeight + padding * 2
     color: Theme.transparent
     visible: false
+    grabFocus: true
 
-    HyprlandFocusGrab {
-        windows: [root]
-        active: root.visible
-        onCleared: root.visible = false
+    function toggle(): void {
+        root.visible = !root.visible;
     }
 
     Item {
@@ -61,10 +67,19 @@ PopupWindow {
             }
         }
 
+        // Opaque backing: popouts float over app windows, where the bar's
+        // translucent wash is unreadable. Glass supplies the edge on top.
+        Rectangle {
+            anchors.fill: parent
+            radius: Theme.popoutRadius
+            color: Theme.tinted(Theme.base, Theme.popoutAlpha)
+            antialiasing: true
+        }
+
         Glass {
             anchors.fill: parent
             radius: Theme.popoutRadius
-            alpha: Theme.surfaceHoverAlpha
+            alpha: Theme.surfaceAlpha
         }
 
         Item {

@@ -16,7 +16,7 @@ StatusPill {
     tone: muted ? Theme.urgent : Theme.fg
     active: popout.visible
 
-    onClicked: popout.visible = !popout.visible
+    onClicked: popout.toggle()
     onWheel: delta => {
         if (!root.sink?.audio)
             return;
