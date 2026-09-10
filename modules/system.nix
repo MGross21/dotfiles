@@ -5,6 +5,7 @@
 }:
 {
   networking.networkmanager.enable = true;
+  networking.modemmanager.enable = false; # no WWAN modem on any host
   networking.networkmanager.settings = {
     wifi = {
       "bg-scan" = false;
@@ -73,9 +74,12 @@
       WIFI_PWR_ON_AC = "off";
       WIFI_PWR_ON_BAT = "off";
 
+      PCIE_ASPM_ON_AC = "performance";
       PCIE_ASPM_ON_BAT = "powersupersave";
 
       USB_AUTOSUSPEND = 1;
+
+      WOL_DISABLE = "Y";
 
       SOUND_POWER_SAVE_ON_BAT = 1;
       SOUND_POWER_SAVE_CONTROLLER = "Y";
@@ -87,6 +91,7 @@
   services.tailscale.enable = true;
 
   virtualisation.docker.enable = true;
+  virtualisation.docker.enableOnBoot = false; # socket-activated, not idling from boot
 
   programs.nix-ld.enable = true;
 

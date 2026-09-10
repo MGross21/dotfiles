@@ -159,6 +159,9 @@ lib.mkIf (config.desktop.environment == "hyprland") {
     wantedBy = [ "graphical-session.target" ];
     after = [ "graphical-session.target" ];
     partOf = [ "graphical-session.target" ];
+    # glvnd probes every ICD in egl_vendor.d, so the nvidia one opens /dev/nvidia0
+    # just to answer the capability query. hyprpaper only needs the mesa ICD.
+    environment.__EGL_VENDOR_LIBRARY_FILENAMES = "${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json";
     serviceConfig = {
       Type = "simple";
       ExecStart = "${pkgs.hyprpaper}/bin/hyprpaper -c /etc/hypr/hyprpaper.conf";

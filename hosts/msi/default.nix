@@ -31,6 +31,30 @@ let
               --prefix PATH : ${pkgs.usbutils}/bin
     '';
   };
+  # Refresh rate and PL1 per power source -- neither is reachable through TLP here.
+  # `hyprctl keyword` is rejected under the Lua parser, hence eval + hl.monitor().
+  powerSourceSwitch = pkgs.writeShellScript "power-source-switch" ''
+    set -u
+    if [ "$(cat /sys/class/power_supply/ADP1/online 2>/dev/null || echo 1)" = "1" ]; then
+      mode=144.03
+      pl1=55000000
+    else
+      mode=60.08
+      pl1=25000000
+    fi
+
+    limit=/sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw
+    [ -w "$limit" ] && echo "$pl1" > "$limit"
+
+    for dir in /run/user/*/hypr/*/; do
+      [ -d "$dir" ] || continue
+      uid=$(echo "$dir" | cut -d/ -f4)
+      sig=$(basename "$dir")
+      HYPRLAND_INSTANCE_SIGNATURE="$sig" XDG_RUNTIME_DIR="/run/user/$uid" \
+        ${pkgs.hyprland}/bin/hyprctl eval \
+          "hl.monitor({output='eDP-1',mode='1920x1080@$mode',position='0x0',scale=1.0})" || true
+    done
+  '';
 in
 {
   imports = [
@@ -65,6 +89,7 @@ in
   boot.kernelParams = [
     "mem_sleep_default=deep"
     "nologo"
+    "pcie_aspm=force" # BIOS withholds ASPM control; TLP's PCIE_ASPM_* are no-ops without it
     "i915.enable_psr=2" # UHD 630 panel self-refresh — reduces display power draw
     "i915.enable_fbc=1" # framebuffer compression — less VRAM bandwidth
     "nmi_watchdog=0" # prevents periodic NMI wakeups from interrupting sleep
@@ -80,10 +105,8 @@ in
 
   boot.extraModprobeConfig = ''
     options iwlwifi power_save=0
-    options iwlmvm power_scheme=1 d0i3_disable=1 uapsd_disable=1
+    options iwlmvm power_scheme=1
     options ec_sys write_support=1
-    options snd_hda_intel power_save=1
-    options snd_hda_intel power_save_controller=y
     options nvidia NVreg_DynamicPowerManagement=0x02
   '';
 
@@ -105,6 +128,11 @@ in
   };
   services.xserver.videoDrivers = [ "nvidia" ];
   boot.blacklistedKernelModules = [ "nouveau" ];
+
+  # Pin the compositor to the iGPU; without this aquamarine enumerates both cards
+  # and Xwayland inherits the dGPU. Colon-free path: the list is colon-separated,
+  # so /dev/dri/by-path names split into fragments and aquamarine finds no GPU.
+  environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/igpu";
   environment.systemPackages = with pkgs; [
     libva
     libva-vdpau-driver
@@ -112,9 +140,35 @@ in
     msi-perkeyrgb
   ];
 
+  systemd.services.power-source-switch = {
+    description = "Apply panel refresh rate and CPU package limit for the current power source";
+    wantedBy = [
+      "multi-user.target"
+      "post-resume.target"
+    ];
+    after = [ "post-resume.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = powerSourceSwitch;
+    };
+  };
+
+  # Re-run at session start: the system unit fires before the compositor exists.
+  systemd.user.services.panel-refresh = {
+    description = "Apply panel refresh rate for the current power source";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = powerSourceSwitch;
+    };
+  };
+
   services.udev.extraRules = ''
+    SUBSYSTEM=="drm", KERNEL=="card*", KERNELS=="0000:00:02.0", SYMLINK+="dri/igpu"
     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x8086", ATTR{device}=="0x2725", ATTR{d3cold_allowed}="0"
     KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="1122", MODE="0666"
+    SUBSYSTEM=="power_supply", KERNEL=="ADP1", TAG+="systemd", ENV{SYSTEMD_WANTS}+="power-source-switch.service"
   '';
 
   # AX210 (0x2725) enters D3cold on suspend and hard-crashes — unload before sleep, reload after.
@@ -164,13 +218,12 @@ in
     CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
     CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
 
-    PLATFORM_PROFILE_ON_AC = "performance";
-    PLATFORM_PROFILE_ON_BAT = "low-power";
+    # No PLATFORM_PROFILE_*: no acpi platform_profile here, shift mode is EC-only.
 
     START_CHARGE_THRESH_BAT1 = 20;
     STOP_CHARGE_THRESH_BAT1 = 80;
 
-    USB_AUTOSUSPEND = lib.mkForce 0; # system.nix sets 1 — HID devices drop with autosuspend
+    USB_DENYLIST = "1038:1122"; # SteelSeries per-key keyboard drops out on autosuspend
   };
 
   programs.zsh.shellAliases.keycolor = "msi-perkeyrgb --model GS65 --id 1038:1122 -s";
