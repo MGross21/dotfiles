@@ -61,6 +61,7 @@ in
     ./hardware-configuration.nix
     ../../configuration.nix
     ../../modules/desktop.nix
+    ./audio.nix
   ];
 
   networking.hostName = "msi";
@@ -138,6 +139,7 @@ in
     libva-vdpau-driver
     libvdpau-va-gl
     msi-perkeyrgb
+    mcontrolcenter
   ];
 
   systemd.services.power-source-switch = {
@@ -224,6 +226,11 @@ in
     STOP_CHARGE_THRESH_BAT1 = 80;
 
     USB_DENYLIST = "1038:1122"; # SteelSeries per-key keyboard drops out on autosuspend
+
+    # TLP's own default is 1 on AC as well as BAT; unset here means codec D3.
+    SOUND_POWER_SAVE_ON_AC = 0;
+    SOUND_POWER_SAVE_ON_BAT = lib.mkForce 0;
+    SOUND_POWER_SAVE_CONTROLLER = lib.mkForce "N";
   };
 
   programs.zsh.shellAliases.keycolor = "msi-perkeyrgb --model GS65 --id 1038:1122 -s";

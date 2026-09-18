@@ -96,7 +96,6 @@ in
       libsecret
       seahorse
       hyprpolkitagent
-      mcontrolcenter
 
       dunst
 
