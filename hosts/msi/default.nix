@@ -2,36 +2,10 @@
   config,
   pkgs,
   lib,
-  theme,
   ...
 }:
 let
-  accentHex = lib.removePrefix "#" theme.blue;
-  msi-perkeyrgb = pkgs.python3Packages.buildPythonApplication {
-    pname = "msi-perkeyrgb";
-    version = "2.1";
-    pyproject = true;
-    build-system = [ pkgs.python3Packages.setuptools ];
-    src = pkgs.fetchFromGitHub {
-      owner = "Askannz";
-      repo = "msi-perkeyrgb";
-      rev = "e185a29e864bdda952b336940b047b5f97419d46";
-      sha256 = "0f25png4fcf7n07g57aa8nc2z3524ydx41b1vzh4dyij39r8lvs0";
-    };
-    nativeBuildInputs = [ pkgs.makeWrapper ];
-    postInstall = ''
-            mkdir -p $out/libexec
-            cat > $out/libexec/ldconfig << 'EOF'
-      #!/bin/sh
-      echo "  ${pkgs.hidapi}/lib/libhidapi-hidraw.so.0"
-      EOF
-            chmod +x $out/libexec/ldconfig
-            wrapProgram $out/bin/msi-perkeyrgb \
-              --prefix PATH : $out/libexec \
-              --prefix PATH : ${pkgs.usbutils}/bin
-    '';
-  };
-  # Refresh rate and PL1 per power source -- neither is reachable through TLP here.
+  accentHex = lib.removePrefix "#" config.theming.colors.blue;
   # `hyprctl keyword` is rejected under the Lua parser, hence eval + hl.monitor().
   powerSourceSwitch = pkgs.writeShellScript "power-source-switch" ''
     set -u
@@ -59,14 +33,16 @@ in
 {
   imports = [
     ./hardware-configuration.nix
-    ../../configuration.nix
-    ../../modules/desktop.nix
     ./audio.nix
   ];
 
   networking.hostName = "msi";
   theming.name = "tomorrow-night-burns";
-  desktop.environment = "hyprland";
+
+  desktop = {
+    enable = true;
+    environment = "hyprland";
+  };
 
   dev = {
     rust.enable = true;
@@ -77,6 +53,7 @@ in
   };
 
   apps = {
+    enable = true;
     creative.enable = false;
     media.enable = true;
     gaming.enable = true;
@@ -91,10 +68,10 @@ in
     "mem_sleep_default=deep"
     "nologo"
     "pcie_aspm=force" # BIOS withholds ASPM control; TLP's PCIE_ASPM_* are no-ops without it
-    "i915.enable_psr=2" # UHD 630 panel self-refresh — reduces display power draw
-    "i915.enable_fbc=1" # framebuffer compression — less VRAM bandwidth
-    "nmi_watchdog=0" # prevents periodic NMI wakeups from interrupting sleep
-    "mitigations=off" # single-user trusted machine — perf over CPU vuln mitigations
+    "i915.enable_psr=2"
+    "i915.enable_fbc=1"
+    "nmi_watchdog=0"
+    "mitigations=off" # single-user trusted machine
     "quiet"
     "udev.log_level=3"
     "rd.udev.log_level=3"
@@ -111,14 +88,14 @@ in
     options nvidia NVreg_DynamicPowerManagement=0x02
   '';
 
-  # GTX 1660 Ti Mobile (TU116M) + Intel UHD 630 — PRIME offload, iGPU renders desktop
+  # GTX 1660 Ti Mobile (TU116M) + Intel UHD 630
   hardware.graphics.enable = true;
   hardware.graphics.enable32Bit = true;
   hardware.nvidia = {
     open = true;
     modesetting.enable = true;
     powerManagement.enable = true;
-    powerManagement.finegrained = true; # RTD3 — dGPU powers off between offload launches
+    powerManagement.finegrained = true;
     nvidiaSettings = true;
     prime = {
       offload.enable = true;
@@ -130,9 +107,7 @@ in
   services.xserver.videoDrivers = [ "nvidia" ];
   boot.blacklistedKernelModules = [ "nouveau" ];
 
-  # Pin the compositor to the iGPU; without this aquamarine enumerates both cards
-  # and Xwayland inherits the dGPU. Colon-free path: the list is colon-separated,
-  # so /dev/dri/by-path names split into fragments and aquamarine finds no GPU.
+  # Colon-separated list, so the path must be colon-free — /dev/dri/by-path names split.
   environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/igpu";
   environment.systemPackages = with pkgs; [
     libva
@@ -155,7 +130,6 @@ in
     };
   };
 
-  # Re-run at session start: the system unit fires before the compositor exists.
   systemd.user.services.panel-refresh = {
     description = "Apply panel refresh rate for the current power source";
     wantedBy = [ "graphical-session.target" ];
@@ -173,8 +147,7 @@ in
     SUBSYSTEM=="power_supply", KERNEL=="ADP1", TAG+="systemd", ENV{SYSTEMD_WANTS}+="power-source-switch.service"
   '';
 
-  # AX210 (0x2725) enters D3cold on suspend and hard-crashes — unload before sleep, reload after.
-  # powerManagement.powerDownCommands runs at shutdown, not suspend — use sleep.target hook instead.
+  # AX210 (0x2725) enters D3cold on suspend and hard-crashes.
   systemd.services.ax210-suspend = {
     description = "Unload AX210 WiFi driver before suspend, reload after resume";
     before = [ "sleep.target" ];
@@ -199,8 +172,7 @@ in
   services.displayManager.ly.settings.battery_id = "BAT1";
   services.thermald.enable = true;
 
-  # auto-cpufreq owns governor — switches powersave↔performance based on load+AC state
-  # TLP handles energy policy/boost/platform profile; governors left to auto-cpufreq
+  # auto-cpufreq owns the governor; TLP owns energy policy and boost.
   services.auto-cpufreq = {
     enable = true;
     settings = {
@@ -215,19 +187,16 @@ in
     };
   };
 
-  # CPU power management — kept here, not in system.nix, so other hosts aren't affected
   services.tlp.settings = {
     CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
     CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-
-    # No PLATFORM_PROFILE_*: no acpi platform_profile here, shift mode is EC-only.
 
     START_CHARGE_THRESH_BAT1 = 20;
     STOP_CHARGE_THRESH_BAT1 = 80;
 
     USB_DENYLIST = "1038:1122"; # SteelSeries per-key keyboard drops out on autosuspend
 
-    # TLP's own default is 1 on AC as well as BAT; unset here means codec D3.
+    # Must be explicit on both: TLP defaults to 1, which puts the codec in D3 and kills mic capture.
     SOUND_POWER_SAVE_ON_AC = 0;
     SOUND_POWER_SAVE_ON_BAT = lib.mkForce 0;
     SOUND_POWER_SAVE_CONTROLLER = lib.mkForce "N";
@@ -242,7 +211,7 @@ in
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
-      ExecStart = "${msi-perkeyrgb}/bin/msi-perkeyrgb --model GS65 --id 1038:1122 -s ${accentHex}";
+      ExecStart = "${pkgs.msi-perkeyrgb}/bin/msi-perkeyrgb --model GS65 --id 1038:1122 -s ${accentHex}";
     };
   };
 }

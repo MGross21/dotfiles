@@ -1,42 +1,27 @@
 {
+  config,
   pkgs,
   lib,
   ...
 }:
 let
-  papirus-red =
-    pkgs.runCommand "papirus-icon-theme-red"
-      {
-        nativeBuildInputs = [ pkgs.papirus-folders ];
-      }
-      ''
-        tmpdir=$(mktemp -d)
-        cp -r ${pkgs.papirus-icon-theme}/share/icons/. $tmpdir/
-        chmod -R u+w $tmpdir
-        DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus -C red
-        DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus-Dark -C red
-        DISABLE_UPDATE_ICON_CACHE=1 papirus-folders -t $tmpdir/Papirus-Light -C red
-        mkdir -p $out/share/icons
-        cp -r $tmpdir/. $out/share/icons/
-      '';
+  cfg = config.desktop;
 in
 {
-  imports = [
-    ./desktops/hyprland.nix
-    ./desktops/gnome.nix
-    ./apps.nix
-  ];
+  options.desktop = {
+    enable = lib.mkEnableOption "the graphical desktop stack";
 
-  options.desktop.environment = lib.mkOption {
-    type = lib.types.enum [
-      "hyprland"
-      "gnome"
-    ];
-    default = "hyprland";
-    description = "Active desktop environment.";
+    environment = lib.mkOption {
+      type = lib.types.enum [
+        "hyprland"
+        "gnome"
+      ];
+      default = "hyprland";
+      description = "Active desktop environment.";
+    };
   };
 
-  config = {
+  config = lib.mkIf cfg.enable {
     services.pulseaudio.enable = false;
     security.rtkit.enable = true;
 
@@ -75,7 +60,6 @@ in
 
     programs.firefox.enable = true;
 
-    # Desktop infrastructure / theming (user apps live in apps.nix)
     environment.systemPackages = with pkgs; [
       ghostty
       tumbler

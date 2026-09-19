@@ -1,11 +1,6 @@
-{ openclaw-gateway, ... }:
+{ inputs, pkgs, ... }:
 {
-  imports = [
-    ./hardware-configuration.nix
-    ../../configuration.nix
-    ../../modules/disko.nix
-    ../../modules/openclaw.nix
-  ];
+  imports = [ ./hardware-configuration.nix ];
 
   networking.hostName = "dell";
 
@@ -19,8 +14,11 @@
 
   services.openclaw = {
     enable = true;
-    package = openclaw-gateway;
+    package = inputs.openclaw.packages.${pkgs.stdenv.hostPlatform.system}.openclaw-gateway;
   };
 
-  disko.devices.disk.main.device = "/dev/sdc";
+  storage.disko = {
+    enable = true;
+    device = "/dev/sdc";
+  };
 }

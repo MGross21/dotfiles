@@ -1,7 +1,12 @@
 # Generated post-install on target. Run:
 # nixos-generate-config --show-hardware-config --no-filesystems
 # and replace this file with the output.
-{ config, lib, modulesPath, ... }:
+{
+  config,
+  lib,
+  modulesPath,
+  ...
+}:
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 

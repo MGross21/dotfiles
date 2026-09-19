@@ -120,18 +120,23 @@ else
     cat <<EOF
 { ... }:
 {
-  imports = [
-    ./hardware-configuration.nix
-    ../../configuration.nix
-EOF
-    [[ "$desktop_arg" == "yes" ]] && echo "    ../../modules/desktop.nix"
-    cat <<EOF
-    ../../modules/disko.nix
-  ];
+  imports = [ ./hardware-configuration.nix ];
 
   networking.hostName = "$host";
+EOF
+    if [[ "$desktop_arg" == "yes" ]]; then
+      cat <<'EOF'
 
-  disko.devices.disk.main.device = "$disk";
+  desktop.enable = true;
+  apps.enable = true;
+EOF
+    fi
+    cat <<EOF
+
+  storage.disko = {
+    enable = true;
+    device = "$disk";
+  };
 }
 EOF
   } > "$default_file"
@@ -164,17 +169,7 @@ if grep -q "nixosConfigurations\.${host}[[:space:]]*=" "$flake_file"; then
 else
   tmp_file="$(mktemp)"
   awk -v block="$(cat <<EOF
-      nixosConfigurations.${host} = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = {
-          inherit unstable;
-        };
-        modules = [
-          stylix.nixosModules.stylix
-          disko.nixosModules.disko
-          ./hosts/${host}/default.nix
-        ];
-      };
+      nixosConfigurations.${host} = mkHost { name = "${host}"; };
 EOF
 )" '
     /^      # End host entries$/ && !inserted {

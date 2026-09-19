@@ -6,8 +6,11 @@ on:
     paths:
       - 'flake.nix'
       - 'flake.lock'
-      - 'configuration.nix'
+      - 'hosts/installer/**'
+      - 'lib/**'
       - 'modules/**'
+      - 'pkgs/**'
+      - 'scripts/iso-install.sh'
       - 'themes/**'
       - '.github/workflows/iso.yml'
   workflow_dispatch:

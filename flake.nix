@@ -14,8 +14,6 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # materia-theme: dropped from unstable (GTK2 murrine dep)
     nixpkgs-materia.url = "github:NixOS/nixpkgs/nixos-25.05";
     disko = {
       url = "github:nix-community/disko";
@@ -25,19 +23,20 @@
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     openclaw = {
       url = "github:openclaw/nix-openclaw";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nix-openclaw-tools.inputs.nixpkgs.follows = "nixpkgs";
     };
-    # Hyprland plugin: pinned to a tag, not main. The plugin ABI is tied to the
-    # Hyprland release it was built against -- `.hyprland-version` in the repo
-    # says which. v0.7.0 targets 0.56.0 and compiles clean against nixpkgs'
-    # 0.56.2. Bump this in lockstep with nixpkgs' hyprland, not on its own.
+    # Plugin ABI is tied to one Hyprland release; bump in lockstep with nixpkgs' hyprland.
     hyprglass = {
       url = "github:hyprnux/hyprglass/v0.7.0";
       flake = false;
     };
-    # MacTahoe themes float on main; bump with `nix flake update mactahoe-*`
     mactahoe-gtk = {
       url = "github:vinceliuice/MacTahoe-gtk-theme";
       flake = false;
@@ -49,158 +48,84 @@
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      nixpkgs-unstable,
-      nixpkgs-materia,
-      disko,
-      stylix,
-      openclaw,
-      hyprglass,
-      mactahoe-gtk,
-      mactahoe-icons,
-      ...
-    }:
+    inputs@{ nixpkgs, ... }:
     let
       system = "x86_64-linux";
-      # materia-theme from 25.05 onto current pkgs
-      materiaOverlay = final: prev: {
-        materia-theme = nixpkgs-materia.legacyPackages.${prev.stdenv.hostPlatform.system}.materia-theme;
+      overlay = import ./pkgs {
+        inherit (inputs) mactahoe-gtk mactahoe-icons nixpkgs-materia;
       };
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
+        overlays = [ overlay ];
       };
-      unstable = import nixpkgs-unstable {
-        inherit system;
-        config.allowUnfree = true;
-      };
-
+      mkHost = import ./lib/mkHost.nix { inherit inputs system overlay; };
       installerSystem = nixpkgs.lib.nixosSystem {
         inherit system;
+        specialArgs = { inherit inputs; };
         modules = [
           "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-          disko.nixosModules.disko
-          (
-            {
-              pkgs,
-              lib,
-              config,
-              ...
-            }:
-            {
-              system.stateVersion = "26.05";
-
-              services.openssh = {
-                enable = true;
-                settings.PermitRootLogin = "yes";
-                settings.PermitEmptyPasswords = "yes";
-              };
-              boot.zfs.forceImportRoot = false;
-
-              # Flakes needed by disko-install / nixos-install --flake and by the
-              # closure-size query in the installer script. Not enabled by the
-              # minimal ISO base otherwise.
-              nix.settings = {
-                experimental-features = [
-                  "nix-command"
-                  "flakes"
-                ];
-                accept-flake-config = true;
-              };
-              nix.extraOptions = ''
-                warn-dirty = false
-              '';
-
-              # Compressed RAM swap so the in-RAM /nix store overlay does not
-              # OOM ("no space left on device") while building the closure.
-              zramSwap = {
-                enable = true;
-                memoryPercent = 150;
-              };
-
-              environment.systemPackages = with pkgs; [
-                git
-                curl
-                vim
-                parted
-                gptfdisk
-                disko.packages.${system}.disko-install
-                (pkgs.writeShellScriptBin "nixos-install-interactive" (builtins.readFile ./scripts/iso-install.sh))
-              ];
-
-              # NetworkManager for wifi setup (nmtui) on the live ISO
-              networking.networkmanager.enable = true;
-              networking.wireless.enable = lib.mkForce false;
-
-              documentation.enable = false;
-              documentation.nixos.enable = false;
-              i18n.supportedLocales = [ "en_US.UTF-8/UTF-8" ];
-              hardware.enableAllFirmware = lib.mkForce false;
-              hardware.enableRedistributableFirmware = true;
-
-              image.baseName = lib.mkForce "nixos_${config.system.nixos.release}_${pkgs.stdenv.hostPlatform.system}";
-              isoImage.squashfsCompression = "zstd -Xcompression-level 19";
-              isoImage.includeSystemBuildDependencies = false;
-
-              # Auto-launch installer when root logs in on console
-              programs.bash.loginShellInit = ''
-                if [[ "$(tty)" == /dev/tty1 ]] && [[ $EUID -eq 0 ]]; then
-                  nixos-install-interactive
-                fi
-              '';
-            }
-          )
+          inputs.disko.nixosModules.disko
+          ./hosts/installer/default.nix
         ];
       };
     in
     {
-      formatter.${system} = pkgs.nixfmt;
+      formatter.${system} = pkgs.writeShellApplication {
+        name = "fmt";
+        runtimeInputs = [
+          pkgs.nixfmt
+          pkgs.git
+        ];
+        text = ''
+          repo_files() {
+            git ls-files '*.nix'
+            git diff --cached --name-only --diff-filter=A | grep '\.nix$' || true
+          }
+
+          flags=()
+          paths=()
+          for arg in "$@"; do
+            case "$arg" in
+              -*) flags+=("$arg") ;;
+              *)
+                if [ -d "$arg" ]; then
+                  mapfile -t -O "''${#paths[@]}" paths < <(repo_files | grep "^''${arg#./}" || true)
+                else
+                  paths+=("$arg")
+                fi
+                ;;
+            esac
+          done
+
+          if [ "''${#paths[@]}" -eq 0 ]; then
+            mapfile -t paths < <(repo_files)
+          fi
+
+          if [ "''${#paths[@]}" -eq 0 ]; then
+            echo "fmt: no .nix files to format" >&2
+            exit 0
+          fi
+
+          exec nixfmt ''${flags[@]+"''${flags[@]}"} "''${paths[@]}"
+        '';
+      };
 
       nixosConfigurations.installer = installerSystem;
-      packages.${system}.installer = installerSystem.config.system.build.isoImage;
+      packages.${system} = {
+        installer = installerSystem.config.system.build.isoImage;
+        inherit (pkgs)
+          msi-perkeyrgb
+          papirus-red
+          mactahoe-gtk-theme
+          mactahoe-icon-theme
+          mactahoe-cursor-theme
+          ;
+      };
 
       # Host entries (managed by new_host_nix.sh)
-      nixosConfigurations.msi = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = {
-          inherit
-            unstable
-            hyprglass
-            mactahoe-gtk
-            mactahoe-icons
-            ;
-        };
-        modules = [
-          {
-            nixpkgs.overlays = [ materiaOverlay ];
-          }
-          stylix.nixosModules.stylix
-          disko.nixosModules.disko
-          ./hosts/msi/default.nix
-        ];
-      };
-      nixosConfigurations.dell = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = {
-          inherit
-            unstable
-            hyprglass
-            mactahoe-gtk
-            mactahoe-icons
-            ;
-          openclaw-gateway = openclaw.packages.${system}.openclaw-gateway;
-        };
-        modules = [
-          {
-            nixpkgs.overlays = [ materiaOverlay ];
-          }
-          stylix.nixosModules.stylix
-          disko.nixosModules.disko
-          ./hosts/dell/default.nix
-        ];
-      };
+      nixosConfigurations.msi = mkHost { name = "msi"; };
+      nixosConfigurations.dell = mkHost { name = "dell"; };
       # End host entries
     };
 }

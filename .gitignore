@@ -1,42 +1,36 @@
-# Hide system and shell files
 .bash*
 .nvidia*
 
-# Hide backup files
 *.bak
+*.hm-bak
 
-# Ignore all .config contents first, then selectively include
+# Whitelist: only the home-manager-managed entries are tracked.
 .config/*
-
-# Include specific config directories (entire folders)
+!.config/alacritty.toml
+!.config/cava/
+!.config/dunst/
+!.config/fastfetch/
+!.config/ghostty/
 !.config/hypr/
+!.config/liquid-glass/
+!.config/ly/
+!.config/neofetch/
 !.config/nvim/
+!.config/quickshell/
+!.config/README.md
+!.config/spotify-launcher.conf
+!.config/Thunar/
 !.config/vivid/
 !.config/wofi/
-!.config/fastfetch/
-!.config/yazi/
-!.config/ly
 !.config/xsettingsd/
-!.config/quickshell/
+!.config/yazi/
 
-# Include specific files only
-!.config/alacritty.toml
-!.config/README.md
+# Rewritten at runtime inside the tracked directories above.
+.config/Thunar/accels.scm
+.config/cava/shaders/
+.config/cava/themes/
 
-# Include specific files from folders (need to include folder first)
-!.config/Thunar/
-.config/Thunar/*
-!.config/Thunar/uca.xml
-
-!.config/cava/
-.config/cava/*
-!.config/cava/config
-
-# Pictures - ignore all, then include wallpapers
-Pictures/*
-!Pictures/wallpapers/
-
-# System screenshots
+Pictures/camera/
 **/*_hyprshot.png
 
 result

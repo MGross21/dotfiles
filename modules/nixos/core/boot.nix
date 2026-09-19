@@ -13,7 +13,10 @@
 
   boot.initrd.systemd.enable = true;
   boot.initrd.compressor = "zstd";
-  boot.initrd.compressorArgs = [ "-19" "-T0" ];
+  boot.initrd.compressorArgs = [
+    "-19"
+    "-T0"
+  ];
 
   systemd.services.NetworkManager-wait-online.enable = false; # don't block boot on network
 

@@ -10,8 +10,7 @@
     ];
   };
 
-  # filter-chain does not chain nodes by array order: with no links every
-  # unconnected port is exposed instead, and the graph emits silence.
+  # filter-chain does not chain nodes by array order; without explicit links the graph emits silence.
   services.pipewire.extraConfig.pipewire."99-mic-highpass" = {
     "context.modules" = [
       {
