@@ -48,6 +48,7 @@
     gitui
     yazi
     bc
+    kimun
 
     # Media/audio CLI utilities
     ffmpeg-full

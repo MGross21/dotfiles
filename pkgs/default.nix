@@ -6,6 +6,8 @@
 final: prev: {
   materia-theme = nixpkgs-materia.legacyPackages.${prev.stdenv.hostPlatform.system}.materia-theme;
 
+  kimun = final.callPackage ./kimun { };
+
   msi-perkeyrgb = final.callPackage ./msi-perkeyrgb { };
 
   papirus-red = final.callPackage ./papirus-red { };

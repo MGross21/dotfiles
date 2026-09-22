@@ -115,6 +115,7 @@
       packages.${system} = {
         installer = installerSystem.config.system.build.isoImage;
         inherit (pkgs)
+          kimun
           msi-perkeyrgb
           papirus-red
           mactahoe-gtk-theme
