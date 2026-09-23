@@ -11,7 +11,7 @@ let
     set -u
     if [ "$(cat /sys/class/power_supply/ADP1/online 2>/dev/null || echo 1)" = "1" ]; then
       mode=144.03
-      pl1=55000000
+      pl1=45000000
     else
       mode=60.08
       pl1=25000000
@@ -171,6 +171,27 @@ in
 
   services.displayManager.ly.settings.battery_id = "BAT1";
   services.thermald.enable = true;
+
+  nix.settings = {
+    max-jobs = 4;
+    cores = 3;
+  };
+
+  # Weights bite only under contention; an idle session still gets full speed.
+  systemd.services.nix-daemon.serviceConfig = {
+    CPUWeight = 20;
+    IOWeight = 20;
+    MemoryHigh = "8G";
+  };
+
+  # Outranks the disk swap in hardware-configuration.nix, which stays as overflow.
+  zramSwap = {
+    enable = true;
+    memoryPercent = 50;
+  };
+
+  boot.kernel.sysctl."vm.swappiness" = 180;
+  boot.kernel.sysctl."vm.page-cluster" = 0;
 
   # auto-cpufreq owns the governor; TLP owns energy policy and boost.
   services.auto-cpufreq = {

@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 {
   nix.settings = {
     experimental-features = [
@@ -8,8 +8,8 @@
 
     warn-dirty = false;
 
-    cores = 0;
-    max-jobs = "auto";
+    cores = lib.mkDefault 0;
+    max-jobs = lib.mkDefault "auto";
 
     auto-optimise-store = true;
     download-buffer-size = 67108864;
