@@ -22,6 +22,7 @@
     gh
     less
     fzf
+    sesh # bound to C-o in tmux.nix
     neovim
     htop
     btop

@@ -35,6 +35,22 @@ in
       cmake
       nixfmt
     ]
+    # Language servers and formatters for nvim; mason is disabled there.
+    ++ [
+      tree-sitter
+      clang-tools # clangd, clang-format
+      lua-language-server
+      stylua
+      nixd
+      statix
+      bash-language-server
+      shellcheck
+      shfmt
+      taplo
+      marksman
+      yaml-language-server
+      vscode-langservers-extracted # jsonls, html, cssls
+    ]
     ++ lib.optionals cfg.rust.enable [
       cargo
       rustc
@@ -47,12 +63,18 @@ in
       uv
       pixi
       python3
+      pyright
+      ruff
     ]
     ++ lib.optionals cfg.js.enable [
       nodejs
+      vtsls
+      eslint_d
+      prettierd
     ]
     ++ lib.optionals cfg.jvm.enable [
       kotlin
+      kotlin-language-server
       ktlint
       gradle
       jdk

@@ -1,8 +1,13 @@
 return {
-  "mfussenegger/nvim-lint",
-  optional = true,
-  dependencies = "mason-org/mason.nvim",
-  opts = {
-    linters_by_ft = { kotlin = { "ktlint" } },
+  {
+    "mfussenegger/nvim-lint",
+    opts = {
+      linters_by_ft = {
+        kotlin = { "ktlint" },
+        sh = { "shellcheck" },
+        bash = { "shellcheck" },
+        nix = { "statix" },
+      },
+    },
   },
 }

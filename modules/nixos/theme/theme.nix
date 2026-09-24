@@ -141,9 +141,16 @@ in
       Xft/RGBA "rgb"
     '';
 
-    # Sourced by lazy.lua at startup.
+    # Read by lua/config/theme.lua.
     environment.etc."nvim-theme.lua".text = ''
-      vim.cmd("colorscheme ${data.nvim}")
+      return {
+        name = "${data.nvim}",
+        colors = {
+      ${lib.concatStringsSep "\n" (
+        lib.mapAttrsToList (k: v: ''${k} = "${v}",'') (lib.filterAttrs (_: lib.isString) c)
+      )}
+        },
+      }
     '';
 
     environment.etc."hypr/hyprlock.conf".text = ''
