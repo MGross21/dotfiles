@@ -23,7 +23,6 @@ let
     "nvim"
     "quickshell"
     "README.md"
-    "spotify-launcher.conf"
     "Thunar"
     "vivid"
     "wofi"

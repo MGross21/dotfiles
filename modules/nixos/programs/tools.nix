@@ -59,7 +59,6 @@
     claude-code
     claude-monitor
     clipse
-    spotify-player
 
     efibootmgr
     mpv-unwrapped

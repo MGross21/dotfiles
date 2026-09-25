@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -7,6 +8,16 @@
 let
   cfg = config.apps;
   isX86_64 = pkgs.stdenv.hostPlatform.isx86_64;
+  spotifast =
+    let
+      pkg = inputs.spotifast.packages.${pkgs.stdenv.hostPlatform.system}.spotifast;
+    in
+    pkgs.runCommand "spotifast-${pkg.version}" { } ''
+      mkdir -p $out/bin
+      ln -s ${pkg}/bin/spotifast $out/bin/spotifast
+      ln -s ${pkg}/bin/spotifast $out/bin/spotify
+      ln -s ${pkg}/share $out/share
+    '';
 in
 {
   options.apps = {
@@ -36,8 +47,7 @@ in
         kicad
       ]
       ++ lib.optionals cfg.media.enable [
-        spotify
-        spicetify-cli
+        spotifast
         gthumb
         feh
       ]

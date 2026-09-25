@@ -32,6 +32,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.nix-openclaw-tools.inputs.nixpkgs.follows = "nixpkgs";
     };
+    spotifast = {
+      url = "github:crmne/spotifast";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # Plugin ABI is tied to one Hyprland release; bump in lockstep with nixpkgs' hyprland.
     hyprglass = {
       url = "github:hyprnux/hyprglass/v0.7.0";
