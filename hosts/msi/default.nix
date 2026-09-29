@@ -12,13 +12,17 @@ let
     if [ "$(cat /sys/class/power_supply/ADP1/online 2>/dev/null || echo 1)" = "1" ]; then
       mode=144.03
       pl1=45000000
+      pl2=55000000
     else
       mode=60.08
       pl1=25000000
+      pl2=35000000
     fi
 
-    limit=/sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw
-    [ -w "$limit" ] && echo "$pl1" > "$limit"
+    rapl=/sys/class/powercap/intel-rapl:0
+    [ -w "$rapl/constraint_0_power_limit_uw" ] && echo "$pl1" > "$rapl/constraint_0_power_limit_uw"
+    [ -w "$rapl/constraint_1_power_limit_uw" ] && echo "$pl2" > "$rapl/constraint_1_power_limit_uw"
+    [ -w "$rapl/constraint_0_time_window_us" ] && echo 8000000 > "$rapl/constraint_0_time_window_us"
 
     for dir in /run/user/*/hypr/*/; do
       [ -d "$dir" ] || continue
@@ -91,6 +95,7 @@ in
   # GTX 1660 Ti Mobile (TU116M) + Intel UHD 630
   hardware.graphics.enable = true;
   hardware.graphics.enable32Bit = true;
+  hardware.graphics.extraPackages = [ pkgs.intel-media-driver ];
   hardware.nvidia = {
     open = true;
     modesetting.enable = true;
@@ -99,6 +104,7 @@ in
     nvidiaSettings = true;
     prime = {
       offload.enable = true;
+      offload.enableOffloadCmd = true;
       intelBusId = "PCI:0:2:0";
       nvidiaBusId = "PCI:1:0:0";
     };
@@ -109,6 +115,11 @@ in
 
   # Colon-separated list, so the path must be colon-free — /dev/dri/by-path names split.
   environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/igpu";
+  environment.sessionVariables.LIBVA_DRIVER_NAME = "iHD";
+  programs.firefox.preferences = {
+    "media.ffmpeg.vaapi.enabled" = true;
+    "media.av1.enabled" = false;
+  };
   environment.systemPackages = with pkgs; [
     libva
     libva-vdpau-driver
@@ -172,6 +183,13 @@ in
   services.displayManager.ly.settings.battery_id = "BAT1";
   services.thermald.enable = true;
 
+  # coreOffset also sets cache; p1/p2 stay unset because power-source-switch owns RAPL.
+  services.undervolt = {
+    enable = true;
+    coreOffset = -80;
+    temp = 90;
+  };
+
   nix.settings = {
     max-jobs = 4;
     cores = 3;
@@ -193,24 +211,16 @@ in
   boot.kernel.sysctl."vm.swappiness" = 180;
   boot.kernel.sysctl."vm.page-cluster" = 0;
 
-  # auto-cpufreq owns the governor; TLP owns energy policy and boost.
-  services.auto-cpufreq = {
-    enable = true;
-    settings = {
-      battery = {
-        governor = "powersave";
-        turbo = "never";
-      };
-      charger = {
-        governor = "performance";
-        turbo = "auto";
-      };
-    };
-  };
-
+  # Sole owner of governor/EPP/boost; conflicts with auto-cpufreq.
   services.tlp.settings = {
-    CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+    CPU_SCALING_GOVERNOR_ON_AC = "powersave";
+    CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+    CPU_ENERGY_PERF_POLICY_ON_AC = "balance_performance";
     CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+    CPU_BOOST_ON_AC = 1;
+    CPU_BOOST_ON_BAT = 0;
+    CPU_HWP_DYN_BOOST_ON_AC = 1;
+    CPU_HWP_DYN_BOOST_ON_BAT = 0;
 
     START_CHARGE_THRESH_BAT1 = 20;
     STOP_CHARGE_THRESH_BAT1 = 80;
