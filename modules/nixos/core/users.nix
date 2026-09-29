@@ -13,6 +13,7 @@
       "dialout"
       "uucp"
       "input"
+      "uinput"
       "storage"
       "optical"
       "ollama"

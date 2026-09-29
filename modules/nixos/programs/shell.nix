@@ -1,5 +1,95 @@
-{ pkgs, ... }:
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
+  environment.systemPackages = [
+    (pkgs.runCommand "uvx-zsh-completion"
+      {
+        nativeBuildInputs = [
+          pkgs.uv
+          pkgs.installShellFiles
+        ];
+      }
+      ''
+        export HOME=$TMPDIR
+        installShellCompletion --cmd uvx --zsh <(uvx --generate-shell-completion zsh)
+      ''
+    )
+  ]
+  ++ lib.optional config.services.tailscale.enable (
+    pkgs.writeShellApplication {
+      name = "ares";
+      runtimeInputs = [
+        pkgs.tailscale
+        pkgs.openssh
+      ];
+      text = ''
+        tailscale status >/dev/null 2>&1 || sudo tailscale up
+        exec ssh ares
+      '';
+    }
+  );
+
+  programs.starship = {
+    enable = true;
+    settings = {
+      add_newline = false;
+      format = "$directory$git_branch$git_state$git_status$cmd_duration$jobs$line_break$nix_shell$python$character";
+      directory = {
+        style = "blue";
+        truncation_length = 3;
+      };
+      git_branch = {
+        format = "[$branch]($style)";
+        style = "bright-black";
+      };
+      git_state = {
+        format = " \\([$state( $progress_current/$progress_total)]($style)\\)";
+        style = "bright-black";
+      };
+      # Zero-width symbols collapse every change type into a single "*".
+      git_status = {
+        format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218)( $ahead_behind$stashed)]($style) ";
+        style = "cyan";
+        conflicted = "​";
+        untracked = "​";
+        modified = "​";
+        staged = "​";
+        renamed = "​";
+        deleted = "​";
+        stashed = "≡";
+      };
+      cmd_duration = {
+        format = "[$duration]($style) ";
+        style = "yellow";
+      };
+      jobs = {
+        format = "[$symbol$number]($style) ";
+        symbol = "✦";
+        style = "bright-black";
+      };
+      nix_shell = {
+        format = "[❄ $name]($style) ";
+        style = "blue";
+      };
+      python = {
+        format = "[$virtualenv]($style) ";
+        style = "bright-black";
+        detect_extensions = [ ];
+        detect_files = [ ];
+        detect_folders = [ ];
+      };
+      character = {
+        success_symbol = "[❯](purple)";
+        error_symbol = "[❯](red)";
+        vimcmd_symbol = "[❮](green)";
+      };
+    };
+  };
+
   programs.fzf = {
     fuzzyCompletion = true;
     keybindings = true;
@@ -25,6 +115,7 @@
     LESS = "-R -i -w -M -z-4";
     # ANDROID_SDK_ROOT = "/opt/android-sdk";
     CLICOLOR = "1";
+    VIRTUAL_ENV_DISABLE_PROMPT = "1";
     COLORTERM = "truecolor";
     FZF_DEFAULT_COMMAND = "fd --type f --follow --exclude .git --exclude node_modules --exclude __pycache__ --exclude .venv";
     FZF_CTRL_T_COMMAND = "fd --follow --exclude .git --exclude node_modules --exclude __pycache__ --exclude .venv";
@@ -32,12 +123,14 @@
     FZF_DEFAULT_OPTS = "--height=~80% --layout=reverse --border --color=fg:-1,bg:-1,hl:4 --color=fg+:7,bg+:0,hl+:5 --color=info:4,prompt:1,pointer:2,marker:3,spinner:6,header:8";
     FZF_CTRL_T_OPTS = "--preview 'bat --style=numbers --color=always --line-range :100 {}' --bind 'ctrl-/:toggle-preview'";
     FZF_CTRL_R_OPTS = "--preview 'echo {}' --preview-window=up:3";
-    FZF_ALT_C_OPTS = "--preview 'tree -C {} | head -50'";
+    FZF_ALT_C_OPTS = "--preview 'eza --tree --level=2 --color=always --icons=always {} | head -50'";
   };
 
   programs.zsh = {
     enable = true;
     enableCompletion = true;
+    enableGlobalCompInit = false;
+    enableLsColors = false;
     autosuggestions = {
       enable = true;
       highlightStyle = "fg=8";
@@ -87,44 +180,27 @@
       "NOTIFY"
     ];
 
-    promptInit = ''
-      autoload -Uz vcs_info
-      zstyle ':vcs_info:*' enable git
-      zstyle ':vcs_info:git:*' formats ':%b'
-      zstyle ':vcs_info:git:*' actionformats ' [%b|%a]'
-      precmd() { vcs_info; }
-
-      autoload -Uz colors && colors
-      PROMPT='%F{blue}%1~%f%F{magenta}''${vcs_info_msg_0_}%f %# '
-    '';
-
     interactiveShellInit = ''
+      autoload -Uz compinit
+      _zcompdump=$HOME/.cache/zsh/zcompdump-''${''${''${:-/run/current-system}:A:t}%%-*}
+      if [[ -f $_zcompdump ]]; then
+        compinit -C -d $_zcompdump
+      else
+        mkdir -p ''${_zcompdump:h}
+        rm -f ''${_zcompdump:h}/zcompdump-*(N)
+        compinit -d $_zcompdump
+      fi
+      unset _zcompdump
+
+      [[ $TERM == dumb ]] && unsetopt zle && PS1='$ '
+
       [[ -f "$HOME/.paths" ]] && source "$HOME/.paths"
-
-      if command -v vivid >/dev/null 2>&1; then
-        _vivid_theme="''${VIVID_THEME:-tomorrow-night-burns}"
-        if [[ "$TERM" == "linux" ]]; then
-          export LS_COLORS="$(vivid -m 8-bit generate "$_vivid_theme")"
-        else
-          export LS_COLORS="$(vivid generate "$_vivid_theme")"
-        fi
-        unset _vivid_theme
-      fi
-
-      if [[ -n "$TMUX" ]]; then
-        export TERM=tmux-256color
-      elif [[ "$TERM" == "xterm" ]] || [[ "$TERM" == "xterm-color" ]]; then
-        export TERM=xterm-256color
-      fi
 
       source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 
       bindkey -e
 
-      unsetopt CORRECT_ALL
       CORRECT_IGNORE=('_*' '.*')
-
-      [[ ! -d ~/.cache/zsh ]] && mkdir -p ~/.cache/zsh
 
       zstyle ':completion:*' menu select
       zstyle ':completion:*' matcher-list \
@@ -132,7 +208,7 @@
         'r:|?=**' \
         'l:|=* r:|=*'
       zstyle ':completion:*:descriptions' format '[%d]'
-      zstyle ':completion:*' list-colors ''${(s.:.)LS_COLORS}
+      zstyle ':completion:*' list-colors ""
       zstyle ':completion:*' group-name ""
       zstyle ':completion:*:*:kill:*' list-colors '=(#b) #([0-9]#)*( *[a-z])*=34=31=33'
       zstyle ':completion:*' use-cache on
@@ -142,27 +218,6 @@
       bindkey '^[[B' history-substring-search-down
       bindkey '^P' history-substring-search-up
       bindkey '^N' history-substring-search-down
-
-      if command -v tailscale >/dev/null 2>&1; then
-        ares() {
-          if ! systemctl is-active --quiet tailscaled.service; then
-            sudo systemctl start tailscaled.service
-          fi
-
-          if ! tailscale status | grep -q "100."; then
-            sudo tailscale up
-          fi
-
-          ssh ares
-        }
-      fi
-      if command -v uv >/dev/null 2>&1; then
-        eval "$(uv generate-shell-completion zsh 2>/dev/null)"
-      fi
-
-      if command -v uvx >/dev/null 2>&1; then
-        eval "$(uvx --generate-shell-completion zsh 2>/dev/null)"
-      fi
 
       sshe() {
         local host="$1"
@@ -184,8 +239,6 @@
           rm -f $remote_tmp
         "
       }
-
-      [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ '
 
       autoload -U add-zsh-hook
 
@@ -214,6 +267,5 @@
 
   };
 
-  environment.shells = with pkgs; [ zsh ];
   users.defaultUserShell = pkgs.zsh;
 }

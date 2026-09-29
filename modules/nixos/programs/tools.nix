@@ -16,7 +16,6 @@
 
     # Shell and terminal workflow
     zsh-completions
-    zsh-history-substring-search
 
     # Terminal utilities
     gh
@@ -38,7 +37,6 @@
     poppler
     poppler_data
     fontconfig
-    vivid
     cava
     docker-compose
     man-db

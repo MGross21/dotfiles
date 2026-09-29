@@ -24,7 +24,6 @@ let
     "quickshell"
     "README.md"
     "Thunar"
-    "vivid"
     "wofi"
     "xsettingsd"
     "yazi"

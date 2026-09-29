@@ -9,8 +9,14 @@
     };
   };
   networking.firewall = {
-    allowedTCPPorts = [ 8080 ];
-    allowedUDPPorts = [ 8081 ];
+    allowedTCPPorts = [
+      8080
+      24850 # input-sharing server
+    ];
+    allowedUDPPorts = [
+      8081
+      5353 # mDNS discovery
+    ];
   };
 
   services.tailscale.enable = true;

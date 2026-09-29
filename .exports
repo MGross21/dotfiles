@@ -16,16 +16,6 @@ if [[ -f "$HOME/.paths" ]]; then
     export PATH
 fi
 
-# Colors
-if command -v vivid &>/dev/null; then
-    theme="tomorrow-night-burns"
-    if [[ "$TERM" == "linux" ]]; then
-        export LS_COLORS="$(vivid -m 8-bit generate "$theme")"
-    else
-        export LS_COLORS="$(vivid generate "$theme")"
-    fi
-fi
-
 # Terminal TERM adjustments for compatibility
 if [[ -n "$TMUX" ]]; then
     export TERM=tmux-256color
@@ -56,8 +46,8 @@ if command -v fzf &>/dev/null; then
     
     export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window=up:3"
     
-    if command -v tree &>/dev/null; then
-        export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -50'"
+    if command -v eza &>/dev/null; then
+        export FZF_ALT_C_OPTS="--preview 'eza --tree --level=2 --color=always --icons=always {} | head -50'"
     fi
 fi
 

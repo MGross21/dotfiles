@@ -44,6 +44,8 @@
     ))
   ];
 
+  services.getty.autologinUser = lib.mkForce "root";
+
   networking.networkmanager.enable = true;
   networking.wireless.enable = lib.mkForce false;
 

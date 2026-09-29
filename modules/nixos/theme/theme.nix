@@ -12,7 +12,6 @@ let
       yaml = ../../../themes/tomorrow-night-burns.yaml;
       wallpaper = wp ../../../Pictures/wallpapers/windows11_red.png;
       ghostty = "Tomorrow Night Burns";
-      vivid = "tomorrow-night-burns";
       gtk = "Materia-dark-compact";
       icons = "Papirus-Dark";
       cursor = "macOS";
@@ -29,7 +28,6 @@ let
       yaml = ../../../themes/tokyo-night.yaml;
       wallpaper = wp ../../../Pictures/wallpapers/cosmic_bg.jpg;
       ghostty = "TokyoNight";
-      vivid = "tokyonight-night";
       gtk = "Materia-dark-compact";
       icons = "Papirus-Dark";
       cursor = "macOS";
@@ -126,8 +124,6 @@ in
       ipc = true
       splash = false
     '';
-
-    environment.variables.VIVID_THEME = data.vivid;
 
     environment.etc."xsettingsd/xsettingsd.conf".text = ''
       Net/ThemeName "${data.gtk}"

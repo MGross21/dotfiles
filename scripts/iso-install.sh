@@ -32,13 +32,56 @@ cat <<'EOF'
 EOF
 echo -e "${NC}"
 
-# ── Wait for dotfiles ────────────────────────────────────────────────────────
-if [[ ! -d "$DOTFILES_DIR/.git" ]]; then
-  info "Dotfiles not found — cloning..."
-  ping -c1 -W3 github.com &>/dev/null || die "No network. Connect and re-run."
+# ── Dotfiles ─────────────────────────────────────────────────────────────────
+until ping -c1 -W3 github.com &>/dev/null; do
+  warn "No network — opening nmtui (quit it once connected)"
+  sleep 2
+  nmtui
+done
+ok "Network up"
+
+if [[ -d "$DOTFILES_DIR/.git" ]]; then
+  info "Updating dotfiles..."
+  git -C "$DOTFILES_DIR" pull --ff-only || warn "Pull failed — using existing checkout"
+else
+  info "Cloning dotfiles..."
   git clone "$DOTFILES_REPO" "$DOTFILES_DIR" || die "Clone failed"
 fi
 ok "Dotfiles ready at $DOTFILES_DIR"
+
+REPO_SCRIPT="$DOTFILES_DIR/scripts/iso-install.sh"
+if [[ -z "${ISO_INSTALL_REEXEC:-}" && -f "$REPO_SCRIPT" ]] && ! cmp -s "$0" "$REPO_SCRIPT"; then
+  info "Switching to the newer installer from the repo..."
+  ISO_INSTALL_REEXEC=1 exec bash "$REPO_SCRIPT"
+fi
+
+host_eval() { nix eval --raw "$DOTFILES_DIR#nixosConfigurations.\"$HOST\".config.$1" "${@:2}"; }
+
+# ── Host config selection ────────────────────────────────────────────────────
+echo
+info "Reading host configs from flake..."
+mapfile -t HOSTS < <(nix eval --raw "$DOTFILES_DIR#nixosConfigurations" --apply \
+  'c: builtins.concatStringsSep "\n" (builtins.filter (n: n != "installer") (builtins.attrNames c))')
+(( ${#HOSTS[@]} )) || die "No nixosConfigurations found in $DOTFILES_DIR"
+for i in "${!HOSTS[@]}"; do
+  echo "  $((i+1))) ${HOSTS[$i]}"
+done
+echo
+
+while true; do
+  read -rp "$(echo -e "${BOLD}Select [1-${#HOSTS[@]}]: ${NC}")" CHOICE
+  if [[ "$CHOICE" =~ ^[0-9]+$ ]] && (( CHOICE >= 1 && CHOICE <= ${#HOSTS[@]} )); then
+    HOST="${HOSTS[$((CHOICE-1))]}"
+    break
+  fi
+  warn "Invalid choice"
+done
+
+mapfile -t DISK_NAMES < <(host_eval disko.devices.disk --apply \
+  'd: builtins.concatStringsSep "\n" (builtins.attrNames d)')
+(( ${#DISK_NAMES[@]} == 1 )) \
+  || die "$HOST must declare exactly one disko disk (found ${#DISK_NAMES[@]}); set storage.disko.enable = true"
+DISK_NAME="${DISK_NAMES[0]}"
 
 # ── Disk selection ───────────────────────────────────────────────────────────
 echo
@@ -55,35 +98,10 @@ while true; do
   break
 done
 
-# ── Host config selection ────────────────────────────────────────────────────
-echo
-info "Available host configs:"
-mapfile -t HOSTS < <(find "$DOTFILES_DIR/hosts" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort)
-for i in "${!HOSTS[@]}"; do
-  echo "  $((i+1))) ${HOSTS[$i]}"
-done
-echo "  $((${#HOSTS[@]}+1))) Enter new hostname"
-echo
-
-while true; do
-  read -rp "$(echo -e "${BOLD}Select [1-$((${#HOSTS[@]}+1))]: ${NC}")" CHOICE
-  if [[ "$CHOICE" =~ ^[0-9]+$ ]] && (( CHOICE >= 1 && CHOICE <= ${#HOSTS[@]} )); then
-    HOST="${HOSTS[$((CHOICE-1))]}"
-    break
-  elif (( CHOICE == ${#HOSTS[@]}+1 )); then
-    read -rp "$(echo -e "${BOLD}Hostname: ${NC}")" HOST
-    [[ "$HOST" =~ ^[a-zA-Z0-9._-]+$ ]] || { warn "Invalid hostname"; continue; }
-    warn "No host config found for '$HOST' — nixos-install will fail unless you create one first"
-    break
-  else
-    warn "Invalid choice"
-  fi
-done
-
 # ── Confirm ──────────────────────────────────────────────────────────────────
 echo
 echo -e "${BOLD}Summary:${NC}"
-echo "  Disk:   $DISK"
+echo "  Disk:   $DISK (disko disk '$DISK_NAME')"
 echo "  Host:   $HOST"
 echo "  Flake:  $DOTFILES_DIR#$HOST"
 echo
@@ -92,38 +110,53 @@ echo
 read -rp "Type the disk path to confirm ($(basename "$DISK")): " CONFIRM
 [[ "$CONFIRM" == "$(basename "$DISK")" ]] || die "Confirmation mismatch — aborted"
 
-# ── Partition + install ──────────────────────────────────────────────────────
-echo
+# ── Hardware config ──────────────────────────────────────────────────────────
+HW="$DOTFILES_DIR/hosts/$HOST/hardware-configuration.nix"
+if [[ ! -f "$HW" ]] || grep -q "Generated post-install on target" "$HW"; then
+  info "Generating $HW from this machine..."
+  nixos-generate-config --show-hardware-config --no-filesystems > "$HW" \
+    || die "nixos-generate-config failed"
+  git -C "$DOTFILES_DIR" add "$HW"
+  ok "Hardware config generated (commit + push it after first boot)"
+else
+  ok "Using existing $HW"
+fi
+
+# ── Partition ────────────────────────────────────────────────────────────────
+info "Partitioning + mounting $DISK..."
+# shellcheck disable=SC2016
+DISKO_SCRIPT=$(
+  INSTALL_FLAKE="git+file://$DOTFILES_DIR" INSTALL_HOST="$HOST" \
+  INSTALL_DISK_NAME="$DISK_NAME" INSTALL_DISK="$DISK" INSTALL_MNT="$MNT" \
+  nix build --impure --no-link --print-out-paths --expr '
+    let
+      env = builtins.getEnv;
+      sys = (builtins.getFlake (env "INSTALL_FLAKE")).nixosConfigurations.${env "INSTALL_HOST"};
+    in
+    (sys.extendModules {
+      modules = [
+        {
+          disko.rootMountPoint = env "INSTALL_MNT";
+          disko.devices.disk.${env "INSTALL_DISK_NAME"}.device = sys.pkgs.lib.mkForce (env "INSTALL_DISK");
+        }
+      ];
+    }).config.system.build.diskoScript'
+) || die "Failed to build disko script"
+"$DISKO_SCRIPT" || die "disko partitioning failed"
+
+# ── Swap top-up (low RAM) ────────────────────────────────────────────────────
 RAM_GB=$(( $(awk '/MemTotal/{print $2}' /proc/meminfo) / 1024 / 1024 ))
 info "Detected ${RAM_GB}G RAM"
 
-if (( RAM_GB >= 16 )); then
-  # Ample RAM: fast one-shot install into the live (RAM-backed) store.
-  info "Partitioning $DISK and installing NixOS ($HOST) [disko-install]..."
-  disko-install \
-    --flake "$DOTFILES_DIR#$HOST" \
-    --disk main "$DISK" \
-    --write-efi-boot-entries \
-    || die "disko-install failed"
-else
-  # Low RAM: partition first, back the RAM-backed /nix store with SSD swap, then
-  # build — avoids "no space left on device" on /nix/.rw-store.
-  warn "Low RAM (<16G) — disk-backed install; target swap active during build"
+SWAPFILE=""
+cleanup_swap() { [[ -n "$SWAPFILE" ]] && { swapoff "$SWAPFILE" 2>/dev/null; rm -f "$SWAPFILE"; }; true; }
+trap cleanup_swap EXIT
 
-  info "Partitioning + mounting $DISK [disko]..."
-  disko --mode disko \
-    --flake "$DOTFILES_DIR#$HOST" \
-    --disk main "$DISK" \
-    || die "disko partitioning failed"
-
-  # Target total swap ~1.5x the real closure (queried from cache, no build),
-  # else a third of free disk. zram + disko's declared swap are already active,
-  # so only top up the shortfall. Keep >=10G disk headroom; file removed before
-  # reboot so it never ships on the installed system.
-  AVAIL_GB=$(( $(df --output=avail -BG /mnt | tail -1 | tr -dc '0-9') ))
+if (( RAM_GB < 16 )); then
+  AVAIL_GB=$(( $(df --output=avail -BG "$MNT" | tail -1 | tr -dc '0-9') ))
   HAVE_GB=$(( $(awk '/SwapTotal/{print $2}' /proc/meminfo) / 1048576 ))
   CLOSURE_BYTES=$(nix path-info -S \
-    "$DOTFILES_DIR#nixosConfigurations.$HOST.config.system.build.toplevel" \
+    "$DOTFILES_DIR#nixosConfigurations.\"$HOST\".config.system.build.toplevel" \
     2>/dev/null | awk 'END{print $NF}')
   if [[ "$CLOSURE_BYTES" =~ ^[0-9]+$ ]]; then
     CLOSURE_GB=$(( CLOSURE_BYTES / 1073741824 ))
@@ -138,13 +171,12 @@ else
   MAX_BY_DISK=$(( AVAIL_GB - 10 ))
   (( ADD_GB > MAX_BY_DISK )) && ADD_GB=$MAX_BY_DISK
 
-  SWAPFILE=""
   if (( ADD_GB >= 1 )); then
-    SWAPFILE=/mnt/.install-swap
+    SWAPFILE="$MNT/.install-swap"
     info "Adding ${ADD_GB}G install swapfile ($SWAPFILE)..."
     if ! btrfs filesystem mkswapfile --size "${ADD_GB}g" "$SWAPFILE" 2>/dev/null; then
-      # Fallback for older btrfs-progs: nodatacow file, no compression.
-      truncate -s 0 "$SWAPFILE"
+      rm -f "$SWAPFILE"
+      touch "$SWAPFILE"
       chattr +C "$SWAPFILE" 2>/dev/null || true
       fallocate -l "${ADD_GB}G" "$SWAPFILE" || die "swapfile alloc failed"
       chmod 600 "$SWAPFILE"
@@ -155,23 +187,33 @@ else
     info "Active swap (${HAVE_GB}G) already covers ${TARGET_GB}G target — no swapfile needed"
   fi
   swapon --show
-
-  export TMPDIR=/mnt/tmp
-  mkdir -p "$TMPDIR"
-
-  info "Installing NixOS ($HOST) into /mnt [nixos-install]..."
-  nixos-install \
-    --flake "$DOTFILES_DIR#$HOST" \
-    --root /mnt \
-    --no-root-passwd \
-    || { [[ -n "$SWAPFILE" ]] && swapoff "$SWAPFILE" 2>/dev/null; die "nixos-install failed"; }
-
-  if [[ -n "$SWAPFILE" ]]; then
-    info "Removing install swapfile..."
-    swapoff "$SWAPFILE" 2>/dev/null || true
-    rm -f "$SWAPFILE"
-  fi
 fi
+
+# ── Install ──────────────────────────────────────────────────────────────────
+export TMPDIR="$MNT/.install-tmp"
+mkdir -p "$TMPDIR"
+
+info "Installing NixOS ($HOST) into $MNT..."
+nixos-install \
+  --flake "$DOTFILES_DIR#$HOST" \
+  --root "$MNT" \
+  --no-root-passwd \
+  || die "nixos-install failed"
+
+rm -rf "$TMPDIR"
+cleanup_swap
+SWAPFILE=""
+
+# ── Copy dotfiles to the new system ──────────────────────────────────────────
+# shellcheck disable=SC2016
+TARGET_USER=$(host_eval users.users --apply \
+  'u: let n = builtins.filter (k: u.${k}.isNormalUser) (builtins.attrNames u); in if n == [ ] then "root" else builtins.head n')
+TARGET_HOME=$(host_eval "users.users.\"$TARGET_USER\".home")
+info "Copying dotfiles to $TARGET_HOME/dotfiles (owner $TARGET_USER)..."
+mkdir -p "$MNT$TARGET_HOME"
+cp -a "$DOTFILES_DIR" "$MNT$TARGET_HOME/dotfiles"
+nixos-enter --root "$MNT" -c "chown -R '$TARGET_USER': '$TARGET_HOME/dotfiles'" \
+  || warn "chown failed — fix with: sudo chown -R $TARGET_USER: $TARGET_HOME/dotfiles"
 ok "Installation complete"
 
 # ── Done ─────────────────────────────────────────────────────────────────────

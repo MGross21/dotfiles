@@ -32,7 +32,7 @@ zstyle ':completion:*' matcher-list \
     'r:|?=**' \
     'l:|=* r:|=*'
 zstyle ':completion:*:descriptions' format '[%d]'
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' list-colors ''
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*:*:kill:*' list-colors '=(#b) #([0-9]#)*( *[a-z])*=34=31=33'
 zstyle ':completion:*' use-cache on
