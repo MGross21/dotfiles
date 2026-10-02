@@ -21,7 +21,6 @@ let
     "ly"
     "neofetch"
     "nvim"
-    "quickshell"
     "README.md"
     "Thunar"
     "wofi"

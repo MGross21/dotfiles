@@ -38,6 +38,14 @@
       url = "github:hyprnux/hyprglass/v0.7.0";
       flake = false;
     };
+    omarchy-plugins = {
+      url = "file+https://raw.githubusercontent.com/omacom/omarchy-plugin-marketplace/main/registry.json";
+      flake = false;
+    };
+    omarchy = {
+      url = "github:omacom/omarchy/quattro";
+      flake = false;
+    };
     mactahoe-gtk = {
       url = "github:vinceliuice/MacTahoe-gtk-theme";
       flake = false;
@@ -53,7 +61,12 @@
     let
       system = "x86_64-linux";
       overlay = import ./pkgs {
-        inherit (inputs) mactahoe-gtk mactahoe-icons nixpkgs-materia;
+        inherit (inputs)
+          mactahoe-gtk
+          mactahoe-icons
+          nixpkgs-materia
+          omarchy
+          ;
       };
       pkgs = import nixpkgs {
         inherit system;

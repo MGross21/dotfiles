@@ -73,6 +73,10 @@ ShellRoot {
                 Row {
                     spacing: Theme.gap * 2
 
+                    PluginSlot {
+                        section: "left"
+                    }
+
                     Workspaces {
                         anchors.verticalCenter: parent.verticalCenter
                         monitor: Hyprland.monitorFor(bar.modelData)
@@ -97,7 +101,15 @@ ShellRoot {
                     topMargin: Theme.barMargin / 2
                 }
 
-                Clock {}
+                Row {
+                    spacing: Theme.gap
+
+                    PluginSlot {
+                        section: "center"
+                    }
+
+                    Clock {}
+                }
             }
 
             Island {
@@ -110,6 +122,10 @@ ShellRoot {
 
                 Row {
                     spacing: Theme.gap
+
+                    PluginSlot {
+                        section: "right"
+                    }
 
                     Tray {
                         anchors.verticalCenter: parent.verticalCenter

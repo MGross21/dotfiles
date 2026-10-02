@@ -361,6 +361,35 @@
         "type": "github"
       }
     },
+    "omarchy": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1790994078,
+        "narHash": "sha256-aksNVqx02RXkReRSPhH/4tOU48i1NBuErWjMMt+tT6w=",
+        "owner": "omacom",
+        "repo": "omarchy",
+        "rev": "a85e29abb556816f4644cf975e98da694b486aa8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "omacom",
+        "ref": "quattro",
+        "repo": "omarchy",
+        "type": "github"
+      }
+    },
+    "omarchy-plugins": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-PxZ2GjPVQA+HC1/9AQ1+GXDimfmuUmGTnyM/z19dX/g=",
+        "type": "file",
+        "url": "https://raw.githubusercontent.com/omacom/omarchy-plugin-marketplace/main/registry.json"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://raw.githubusercontent.com/omacom/omarchy-plugin-marketplace/main/registry.json"
+      }
+    },
     "openclaw": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -420,6 +449,8 @@
         "mactahoe-icons": "mactahoe-icons",
         "nixpkgs": "nixpkgs",
         "nixpkgs-materia": "nixpkgs-materia",
+        "omarchy": "omarchy",
+        "omarchy-plugins": "omarchy-plugins",
         "openclaw": "openclaw",
         "spotifast": "spotifast",
         "stylix": "stylix"
