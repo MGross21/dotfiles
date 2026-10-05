@@ -25,9 +25,58 @@ let
       platforms = lib.platforms.linux;
     };
   };
+
+  # Expects the setcap gpu-screen-recorder wrapper from programs.gpu-screen-recorder on PATH.
+  record-toggle = pkgs.writeShellApplication {
+    name = "record-toggle";
+    runtimeInputs = with pkgs; [
+      config.programs.hyprland.package
+      coreutils
+      jq
+      slurp
+    ];
+    text = ''
+      state="''${XDG_RUNTIME_DIR:-/tmp}/record-toggle"
+
+      if [ -f "$state.pid" ] && kill -INT "$(cat "$state.pid")" 2>/dev/null; then
+        hyprctl notify 5 3000 0 "Saved $(cat "$state.out")" >/dev/null
+        exit 0
+      fi
+
+      case "''${1:-screen}" in
+        screen) target=(-w screen) ;;
+        window) target=(-w portal) ;;
+        region)
+          workspaces=$(hyprctl -j monitors | jq '[.[].activeWorkspace.id]')
+          geom=$(hyprctl -j clients |
+            jq -r --argjson ws "$workspaces" \
+              '.[] | select(.mapped and (.hidden | not)) | select(.workspace.id as $w | $ws | any(. == $w))
+                | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"' |
+            slurp -f '%wx%h+%x+%y') || exit 0
+          target=(-w region -region "$geom")
+          ;;
+        *)
+          echo "usage: record-toggle [screen|window|region]" >&2
+          exit 1
+          ;;
+      esac
+
+      mkdir -p ~/Videos
+      out=~/Videos/"$(date +%Y%m%d_%H%M%S)".mp4
+      echo "$out" >"$state.out"
+
+      gpu-screen-recorder "''${target[@]}" -f 60 -a default_output -o "$out" &
+      echo $! >"$state.pid"
+      status=0
+      wait $! || status=$?
+      rm -f "$state.pid"
+      if [ "$status" -ne 0 ]; then
+        hyprctl notify 3 4000 0 "Recording failed (exit $status)" >/dev/null
+      fi
+    '';
+  };
 in
 lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
-  # No `programs.hyprland.plugins` in the NixOS module; load from Lua instead.
   environment.etc."hypr/plugins.lua".text = ''
     hl.plugin.load("${hyprglass-plugin}/lib/libhyprglass.so")
   '';
@@ -37,6 +86,8 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
     withUWSM = true;
     xwayland.enable = true;
   };
+
+  programs.gpu-screen-recorder.enable = true;
 
   xdg.portal = {
     enable = true;
@@ -81,7 +132,6 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
 
   location.provider = "geoclue2";
 
-  # isSystem skips the agent prompt; gammastep runs headless and cannot answer one.
   services.geoclue2.appConfig.gammastep = {
     isAllowed = true;
     isSystem = true;
@@ -103,7 +153,8 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
       wofi
       brightnessctl
       playerctl
-      kooha
+      gpu-screen-recorder-gtk
+      record-toggle
       nwg-displays
       uwsm
       xsettingsd
@@ -146,7 +197,6 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
     wantedBy = [ "graphical-session.target" ];
     after = [ "graphical-session.target" ];
     partOf = [ "graphical-session.target" ];
-    # Pinning the mesa ICD stops glvnd probing the nvidia one and waking the dGPU.
     environment.__EGL_VENDOR_LIBRARY_FILENAMES = "${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json";
     serviceConfig = {
       Type = "simple";

@@ -51,7 +51,7 @@ hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.window.resize({ x = -20, y =   0 }
 hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.window.resize({ x =   0, y = -20 }))
 hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.window.resize({ x =   0, y =  20 }))
 
--- Volume and brightness (locked = works on lockscreen, repeating = fires while held)
+-- Volume and brightness
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), { locked = true, repeating = true })
 hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true, repeating = true })
@@ -66,9 +66,14 @@ hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tru
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 
 -- Screenshots
-hl.bind("Print", hl.dsp.exec_cmd('hyprshot -z -m output -d "~/Pictures/screenshots/" --clipboard-only'))
-hl.bind("ALT + Print", hl.dsp.exec_cmd('hyprshot -z -m window -d "~/Pictures/screenshots/" --clipboard-only'))
-hl.bind("ALT + SHIFT + Print", hl.dsp.exec_cmd('hyprshot -z -m region -d "~/Pictures/screenshots/" --clipboard-only'))
+hl.bind("Print", hl.dsp.exec_cmd('hyprshot -z -m output -o ~/Pictures/screenshots'))
+hl.bind("ALT + Print", hl.dsp.exec_cmd('hyprshot -z -m window -o ~/Pictures/screenshots'))
+hl.bind("ALT + SHIFT + Print", hl.dsp.exec_cmd('hyprshot -z -m region -o ~/Pictures/screenshots'))
+
+-- Screen recording (any bind again stops)
+hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd("record-toggle screen"))
+hl.bind(mainMod .. " + ALT + Print", hl.dsp.exec_cmd("record-toggle window"))
+hl.bind(mainMod .. " + ALT + SHIFT + Print", hl.dsp.exec_cmd("record-toggle region"))
 
 -- Bar toggle
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("qs -c bar ipc call bar toggle"))
