@@ -163,7 +163,7 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
       gnome-themes-extra
       adwaita-icon-theme
       materia-theme
-      tela-circle-icon-theme
+      (tela-circle-icon-theme.overrideAttrs { dontCheckForBrokenSymlinks = true; })
 
       apple-cursor
     ]

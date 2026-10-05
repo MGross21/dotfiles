@@ -10,12 +10,16 @@ let
   isX86_64 = pkgs.stdenv.hostPlatform.isx86_64;
   spotifast =
     let
-      pkg = inputs.spotifast.packages.${pkgs.stdenv.hostPlatform.system}.spotifast;
+      system = pkgs.stdenv.hostPlatform.system;
+      pkg = inputs.spotifast.packages.${system}.spotifast;
+      mesa = inputs.spotifast.inputs.nixpkgs.legacyPackages.${system}.mesa;
     in
-    pkgs.runCommand "spotifast-${pkg.version}" { } ''
+    pkgs.runCommand "spotifast-${pkg.version}" { nativeBuildInputs = [ pkgs.makeWrapper ]; } ''
       mkdir -p $out/bin
-      ln -s ${pkg}/bin/spotifast $out/bin/spotifast
-      ln -s ${pkg}/bin/spotifast $out/bin/spotify
+      makeWrapper ${pkg}/bin/spotifast $out/bin/spotifast \
+        --set __EGL_VENDOR_LIBRARY_FILENAMES ${mesa}/share/glvnd/egl_vendor.d/50_mesa.json \
+        --prefix LD_LIBRARY_PATH : ${mesa}/lib
+      ln -s $out/bin/spotifast $out/bin/spotify
       ln -s ${pkg}/share $out/share
     '';
 in
