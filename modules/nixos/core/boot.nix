@@ -18,7 +18,9 @@
     "-T0"
   ];
 
-  systemd.services.NetworkManager-wait-online.enable = false; # don't block boot on network
+  systemd.services.NetworkManager-wait-online.enable = false;
+
+  boot.tmp.cleanOnBoot = true;
 
   boot.plymouth.enable = true;
   boot.consoleLogLevel = 0;
