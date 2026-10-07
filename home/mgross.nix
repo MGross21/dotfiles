@@ -25,7 +25,6 @@ let
     "Thunar"
     "wofi"
     "xsettingsd"
-    "yazi"
   ];
 
   vscodeTheme = pkgs.fetchFromGitHub {

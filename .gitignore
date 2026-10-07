@@ -22,7 +22,6 @@
 !.config/Thunar/
 !.config/wofi/
 !.config/xsettingsd/
-!.config/yazi/
 
 # Rewritten at runtime inside the tracked directories above.
 .config/Thunar/accels.scm
