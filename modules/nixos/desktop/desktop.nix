@@ -47,22 +47,10 @@ in
       MOZ_DISABLE_SPLASH = "1";
     };
 
-    programs.thunar = {
-      enable = true;
-      plugins = with pkgs; [
-        thunar-volman
-        thunar-archive-plugin
-        thunar-media-tags-plugin
-        thunar-vcs-plugin
-        thunar-shares-plugin
-      ];
-    };
-
     programs.firefox.enable = true;
 
     environment.systemPackages = with pkgs; [
       ghostty
-      tumbler
 
       papirus-red
       papirus-folders

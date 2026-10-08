@@ -30,12 +30,11 @@ let
   };
 in
 {
-  # Yazi itself is installed system-wide; home-manager only writes the theme.
   home-manager.sharedModules = [
     {
       programs.yazi = {
         enable = true;
-        package = null;
+        package = null; # installed system-wide
 
         theme = {
           mgr = {

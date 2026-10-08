@@ -381,7 +381,7 @@
     "omarchy-plugins": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-WDcQDveOLaxU8fRPo0AelqNhnBl9DBEl/DRKuoWsfcc=",
+        "narHash": "sha256-wNHdf2HzdIO9GnROrWJiimqr5HkvkVGjGCFeq5rumy8=",
         "type": "file",
         "url": "https://raw.githubusercontent.com/omacom/omarchy-plugin-marketplace/main/registry.json"
       },

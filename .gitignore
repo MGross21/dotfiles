@@ -19,12 +19,10 @@
 !.config/quickshell/
 !.config/README.md
 !.config/spotify-launcher.conf
-!.config/Thunar/
 !.config/wofi/
 !.config/xsettingsd/
 
 # Rewritten at runtime inside the tracked directories above.
-.config/Thunar/accels.scm
 .config/cava/shaders/
 .config/cava/themes/
 

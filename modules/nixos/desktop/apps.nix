@@ -53,7 +53,6 @@ in
       ++ lib.optionals cfg.media.enable [
         spotifast
         gthumb
-        feh
       ]
       ++ lib.optionals (cfg.gaming.enable && isX86_64) [
         discord
