@@ -11,8 +11,6 @@ final: prev: {
 
   msi-perkeyrgb = final.callPackage ./msi-perkeyrgb { };
 
-  papirus-red = final.callPackage ./papirus-red { };
-
   omarchy-shell-compat = final.callPackage ./omarchy-shell-compat { src = omarchy; };
 
   mactahoe-gtk-theme = final.callPackage ./mactahoe/gtk.nix { src = mactahoe-gtk; };

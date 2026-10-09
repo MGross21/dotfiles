@@ -8,6 +8,13 @@ return {
     opts = { style = "storm", transparent = false, terminal_colors = true },
   },
 
+  {
+    "ribru17/bamboo.nvim",
+    lazy = theme.name ~= "bamboo",
+    priority = 1000,
+    opts = {},
+  },
+
   { "catppuccin/nvim", enabled = false },
 
   {

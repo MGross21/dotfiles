@@ -52,7 +52,6 @@ in
     environment.systemPackages = with pkgs; [
       ghostty
 
-      papirus-red
       papirus-folders
 
       libxres

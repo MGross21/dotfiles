@@ -131,7 +131,6 @@
         inherit (pkgs)
           kimun
           msi-perkeyrgb
-          papirus-red
           mactahoe-gtk-theme
           mactahoe-icon-theme
           mactahoe-cursor-theme

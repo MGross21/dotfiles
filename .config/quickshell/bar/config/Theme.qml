@@ -122,7 +122,7 @@ Singleton {
         if (value >= critAt)
             return root.urgent;
         if (value >= warnAt)
-            return root.accent;
+            return root.warn;
         return root.fg;
     }
 }

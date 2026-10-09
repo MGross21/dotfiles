@@ -41,7 +41,7 @@ in
   ];
 
   networking.hostName = "msi";
-  theming.name = "tomorrow-night-burns";
+  theming.name = "osaka-jade";
 
   desktop = {
     enable = true;

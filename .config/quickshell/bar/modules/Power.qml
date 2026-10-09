@@ -7,7 +7,7 @@ StatusPill {
     id: root
 
     icon: Icons.shutdown
-    tone: popout.visible ? Theme.urgent : Theme.fg
+    tone: popout.visible ? Theme.accent : Theme.fg
     active: popout.visible
     onClicked: popout.toggle()
 

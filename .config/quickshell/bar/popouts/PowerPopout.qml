@@ -64,13 +64,13 @@ Popout {
                     Icon {
                         anchors.verticalCenter: parent.verticalCenter
                         source: row.modelData.icon
-                        color: row.modelData.danger && rowHover.hovered ? Theme.urgent : Theme.fg
+                        color: row.modelData.danger && rowHover.hovered ? Theme.accent : Theme.fg
                     }
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         text: row.modelData.label
-                        color: row.modelData.danger && rowHover.hovered ? Theme.urgent : Theme.fg
+                        color: row.modelData.danger && rowHover.hovered ? Theme.accent : Theme.fg
                         font.family: Theme.font
                         font.pixelSize: Theme.fontSize
                     }

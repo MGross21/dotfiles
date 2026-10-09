@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   wp =
     path:
@@ -14,6 +19,7 @@ let
       ghostty = "Tomorrow Night Burns";
       gtk = "Materia-dark-compact";
       icons = "Papirus-Dark";
+      folders = "red";
       cursor = "macOS";
       nvim = "tomorrow-night-burns";
       qs = with (import ../../../themes/tomorrow-night-burns.nix); {
@@ -30,12 +36,30 @@ let
       ghostty = "TokyoNight";
       gtk = "Materia-dark-compact";
       icons = "Papirus-Dark";
+      folders = "blue";
       cursor = "macOS";
       nvim = "tokyonight-storm";
       qs = with (import ../../../themes/tokyo-night.nix); {
         accent = blue;
         good = green;
         warn = yellow;
+        urgent = red;
+      };
+    };
+    osaka-jade = {
+      nix = import ../../../themes/osaka-jade.nix;
+      yaml = ../../../themes/osaka-jade.yaml;
+      wallpaper = wp ../../../Pictures/wallpapers/green_jade.jpg;
+      ghostty = null;
+      gtk = "Materia-dark-compact";
+      icons = "Papirus-Dark";
+      folders = "teal";
+      cursor = "macOS";
+      nvim = "bamboo";
+      qs = with (import ../../../themes/osaka-jade.nix); {
+        accent = cyan;
+        good = green;
+        warn = brightYellow;
         urgent = red;
       };
     };
@@ -62,6 +86,8 @@ in
   config = {
     theming.colors = lib.mkDefault t;
 
+    environment.systemPackages = [ (pkgs.papirus-icon-theme.override { color = data.folders; }) ];
+
     stylix = {
       enable = true;
       base16Scheme = data.yaml;
@@ -82,8 +108,8 @@ in
       cmatrix_fg = ly c.green;
       cmatrix_head_col = "0x01FFFFFF";
       colormix_col1 = ly c.black;
-      colormix_col2 = ly c.red;
-      colormix_col3 = ly c.yellow;
+      colormix_col2 = ly c.blue;
+      colormix_col3 = ly c.cyan;
       doom_top_color = ly c.red;
       doom_middle_color = ly c.yellow;
       doom_bottom_color = ly c.blue;
@@ -109,9 +135,20 @@ in
         ;
     };
 
-    environment.etc."ghostty-theme.conf".text = ''
-      theme = ${data.ghostty}
-    '';
+    environment.etc."ghostty-theme.conf".text =
+      if data.ghostty != null then
+        "theme = ${data.ghostty}\n"
+      else
+        lib.concatLines (
+          [
+            "background = ${c.bg}"
+            "foreground = ${c.fg}"
+            "cursor-color = ${c.cursor}"
+            "selection-background = ${c.selection}"
+            "selection-foreground = ${c.selectedText}"
+          ]
+          ++ lib.imap0 (i: hex: "palette = ${toString i}=#${hex}") c.ansi
+        );
 
     environment.etc."hypr/hyprpaper.conf".text = ''
       preload = ${toString data.wallpaper}
