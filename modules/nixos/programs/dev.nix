@@ -62,7 +62,7 @@ in
     ++ lib.optionals cfg.python.enable [
       uv
       pixi
-      python3
+      python315
       pyright
       ruff
     ]

@@ -150,10 +150,9 @@
     cc = "claude";
 
     # Python and uv
-    python = "uv python";
     p = "python";
-    pip = "uv pip --require-virtualenv";
-    pycompile = "uv python -m py_compile";
+    pip = "uv pip";
+    pycompile = "python -m py_compile";
     uvenv = "uv venv --clear && source ./.venv/bin/activate";
     uva = "uv add";
     uvad = "uv add --dev";
