@@ -83,8 +83,14 @@ in
     description = "Palette of the active theme. Individual slots can be overridden per host.";
   };
 
+  options.theming.accent = lib.mkOption {
+    type = lib.types.str;
+    description = "Accent color of the active theme.";
+  };
+
   config = {
     theming.colors = lib.mkDefault t;
+    theming.accent = lib.mkDefault data.qs.accent;
 
     environment.systemPackages = [ (pkgs.papirus-icon-theme.override { color = data.folders; }) ];
 
@@ -144,6 +150,7 @@ in
             "background = ${c.bg}"
             "foreground = ${c.fg}"
             "cursor-color = ${c.cursor}"
+            "cursor-text = ${c.cursorText}"
             "selection-background = ${c.selection}"
             "selection-foreground = ${c.selectedText}"
           ]
