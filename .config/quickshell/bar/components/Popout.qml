@@ -1,22 +1,18 @@
 import QtQuick
 import Quickshell
 import "../config"
+import "../services"
 
-// Base dropdown. grabFocus is quickshell's xdg-popup grab: dismisses on an
-// outside click, and that click is consumed -- so opening a different pill's
-// popout takes a second click.
+// Click-away is the scrim in shell.qml; set grabFocus only for keyboard input.
 PopupWindow {
     id: root
 
     required property Item anchorItem
     default property alias content: holder.data
     property int padding: 12
+    // ms timestamp of the last hover-open; toggle() ignores a close right after.
+    property real handoffAt: 0
 
-    // The anchor rect spans the invoking item's full width, so the popup centers
-    // under it instead of under its left edge -- without the width the anchor
-    // point is a zero-width box at x=0 and a wide popup hangs off to the right.
-    // SlideX then pulls the right-hand popouts back on screen when centering
-    // would overflow the edge.
     anchor.item: anchorItem
     anchor.rect.y: (anchorItem?.height ?? 0) + 6
     anchor.rect.width: anchorItem?.width ?? 0
@@ -28,9 +24,18 @@ PopupWindow {
     implicitHeight: holder.implicitHeight + padding * 2
     color: Theme.transparent
     visible: false
-    grabFocus: true
+    grabFocus: false
+
+    onVisibleChanged: {
+        if (visible)
+            Popouts.opened(root);
+        else
+            Popouts.closed(root);
+    }
 
     function toggle(): void {
+        if (root.visible && Date.now() - root.handoffAt < 400)
+            return;
         root.visible = !root.visible;
     }
 
@@ -38,8 +43,6 @@ PopupWindow {
         id: shell
         anchors.fill: parent
 
-        // Grow-in from the anchor edge. The window itself cannot animate its
-        // size, so the surface scales inside it.
         transform: Scale {
             origin.x: shell.width / 2
             origin.y: 0
@@ -67,8 +70,6 @@ PopupWindow {
             }
         }
 
-        // Opaque backing: popouts float over app windows, where the bar's
-        // translucent wash is unreadable. Glass supplies the edge on top.
         Rectangle {
             anchors.fill: parent
             radius: Theme.popoutRadius

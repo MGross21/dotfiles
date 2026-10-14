@@ -8,7 +8,24 @@ Popout {
 
     property string pendingSsid: ""
 
+    property bool _regrabbing: false
+
+    // Keyboard needs the grab, which only applies at map time: toggling remaps.
+    grabFocus: pendingSsid !== ""
+    onGrabFocusChanged: {
+        if (!visible)
+            return;
+        _regrabbing = true;
+        visible = false;
+        Qt.callLater(() => {
+            visible = true;
+            _regrabbing = false;
+        });
+    }
+
     onVisibleChanged: {
+        if (_regrabbing)
+            return;
         if (visible)
             Network.rescan();
         else
@@ -104,8 +121,6 @@ Popout {
             visible: Network.wifiEnabled
 
             Repeater {
-                // Cap the list: a busy area can return dozens of APs and the
-                // popup would run off the screen.
                 model: Network.networks.slice(0, 8)
 
                 delegate: Column {
@@ -189,15 +204,12 @@ Popout {
                                     Network.connect(n.ssid, "");
                                     root.visible = false;
                                 } else {
-                                    // Unsaved and secured: ask for the key inline
-                                    // rather than silently failing.
                                     root.pendingSsid = root.pendingSsid === n.ssid ? "" : n.ssid;
                                 }
                             }
                         }
                     }
 
-                    // Inline password entry for unsaved secured networks.
                     Item {
                         width: Theme.listWidth
                         height: netRow.isPending ? 30 : 0

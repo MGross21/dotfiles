@@ -9,6 +9,7 @@ StatusPill {
     icon: Icons.shutdown
     tone: popout.visible ? Theme.accent : Theme.fg
     active: popout.visible
+    menu: popout
     onClicked: popout.toggle()
 
     PowerPopout {

@@ -15,6 +15,7 @@ StatusPill {
     text: `${Math.round(volume * 100)}%`
     tone: muted ? Theme.urgent : Theme.fg
     active: popout.visible
+    menu: popout
 
     onClicked: popout.toggle()
     onWheel: delta => {
@@ -23,8 +24,7 @@ StatusPill {
         root.sink.audio.volume = Math.max(0, Math.min(1, root.volume + (delta > 0 ? 0.02 : -0.02)));
     }
 
-    // Pipewire objects are unbound by default; without this the volume and
-    // muted properties are never populated.
+    // Unbound Pipewire nodes never populate volume or muted.
     PwObjectTracker {
         objects: [root.sink]
     }

@@ -8,9 +8,8 @@ import Quickshell.Wayland
 import "components"
 import "config"
 import "modules"
+import "services"
 
-// Adwaita rather than the desktop's Papirus: Papirus ships no *-symbolic
-// variants, so every status icon would resolve to a missing texture.
 ShellRoot {
     id: shell
 
@@ -23,13 +22,42 @@ ShellRoot {
             shell.barVisible = !shell.barVisible;
         }
 
-        // Not `show` -- that collides with the `qs ipc show` subcommand.
+        // `show` collides with the `qs ipc show` subcommand.
         function reveal(): void {
             shell.barVisible = true;
         }
 
         function hide(): void {
             shell.barVisible = false;
+        }
+    }
+
+    // Popout click-away. Normal exclusion keeps it out of the bar's zone.
+    Variants {
+        model: Quickshell.screens
+
+        PanelWindow {
+            required property ShellScreen modelData
+
+            screen: modelData
+            visible: Popouts.current !== null
+            color: Theme.transparent
+
+            WlrLayershell.namespace: "quickshell-popout-scrim"
+            WlrLayershell.layer: WlrLayer.Top
+
+            anchors {
+                top: true
+                bottom: true
+                left: true
+                right: true
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.AllButtons
+                onPressed: Popouts.close()
+            }
         }
     }
 
@@ -46,8 +74,6 @@ ShellRoot {
 
             WlrLayershell.namespace: "quickshell-bar"
             WlrLayershell.layer: WlrLayer.Top
-            // OnDemand so the wifi password field can receive keys; with None
-            // the layer surface never takes keyboard focus.
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
             anchors {
@@ -56,8 +82,6 @@ ShellRoot {
                 right: true
             }
 
-            // The bar floats: the window is taller than the visible islands and
-            // fully transparent, so the islands read as detached from the edge.
             implicitHeight: Theme.barHeight + Theme.barMargin
             exclusiveZone: Theme.barHeight + Theme.barMargin
             color: Theme.transparent

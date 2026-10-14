@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell.Services.SystemTray
 import "../components"
 import "../config"
+import "../services"
 import "../popouts"
 
 Row {
@@ -31,13 +32,10 @@ Row {
                 anchors.centerIn: parent
                 size: 15
                 source: entry.modelData.icon
-                // Application icons carry their own color.
                 recolor: false
                 opacity: trayHover.hovered ? 1.0 : 0.9
             }
 
-            // Right-click (or left-click on menu-only items) opens the real
-            // application menu, styled by the shell instead of Qt's platform popup.
             TrayMenu {
                 id: menu
                 anchorItem: entry
@@ -46,6 +44,8 @@ Row {
 
             HoverHandler {
                 id: trayHover
+                onHoveredChanged: if (hovered && entry.modelData.hasMenu)
+                    Popouts.handoff(menu)
             }
 
             TapHandler {

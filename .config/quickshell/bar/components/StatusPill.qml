@@ -1,19 +1,19 @@
 import QtQuick
 import "../config"
+import "../services"
 
-// Icon-first module. The text label is collapsed by default and expands on
-// hover, so the bar stays dense but nothing is hidden.
 Item {
     id: root
 
     property string icon: ""
     property string text: ""
     property color tone: Theme.fg
-    property bool expanded: false
     property bool alwaysShowText: false
     property bool active: false
+    // Popout opened by Popouts.handoff when hovered.
+    property var menu: null
 
-    readonly property bool showText: text !== "" && (alwaysShowText || expanded || hover.hovered || active)
+    readonly property bool showText: text !== "" && alwaysShowText
 
     signal clicked
     signal wheel(int delta)
@@ -59,8 +59,6 @@ Item {
             color: root.tone
             font.family: Theme.font
             font.pixelSize: Theme.fontSize
-            // Width animates rather than visibility toggling, so the island
-            // morphs instead of snapping.
             width: root.showText ? implicitWidth : 0
             clip: true
             opacity: root.showText ? 1 : 0
@@ -81,6 +79,8 @@ Item {
 
     HoverHandler {
         id: hover
+        onHoveredChanged: if (hovered)
+            Popouts.handoff(root.menu)
     }
 
     TapHandler {

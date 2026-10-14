@@ -10,10 +10,10 @@ StatusPill {
     icon: Network.icon
     text: Network.label
     tone: Theme.fg
-    // Dimming is opacity, never a darker tone: the icon recolor path saturates
-    // lightness, so a dim color would come back out bright.
+    // Dim via opacity: icon recolor saturates lightness, undoing a darker tone.
     opacity: Network.connected ? 1.0 : 0.55
     active: popout.visible
+    menu: popout
     onClicked: popout.toggle()
 
     NetworkPopout {
