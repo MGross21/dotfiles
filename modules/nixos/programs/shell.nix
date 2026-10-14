@@ -37,6 +37,8 @@
     enable = true;
     settings = {
       add_newline = false;
+      palette = "theme";
+      palettes.theme.accent = config.theming.accent;
       format = "$directory$git_branch$git_state$git_status$cmd_duration$jobs$line_break$nix_shell$python$character";
       directory = {
         style = "blue";
@@ -52,7 +54,7 @@
       };
       # Zero-width symbols collapse every change type into a single "*".
       git_status = {
-        format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218)( $ahead_behind$stashed)]($style) ";
+        format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](accent)( $ahead_behind$stashed)]($style) ";
         style = "cyan";
         conflicted = "​";
         untracked = "​";
@@ -83,7 +85,7 @@
         detect_folders = [ ];
       };
       character = {
-        success_symbol = "[❯](purple)";
+        success_symbol = "[❯](accent)";
         error_symbol = "[❯](red)";
         vimcmd_symbol = "[❮](green)";
       };
@@ -152,6 +154,31 @@
         "root"
         "line"
       ];
+      styles =
+        let
+          c = config.theming.colors;
+          accent = "fg=${config.theming.accent}";
+          quoted = "fg=${c.brightYellow}";
+        in
+        {
+          command = accent;
+          builtin = accent;
+          alias = accent;
+          suffix-alias = accent;
+          function = accent;
+          precommand = "${accent},underline";
+          reserved-word = "fg=${c.blue}";
+          single-quoted-argument = quoted;
+          double-quoted-argument = quoted;
+          dollar-quoted-argument = quoted;
+          globbing = "fg=${c.magenta}";
+          history-expansion = "fg=${c.magenta}";
+          comment = "fg=${c.brightBlack}";
+          bracket-level-1 = "${accent},bold";
+          bracket-level-2 = "fg=${c.blue},bold";
+          bracket-level-3 = "fg=${c.magenta},bold";
+          bracket-level-4 = "${quoted},bold";
+        };
     };
     histFile = "$HOME/.zsh_history";
     histSize = 50000;
@@ -197,6 +224,8 @@
       [[ -f "$HOME/.paths" ]] && source "$HOME/.paths"
 
       source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+      HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND="bg=${config.theming.accent},fg=${config.theming.colors.bg},bold"
+      HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND="bg=${config.theming.colors.red},fg=${config.theming.colors.bg},bold"
 
       bindkey -e
 
