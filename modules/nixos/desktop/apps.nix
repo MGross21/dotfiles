@@ -11,7 +11,11 @@ let
   spotifast =
     let
       system = pkgs.stdenv.hostPlatform.system;
-      pkg = inputs.spotifast.packages.${system}.spotifast;
+      pkg = inputs.spotifast.packages.${system}.spotifast.overrideAttrs (old: {
+        postPatch = (old.postPatch or "") + ''
+          substituteInPlace src/app.rs --replace-fail "if self.settings.check_for_updates" "if false"
+        '';
+      });
       mesa = inputs.spotifast.inputs.nixpkgs.legacyPackages.${system}.mesa;
     in
     pkgs.runCommand "spotifast-${pkg.version}" { nativeBuildInputs = [ pkgs.makeWrapper ]; } ''
