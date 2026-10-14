@@ -10,9 +10,11 @@ hl.layer_rule({
 })
 
 hl.layer_rule({
-    name  = "lr-wofi",
-    match = { namespace = "wofi" },
-    blur  = true,
+    name         = "lr-launcher",
+    match        = { namespace = "^quickshell-launcher(-light)?$" },
+    blur         = true,
+    ignore_alpha = 0.05,
+    animation    = "popin 92%",
 })
 
 hl.layer_rule({

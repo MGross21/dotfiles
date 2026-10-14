@@ -136,6 +136,7 @@ in
       base = c.bg;
       fg = c.white;
       fgDim = c.brightBlack;
+      hi = c.brightWhite;
       inherit (data.qs)
         accent
         good

@@ -150,7 +150,6 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
       ly
 
       quickshell
-      wofi
       brightnessctl
       playerctl
       gpu-screen-recorder-gtk
@@ -174,16 +173,23 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
     wantedBy = [ "graphical-session.target" ];
     after = [ "graphical-session.target" ];
     partOf = [ "graphical-session.target" ];
-    path = with pkgs; [
-      bash
-      coreutils
-      gawk
-      gnused
-      systemd
-      networkmanager
-      ghostty
-      hyprlock
-    ];
+    # uwsm resolves launched entries' executables against this PATH.
+    path =
+      with pkgs;
+      [
+        bash
+        coreutils
+        gawk
+        gnused
+        systemd
+        networkmanager
+        ghostty
+        hyprlock
+        uwsm
+        "/run/wrappers"
+        "/run/current-system/sw"
+      ]
+      ++ map (user: "/etc/profiles/per-user/${user}") (lib.attrNames config.home-manager.users);
     serviceConfig = {
       Type = "simple";
       ExecStart = "${pkgs.quickshell}/bin/qs -c bar";

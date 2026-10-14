@@ -3,13 +3,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 
-// Freedesktop icon names, resolved against the theme set by the
-// `//@ pragma IconTheme` line in shell.qml.
-//
-// Adwaita is used rather than Papirus because Papirus ships no `*-symbolic`
-// variants at all -- the entire status set would fall back to missing-texture.
-// Verified present in adwaita-icon-theme 50: battery-level-N[-charging],
-// audio-volume-{high,medium,low,muted}, system-{lock-screen,reboot,shutdown}.
+// Freedesktop names, resolved against the IconTheme pragma in shell.qml.
 Singleton {
     id: root
 
@@ -20,16 +14,13 @@ Singleton {
         return Quickshell.iconPath(name);
     }
 
-    // Adwaita buckets battery levels in tens. The charging ramp stops at 90 --
-    // at full it switches to `-charged`, so 100 needs a special case or it
-    // resolves to nothing.
+    // The charging ramp stops at 90; full is `-charged`.
     function battery(pct: int, charging: bool): string {
         const level = Math.max(0, Math.min(100, Math.round(pct / 10) * 10));
         const suffix = !charging ? "" : level >= 100 ? "-charged" : "-charging";
         return Quickshell.iconPath(`battery-level-${level}${suffix}-symbolic`, "battery-missing-symbolic");
     }
 
-    // Adwaita's wifi ramp is named by quality band, not by number.
     function wifi(strength: int, enabled: bool, connected: bool): string {
         if (!enabled)
             return Quickshell.iconPath("network-wireless-disabled-symbolic", "network-offline-symbolic");
@@ -44,13 +35,16 @@ Singleton {
     readonly property string vpn: Quickshell.iconPath("network-vpn-symbolic")
     readonly property string locked: Quickshell.iconPath("changes-prevent-symbolic")
     readonly property string refresh: Quickshell.iconPath("view-refresh-symbolic")
+    readonly property string search: Quickshell.iconPath("system-search-symbolic")
 
     function app(appId: string): string {
         if (!appId)
             return "";
-        // Desktop files are usually lowercase reverse-DNS or plain lowercase;
-        // fall back to the generic executable glyph rather than a broken image.
         return Quickshell.iconPath(appId.toLowerCase(), "application-x-executable-symbolic");
+    }
+
+    function desktopEntry(icon: string): string {
+        return Quickshell.iconPath(icon, "application-x-executable");
     }
 
     readonly property string lock: Quickshell.iconPath("system-lock-screen-symbolic")

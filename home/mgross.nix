@@ -22,7 +22,6 @@ let
     "neofetch"
     "nvim"
     "README.md"
-    "wofi"
     "xsettingsd"
   ];
 

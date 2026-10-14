@@ -7,6 +7,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import "components"
 import "config"
+import "launcher"
 import "modules"
 import "services"
 
@@ -31,6 +32,8 @@ ShellRoot {
             shell.barVisible = false;
         }
     }
+
+    Launcher {}
 
     // Popout click-away. Normal exclusion keeps it out of the bar's zone.
     Variants {
