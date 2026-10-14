@@ -6,8 +6,8 @@ hl.config({
         gaps_out = 0,
         border_size = 1,
         col = {
-            active_border   = THEME_ACTIVE   or "rgba(fc595fff)",  -- set by /etc/hypr/colors.lua when lua config is active
-            inactive_border = THEME_INACTIVE or "rgba(00000000)",
+            active_border   = THEME.active_border   or "rgba(fc595fff)",
+            inactive_border = THEME.inactive_border or "rgba(00000000)",
         },
         resize_on_border = true,
         allow_tearing = false,

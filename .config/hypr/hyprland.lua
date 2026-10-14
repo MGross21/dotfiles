@@ -1,5 +1,6 @@
 -- https://wiki.hypr.land/Configuring/Start/
-pcall(dofile, "/etc/hypr/colors.lua")
+local ok, theme = pcall(dofile, "/etc/hypr/colors.lua")
+THEME = ok and type(theme) == "table" and theme or {}
 -- Nix-generated; hl.plugin.load() for hyprglass. Must run before module.glass.
 pcall(dofile, "/etc/hypr/plugins.lua")
 

@@ -122,12 +122,15 @@ in
       gameoflife_fg = ly c.green;
     };
 
-    # Loaded by pcall from hyprland.lua.
-    environment.etc."hypr/colors.lua".text = ''
-      THEME_ACTIVE   = "rgba(${rm c.blue}ff)"
-      THEME_INACTIVE = "rgba(00000000)"
-      THEME_SHADOW   = "rgba(${rm c.black}b3)"
-    '';
+    environment.etc."hypr/colors.lua".text =
+      "return "
+      + lib.generators.toLua { } {
+        active_border = "rgba(${rm c.blue}ff)";
+        inactive_border = "rgba(00000000)";
+        shadow = "rgba(${rm c.black}b3)";
+        glass_tint = lib.fromHexString "${rm c.bg}a0";
+        glass_tint_light = lib.fromHexString "${rm c.brightWhite}50";
+      };
 
     environment.etc."quickshell/colors.json".text = builtins.toJSON {
       base = c.bg;
