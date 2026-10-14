@@ -211,6 +211,12 @@ lib.mkIf config.desktop.enable {
     ];
   };
 
+  systemd.user.services.thunar = {
+    wantedBy = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+  };
+
   # Backend for thunar-archive-plugin.
   environment.systemPackages = [ pkgs.file-roller ];
 
