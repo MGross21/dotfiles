@@ -19,6 +19,17 @@ final: prev: {
     }
   );
 
+  # TODO: drop once nixos-unstable has NixOS/nixpkgs#569702
+  t3code = prev.t3code.overrideAttrs (old: {
+    buildCommand = old.buildCommand + ''
+      for program in "$out"/bin/*; do
+        wrapProgram "$program" --prefix LD_LIBRARY_PATH : ${
+          final.lib.makeLibraryPath [ final.stdenv.cc.cc.lib ]
+        }
+      done
+    '';
+  });
+
   materia-theme = nixpkgs-materia.legacyPackages.${prev.stdenv.hostPlatform.system}.materia-theme;
 
   kimun = final.callPackage ./kimun { };

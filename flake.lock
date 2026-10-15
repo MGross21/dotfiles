@@ -364,11 +364,11 @@
     "omarchy": {
       "flake": false,
       "locked": {
-        "lastModified": 1791969218,
-        "narHash": "sha256-SAaE7t00rWRf1eztnkjwBZsyT3xtJJI8FezCcZ+04x0=",
+        "lastModified": 1792019860,
+        "narHash": "sha256-z+ovTSieA1z8K9Y5WVeeAmXw3+h4pin7wAv2/iaWvJg=",
         "owner": "omacom",
         "repo": "omarchy",
-        "rev": "84cfb93959f4fe0bbb71de71593b36647d2ba78d",
+        "rev": "41d2f9d9dcad91d07ebea30a6a663ca335e2cfa4",
         "type": "github"
       },
       "original": {
@@ -381,7 +381,7 @@
     "omarchy-plugins": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-Ny506xfqH4p1XaBiQK0US9fk2gFUOBiZDrdIoYANpkk=",
+        "narHash": "sha256-rfbtZwaGgWqjwnS+b/rt3k8EqI/8iiRllIxl7aVOV8A=",
         "type": "file",
         "url": "https://raw.githubusercontent.com/omacom/omarchy-plugin-marketplace/main/registry.json"
       },

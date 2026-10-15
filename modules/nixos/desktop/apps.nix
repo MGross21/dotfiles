@@ -47,6 +47,7 @@ in
       with pkgs;
       [
         vscode
+        t3code
       ]
       ++ lib.optionals cfg.creative.enable [
         obs-studio
