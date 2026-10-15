@@ -58,6 +58,7 @@ in
       clippy
       rust-analyzer
       espflash
+      sccache
     ]
     ++ lib.optionals cfg.python.enable [
       uv
@@ -82,16 +83,11 @@ in
     ++ lib.optionals cfg.android.enable [
       android-tools
     ]
-    ++ [
-      mold
-      ccache
-      sccache
-    ];
+    ++ [ mold ];
 
   # rust-analyzer needs stdlib sources; nixpkgs rustc ships none.
   config.environment.sessionVariables = lib.mkIf cfg.rust.enable {
     RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
+    RUSTC_WRAPPER = "sccache";
   };
-
-  config.programs.ccache.enable = true;
 }
