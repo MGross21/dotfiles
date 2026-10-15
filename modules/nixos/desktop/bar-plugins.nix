@@ -2,33 +2,18 @@
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 let
   cfg = config.desktop.bar;
-  registry = lib.importJSON inputs.omarchy-plugins;
 
   resolve =
     p:
     let
-      matches = builtins.filter (s: s ? plugins && s.plugins ? ${p.id}) registry.sources;
-      source = builtins.head matches;
-      src = builtins.fetchGit {
-        url = source.repo;
-        rev = source.listingValidatedCommit;
-        ref = "refs/heads/${source.listingValidatedBranch}";
-        shallow = true;
-      };
-      dir = dirOf (source.plugins.${p.id}.manifestPath or "manifest.json");
-      root = if dir == "." then src else "${src}/${dir}";
+      root = if p.dir == "." then p.src else "${p.src}/${p.dir}";
       manifest = lib.importJSON "${root}/manifest.json";
     in
-    if builtins.elem p.id registry.retiredPluginIds then
-      throw "desktop.bar.plugins: ${p.id} was delisted from the Omarchy marketplace"
-    else if matches == [ ] then
-      throw "desktop.bar.plugins: ${p.id} is not listed on the Omarchy marketplace"
-    else if !(builtins.elem "bar-widget" manifest.kinds) then
+    if !(builtins.elem "bar-widget" manifest.kinds) then
       throw "desktop.bar.plugins: ${p.id} is not a bar-widget plugin (kinds: ${toString manifest.kinds})"
     else
       {
@@ -49,6 +34,15 @@ let
       id = lib.mkOption {
         type = lib.types.str;
         description = "Plugin ID as listed on plugins.omarchy.org.";
+      };
+      src = lib.mkOption {
+        type = lib.types.path;
+        description = "Plugin source, usually a `flake = false` flake input.";
+      };
+      dir = lib.mkOption {
+        type = lib.types.str;
+        default = ".";
+        description = "Directory within `src` holding manifest.json.";
       };
       section = lib.mkOption {
         type = lib.types.nullOr (
@@ -71,17 +65,24 @@ let
 in
 {
   options.desktop.bar.plugins = lib.mkOption {
-    type = lib.types.listOf (lib.types.coercedTo lib.types.str (id: { inherit id; }) pluginEntry);
+    type = lib.types.listOf pluginEntry;
     default = [ ];
     example = lib.literalExpression ''
       [
-        "io.github.raythurman2386.omamine"
-        { id = "yuters.flight-radar"; section = "left"; }
+        {
+          id = "io.github.raythurman2386.omamine";
+          src = inputs.omamine;
+        }
+        {
+          id = "yuters.flight-radar";
+          src = inputs.flight-radar;
+          section = "left";
+        }
       ]
     '';
     description = ''
       Omarchy marketplace bar-widget plugins to load into the quickshell bar.
-      Update the listing with `nix flake update omarchy-plugins`.
+      Pin each as its own `flake = false` input; `nix flake update <input>` bumps it.
     '';
   };
 
