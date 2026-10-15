@@ -100,6 +100,14 @@ Singleton {
     readonly property int launcherRowHeight: 48
     readonly property int launcherRowRadius: 10
     readonly property int launcherIconSize: 30
+    readonly property int launcherPreviewWidth: 320
+    readonly property int launcherPreviewIconSize: 72
+    readonly property int launcherSectionHeight: 26
+    readonly property int launcherChipHeight: 24
+    readonly property int launcherHintHeight: 18
+    readonly property int launcherTileSize: 96
+    readonly property int launcherTileIconSize: 44
+    readonly property int launcherStagger: 18 // ms per row on open
 
     // ── type ───────────────────────────────────────────────────────────
     readonly property string font: "JetBrainsMono Nerd Font"
