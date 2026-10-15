@@ -140,8 +140,6 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
   environment.systemPackages = lib.mkOrder 200 (
     with pkgs;
     [
-      hyprlock
-      hypridle
       hyprpaper
       hyprpicker
       gammastep
@@ -184,7 +182,6 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
         systemd
         networkmanager
         ghostty
-        hyprlock
         uwsm
         "/run/wrappers"
         "/run/current-system/sw"

@@ -24,6 +24,12 @@ hl.layer_rule({
 })
 
 hl.window_rule({
+    name         = "wr-idle-fullscreen",
+    match        = { class = ".*" },
+    idle_inhibit = "fullscreen",
+})
+
+hl.window_rule({
     name   = "windowrule-1",
     match  = { class = "^(terminal|g\\.terminal|com\\.mitchellh\\.ghostty)$" },
     float  = true,

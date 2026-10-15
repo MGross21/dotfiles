@@ -16,7 +16,8 @@ hl.bind(mainMod .. " + space", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + O", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(term .. " -e clipse | wl-copy"))
-hl.bind(mainMod .. " + semicolon", hl.dsp.exec_cmd("hyprlock -c /etc/hypr/hyprlock.conf"))
+hl.bind(mainMod .. " + semicolon", hl.dsp.exec_cmd("idlectl lock"))
+hl.bind(mainMod .. " + SHIFT + semicolon", hl.dsp.exec_cmd("qs -c bar ipc call caffeine toggle"))
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(browser))
 
 -- Move focus with mainMod + vim motion keys

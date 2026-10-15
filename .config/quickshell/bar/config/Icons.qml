@@ -48,6 +48,7 @@ Singleton {
     }
 
     readonly property string lock: Quickshell.iconPath("system-lock-screen-symbolic")
+    readonly property string caffeine: Quickshell.iconPath("display-brightness-symbolic")
     readonly property string suspend: Quickshell.iconPath("weather-clear-night-symbolic")
     readonly property string reboot: Quickshell.iconPath("system-reboot-symbolic")
     readonly property string shutdown: Quickshell.iconPath("system-shutdown-symbolic")

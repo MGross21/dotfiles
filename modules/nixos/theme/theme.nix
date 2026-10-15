@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 let
@@ -197,58 +198,205 @@ in
       }
     '';
 
-    environment.etc."hypr/hyprlock.conf".text = ''
-      general {
-          layer = overlay
-      }
+    environment.etc."hypr/hyprlock.conf".text =
+      let
+        rgba = hex: alpha: "rgba(${rm hex}${alpha})";
+        sans = "Geist";
+        mono = "JetBrainsMono Nerd Font";
+        margin = 96;
+        at = x: y: "${toString x}, ${toString y}";
+        user = lib.head (lib.attrValues (lib.filterAttrs (_: u: u.isNormalUser) config.users.users));
+        firstName = lib.head (lib.splitString " " user.description);
+        host = lib.toUpper config.networking.hostName;
+        caps = text: "<span font_family='${mono}' letter_spacing='3072'>${text}</span>";
+        # Empty command output renders as "Sample Text".
+        script =
+          name: text:
+          pkgs.writeShellScript "hyprlock-${name}" ''
+            PATH=${
+              lib.makeBinPath [
+                pkgs.coreutils
+                pkgs.gnused
+                pkgs.playerctl
+              ]
+            }
+            ${text}
+          '';
+        clock = script "clock" ''
+          echo "$(date +%-I:%M)<span font_family='${mono}' size='12%' letter_spacing='3072' rise='118pt' foreground='#${rm data.qs.accent}'> $(date +%p)</span>"
+        '';
+        dateline = script "date" ''
+          echo "${caps "$(date '+%A  ·  %d %B' | tr a-z A-Z)"}"
+        '';
+        greeting = script "greeting" ''
+          hour=$(date +%-H)
+          if [ "$hour" -lt 5 ]; then g="Up late"
+          elif [ "$hour" -lt 12 ]; then g="Good morning"
+          elif [ "$hour" -lt 18 ]; then g="Good afternoon"
+          else g="Good evening"; fi
+          echo "$g, ${firstName}."
+        '';
+        media = script "media" ''
+          status=$(playerctl status 2>/dev/null) || status=
+          case "$status" in
+            Playing) state="NOW PLAYING" ;;
+            Paused) state="PAUSED" ;;
+            *) echo " "; exit 0 ;;
+          esac
+          esc() { sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'; }
+          title=$(playerctl metadata title 2>/dev/null | esc)
+          artist=$(playerctl metadata artist 2>/dev/null | esc)
+          echo "<span size=\"70%\" foreground=\"#${rm data.qs.accent}\">${caps "$state"}</span>"
+          echo "<span font_weight=\"500\">$title</span>"
+          echo "<span foreground=\"#${rm c.brightBlack}\">$artist</span>"
+        '';
+        status = script "status" ''
+          parts="${host}"
+          for bat in /sys/class/power_supply/BAT*; do
+            [ -r "$bat/capacity" ] || continue
+            read -r pct <"$bat/capacity"
+            read -r state <"$bat/status"
+            case "$state" in
+              Charging) parts="$parts  ·  CHARGING $pct%" ;;
+              *) parts="$parts  ·  BATTERY $pct%" ;;
+            esac
+            break
+          done
+          echo "${caps "$parts"}"
+        '';
+        bottomLeft = {
+          monitor = "";
+          halign = "left";
+          valign = "bottom";
+        };
+        bottomRight = {
+          monitor = "";
+          halign = "right";
+          valign = "bottom";
+          text_align = "right";
+        };
+      in
+      inputs.home-manager.lib.hm.generators.toHyprconf {
+        attrs = {
+          general = {
+            hide_cursor = true;
+            ignore_empty_input = true;
+          };
 
-      background {
-          monitor =
-          path = ${toString data.wallpaper}
-          blur_size = 3
-          blur_passes = 5
-      }
+          animations = {
+            enabled = true;
+            bezier = "easeOut, 0.16, 1, 0.3, 1";
+            animation = [
+              "fadeIn, 1, 5, easeOut"
+              "fadeOut, 1, 4, easeOut"
+              "inputFieldColors, 1, 3, easeOut"
+              "inputFieldDots, 1, 2, easeOut"
+            ];
+          };
 
-      image {
-          monitor =
-          path = $HOME/Pictures/profiles/man_on_moon.jpeg
-          size = 120
-          halign = center
-          valign = center
-          position = 0, 150
-      }
+          background = {
+            monitor = "";
+            path = toString data.wallpaper;
+            blur_passes = 3;
+            blur_size = 9;
+            brightness = 0.45;
+            contrast = 0.95;
+            vibrancy = 0.2;
+            noise = 0.015;
+          };
 
-      input-field {
-          monitor =
-          size = 320, 50
-          halign = center
-          valign = center
-          position = 0, 0
-          outline_thickness = 1
-          dots_size = 0.3
-          dots_spacing = 0.3
-          dots_center = true
-          fade_on_empty = true
-          font_family = JetBrainsMono Nerd Font
-          font_size = 18
-          inner_color = rgba(${rm c.red}66)
-          outline_color = rgba(${rm c.blue}e6)
-          check_color = rgba(00c86400)
-          fail_color = rgba(ff323200)
-          text_color = rgba(ffffffe6)
-      }
+          shape = bottomLeft // {
+            size = at 28 3;
+            rounding = 2;
+            color = rgba data.qs.accent "ff";
+            position = at margin 500;
+          };
 
-      label {
-          monitor =
-          text = cmd[update:1000] date '+%I:%M %p'
-          halign = center
-          valign = center
-          position = 0, -100
-          font_family = JetBrainsMono Nerd Font
-          font_size = 30
-          font_weight = bold
-          color = rgba(${rm c.blue}e6)
-      }
-    '';
+          label = [
+            {
+              monitor = "";
+              text = "<span foreground='##${rm data.qs.accent}'>●</span>  ${caps "LOCKED"}";
+              font_family = mono;
+              font_size = 11;
+              color = rgba c.white "99";
+              halign = "left";
+              valign = "top";
+              position = at margin (-56);
+            }
+            (
+              bottomLeft
+              // {
+                text = "cmd[update:60000] ${dateline}";
+                font_family = mono;
+                font_size = 12;
+                color = rgba data.qs.accent "e6";
+                position = at margin 460;
+              }
+            )
+            (
+              bottomLeft
+              // {
+                text = "cmd[update:1000] ${clock}";
+                font_family = "${sans} Thin";
+                font_size = 168;
+                color = rgba c.white "f2";
+                position = at (margin - 12) 200;
+              }
+            )
+            (
+              bottomLeft
+              // {
+                text = "cmd[update:60000] ${greeting}";
+                font_family = "${sans} Light";
+                font_size = 24;
+                color = rgba c.white "b3";
+                position = at margin 176;
+              }
+            )
+            (
+              bottomRight
+              // {
+                text = "cmd[update:2000] ${media}";
+                font_family = sans;
+                font_size = 17;
+                color = rgba c.white "e6";
+                position = at (-margin) 150;
+              }
+            )
+            (
+              bottomRight
+              // {
+                text = "cmd[update:30000] ${status}";
+                font_family = mono;
+                font_size = 11;
+                color = rgba c.white "80";
+                position = at (-margin) margin;
+              }
+            )
+          ];
+
+          input-field = bottomLeft // {
+            size = at 380 52;
+            position = at margin margin;
+            rounding = 14;
+            outline_thickness = 1;
+            dots_center = false;
+            dots_size = 0.22;
+            dots_spacing = 0.5;
+            fade_on_empty = false;
+            font_family = sans;
+            font_size = 14;
+            placeholder_text = ''<span foreground="##${rm c.brightBlack}">${caps "PASSWORD"}</span>'';
+            fail_text = "$FAIL";
+            fail_timeout = 2500;
+            inner_color = rgba c.white "0f";
+            outer_color = rgba c.white "26";
+            font_color = rgba c.white "f2";
+            check_color = rgba data.qs.accent "cc";
+            fail_color = rgba data.qs.urgent "e6";
+            capslock_color = rgba data.qs.warn "cc";
+          };
+        };
+      };
   };
 }

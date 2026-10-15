@@ -18,7 +18,7 @@ Popout {
                 {
                     label: "Lock",
                     icon: Icons.lock,
-                    cmd: ["hyprlock"],
+                    cmd: ["idlectl", "lock"],
                     danger: false
                 },
                 {

@@ -166,6 +166,10 @@ ShellRoot {
 
                     Separator {}
 
+                    Caffeine {
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
                     Volume {
                         anchors.verticalCenter: parent.verticalCenter
                     }

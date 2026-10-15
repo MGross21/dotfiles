@@ -75,6 +75,7 @@ in
 
     fonts.packages = with pkgs; [
       ubuntu-classic
+      geist-font
       nerd-fonts.ubuntu
       nerd-fonts.jetbrains-mono
       nerd-fonts.symbols-only
