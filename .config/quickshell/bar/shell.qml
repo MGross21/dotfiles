@@ -170,6 +170,10 @@ ShellRoot {
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
+                    DisplayMode {
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
                     Volume {
                         anchors.verticalCenter: parent.verticalCenter
                     }

@@ -152,7 +152,6 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
       playerctl
       gpu-screen-recorder-gtk
       record-toggle
-      nwg-displays
       uwsm
       xsettingsd
 
