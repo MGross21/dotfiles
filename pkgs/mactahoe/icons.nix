@@ -13,9 +13,6 @@ stdenvNoCC.mkDerivation {
   version = "unstable-2024";
   inherit src;
 
-  # upstream ships a dangling symbolic-icon alias (globe->network-workgroup)
-  dontCheckForBrokenSymlinks = true;
-
   nativeBuildInputs = [
     bash
     coreutils
