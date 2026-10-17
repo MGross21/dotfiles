@@ -35,8 +35,13 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "gnome") {
     gnomeExtensions.user-themes
     mactahoe-gtk-theme
     mactahoe-icon-theme
-    mactahoe-cursor-theme
   ];
+
+  stylix.cursor = {
+    package = pkgs.mactahoe-cursor-theme;
+    name = "MacTahoe-cursors";
+    size = 24;
+  };
 
   programs.dconf.enable = true;
   programs.dconf.profiles = {
@@ -49,7 +54,6 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "gnome") {
             show-battery-percentage = true;
             gtk-theme = "MacTahoe-Dark";
             icon-theme = "MacTahoe";
-            cursor-theme = "MacTahoe-cursors";
           };
           "org/gnome/desktop/background" = {
             picture-uri = "file://${config.stylix.image}";

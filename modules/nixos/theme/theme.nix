@@ -95,11 +95,34 @@ in
 
     environment.systemPackages = [ (pkgs.papirus-icon-theme.override { color = data.folders; }) ];
 
+    environment.sessionVariables = {
+      XCURSOR_THEME = config.stylix.cursor.name;
+      XCURSOR_SIZE = toString config.stylix.cursor.size;
+    };
+
+    home-manager.sharedModules = [
+      {
+        home.pointerCursor = {
+          enable = true;
+          inherit (config.stylix.cursor) package name size;
+        };
+        dconf.settings."org/gnome/desktop/interface" = {
+          cursor-theme = config.stylix.cursor.name;
+          cursor-size = config.stylix.cursor.size;
+        };
+      }
+    ];
+
     stylix = {
       enable = true;
       base16Scheme = data.yaml;
       image = lib.mkDefault data.wallpaper;
       polarity = "dark";
+      cursor = lib.mkDefault {
+        package = pkgs.apple-cursor;
+        name = data.cursor;
+        size = 24;
+      };
       targets = {
         console.enable = true;
         regreet.enable = false; # unused DM; silences a rename warning
@@ -177,7 +200,8 @@ in
     environment.etc."xsettingsd/xsettingsd.conf".text = ''
       Net/ThemeName "${data.gtk}"
       Net/IconThemeName "${data.icons}"
-      Gtk/CursorThemeName "${data.cursor}"
+      Gtk/CursorThemeName "${config.stylix.cursor.name}"
+      Gtk/CursorThemeSize ${toString config.stylix.cursor.size}
       Net/EnableEventSounds 1
       EnableInputFeedbackSounds 0
       Xft/Antialias 1

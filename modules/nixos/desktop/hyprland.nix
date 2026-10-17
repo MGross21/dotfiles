@@ -161,7 +161,6 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
       materia-theme
       tela-circle-icon-theme
 
-      apple-cursor
     ]
   );
 
