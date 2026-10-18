@@ -202,8 +202,9 @@ in
       Net/IconThemeName "${data.icons}"
       Gtk/CursorThemeName "${config.stylix.cursor.name}"
       Gtk/CursorThemeSize ${toString config.stylix.cursor.size}
+      Net/SoundThemeName "freedesktop"
       Net/EnableEventSounds 1
-      EnableInputFeedbackSounds 0
+      Net/EnableInputFeedbackSounds 0
       Xft/Antialias 1
       Xft/Hinting 1
       Xft/HintStyle "hintslight"
