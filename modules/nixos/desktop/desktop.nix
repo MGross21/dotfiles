@@ -73,16 +73,17 @@ in
       nix-search-tv
     ];
 
+    fonts.enableDefaultPackages = false;
     fonts.packages = with pkgs; [
       ubuntu-classic
-      geist-font
-      nerd-fonts.ubuntu
-      nerd-fonts.jetbrains-mono
       nerd-fonts.symbols-only
-      font-awesome
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-monochrome-emoji
+      dejavu_fonts
+      liberation_ttf
+      gyre-fonts
+      carlito
+      caladea
     ];
   };
 }

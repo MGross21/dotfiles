@@ -110,7 +110,8 @@ Singleton {
     readonly property int launcherStagger: 18 // ms per row on open
 
     // ── type ───────────────────────────────────────────────────────────
-    readonly property string font: "JetBrainsMono Nerd Font"
+    readonly property string font: pal.fontMono ?? "JetBrainsMono Nerd Font"
+    readonly property string fontSans: pal.fontSans ?? "Geist"
     readonly property int fontSize: 10
     readonly property int fontSizeLarge: 13
     readonly property int fontSizeSmall: 9

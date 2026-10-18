@@ -123,6 +123,20 @@ in
         name = data.cursor;
         size = 24;
       };
+      fonts = {
+        sansSerif = {
+          package = pkgs.geist-font;
+          name = "Geist";
+        };
+        monospace = {
+          package = pkgs.nerd-fonts.jetbrains-mono;
+          name = "JetBrainsMono Nerd Font";
+        };
+        serif = {
+          package = pkgs.noto-fonts;
+          name = "Noto Serif";
+        };
+      };
       targets = {
         console.enable = true;
         regreet.enable = false; # unused DM; silences a rename warning
@@ -161,6 +175,8 @@ in
       fg = c.white;
       fgDim = c.brightBlack;
       hi = c.brightWhite;
+      fontSans = config.stylix.fonts.sansSerif.name;
+      fontMono = config.stylix.fonts.monospace.name;
       inherit (data.qs)
         accent
         good
@@ -226,8 +242,8 @@ in
     environment.etc."hypr/hyprlock.conf".text =
       let
         rgba = hex: alpha: "rgba(${rm hex}${alpha})";
-        sans = "Geist";
-        mono = "JetBrainsMono Nerd Font";
+        sans = config.stylix.fonts.sansSerif.name;
+        mono = config.stylix.fonts.monospace.name;
         margin = 96;
         at = x: y: "${toString x}, ${toString y}";
         user = lib.head (lib.attrValues (lib.filterAttrs (_: u: u.isNormalUser) config.users.users));

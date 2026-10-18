@@ -7,7 +7,7 @@ let
 
   fields = {
     text = {
-      font = "JetBrainsMono Nerd Font";
+      font = config.stylix.fonts.monospace.name;
       size = 18;
       color = solid c.fg;
       background = argb "cc" c.bg;
