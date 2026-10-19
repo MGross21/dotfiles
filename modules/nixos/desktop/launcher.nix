@@ -103,6 +103,7 @@ in
     systemd.user.services.quickshell.path = with pkgs; [
       fd
       file
+      fzf
       libqalculate
       wl-clipboard
     ];

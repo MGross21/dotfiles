@@ -99,26 +99,11 @@ Provider {
         const terms = Fuzzy.terms(root.text);
         if (!root.active || terms.length === 0)
             return [];
-        const out = [];
-        for (const path of root.found) {
+        return root.found.map(path => {
             const clean = path.replace(/\/$/, "");
             const base = clean.slice(clean.lastIndexOf("/") + 1);
-            const r = Fuzzy.matchAll(terms, base);
-            const depth = clean.split("/").length;
-            if (r)
-                out.push({
-                    path,
-                    score: r.score - depth,
-                    positions: r.positions
-                });
-            else if (terms.every(t => clean.toLowerCase().includes(t)))
-                out.push({
-                    path,
-                    score: -depth,
-                    positions: []
-                });
-        }
-        return out.sort((a, b) => b.score - a.score).slice(0, 100).map(x => root.fileItem(x.path, x.positions));
+            return root.fileItem(path, [].concat(...terms.map(t => Fuzzy.match(t, base)?.positions ?? [])));
+        });
     }
 
     property Timer debounce: Timer {
@@ -131,8 +116,7 @@ Provider {
                 root.found = [];
                 return;
             }
-            const longest = terms.reduce((a, b) => b.length > a.length ? b : a);
-            job.start(["fd", "--hidden", "--absolute-path", "--ignore-case", "--fixed-strings", "--max-results", "2000", "--exclude", ".git", "--exclude", ".cache", "--exclude", "node_modules", "--exclude", ".local/share/Trash", ...(longest.includes("/") ? ["--full-path"] : []), "--", longest, root.home]);
+            job.start(["sh", "-c", 'fd --hidden --absolute-path --exclude .git --exclude .cache --exclude node_modules --exclude .local/share/Trash . "$HOME" | fzf --filter "$1" --scheme=path | head -n 100', "sh", root.text.trim()]);
         }
     }
 
