@@ -54,6 +54,7 @@ Singleton {
 
     readonly property real popoutAlpha: 0.88
     readonly property real launcherAlpha: 0.62
+    readonly property real launcherAlphaMax: 0.92
     readonly property real scrimAlpha: 0.25
     readonly property real inkDimAlpha: 0.55
     readonly property real selectionAlpha: 0.16
@@ -72,6 +73,8 @@ Singleton {
     function tinted(c: color, a: real): color {
         return Qt.rgba(c.r, c.g, c.b, a);
     }
+
+    readonly property color inkDim: tinted(fg, inkDimAlpha)
 
     // ── metrics ────────────────────────────────────────────────────────
     // barHeight is the island height; the window is barMargin taller.

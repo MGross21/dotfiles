@@ -6,7 +6,6 @@ MouseArea {
 
     required property var modelData
     required property int index
-    property Scheme scheme
     readonly property bool selected: GridView.isCurrentItem
 
     signal activated(string mode)
@@ -35,7 +34,7 @@ MouseArea {
         }
         item: root.modelData
         size: Theme.launcherTileIconSize
-        color: root.scheme.ink
+        color: Theme.fg
     }
 
     Rectangle {
@@ -48,7 +47,7 @@ MouseArea {
         height: 4
         radius: 2
         visible: root.modelData.running ?? false
-        color: root.scheme.accent
+        color: Theme.accent
     }
 
     Text {
@@ -59,8 +58,8 @@ MouseArea {
             margins: Theme.gap
         }
         text: root.modelData.title ?? ""
-        color: root.selected ? root.scheme.inkStrong : root.scheme.ink
-        font.family: Theme.font
+        color: root.selected ? Theme.hi : Theme.fg
+        font.family: Theme.fontSans
         font.pixelSize: Theme.fontSize
         font.weight: root.selected ? Font.Bold : Font.Normal
         horizontalAlignment: Text.AlignHCenter

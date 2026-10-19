@@ -167,7 +167,6 @@ in
         inactive_border = "rgba(00000000)";
         shadow = "rgba(${rm c.black}b3)";
         glass_tint = lib.fromHexString "${rm c.bg}a0";
-        glass_tint_light = lib.fromHexString "${rm c.brightWhite}50";
       };
 
     environment.etc."quickshell/colors.json".text = builtins.toJSON {

@@ -11,7 +11,6 @@ Item {
     id: root
 
     property var item
-    property Scheme scheme
     readonly property var preview: root.item?.preview ?? null
     readonly property string kind: root.preview?.kind ?? ""
     readonly property string path: root.preview?.path ?? ""
@@ -70,14 +69,14 @@ Item {
                 icon: root.preview.icon
             } : root.item
             size: root.kind === "glyph" ? Theme.launcherPreviewIconSize * 1.4 : Theme.launcherPreviewIconSize
-            color: root.scheme.ink
+            color: Theme.fg
         }
 
         Text {
             width: parent.width
             text: root.preview?.title ?? root.item?.title ?? ""
-            color: root.scheme.inkStrong
-            font.family: Theme.font
+            color: Theme.hi
+            font.family: Theme.fontSans
             font.pixelSize: Theme.fontSizeHeading
             font.weight: Font.Bold
             horizontalAlignment: Text.AlignHCenter
@@ -101,8 +100,8 @@ Item {
                     return p.path;
                 return p.detail ?? root.item?.subtitle ?? "";
             }
-            color: root.scheme.ink
-            font.family: Theme.font
+            color: Theme.fg
+            font.family: Theme.fontSans
             font.pixelSize: Theme.fontSize
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.Wrap
@@ -138,7 +137,7 @@ Item {
                     return p.text;
                 return "";
             }
-            color: root.scheme.inkDim
+            color: Theme.inkDim
             font.family: Theme.font
             font.pixelSize: Theme.fontSizeSmall
             wrapMode: Text.WrapAnywhere
@@ -190,8 +189,8 @@ Item {
                 Text {
                     width: parent.width
                     text: root.preview.title
-                    color: root.scheme.inkStrong
-                    font.family: Theme.font
+                    color: Theme.hi
+                    font.family: Theme.fontSans
                     font.pixelSize: Theme.fontSizeLarge
                     font.weight: Font.Bold
                     wrapMode: Text.Wrap
@@ -202,7 +201,7 @@ Item {
                 Text {
                     width: parent.width
                     text: `${root.preview.appId} · workspace ${root.preview.workspace}`
-                    color: root.scheme.inkDim
+                    color: Theme.inkDim
                     font.family: Theme.font
                     font.pixelSize: Theme.fontSize
                     elide: Text.ElideRight

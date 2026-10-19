@@ -52,28 +52,6 @@ hg.preset("bar", {
     },
 })
 
-hg.preset("launcher-light", {
-    blur_strength = 3.0,
-    blur_iterations = 3,
-    glass_opacity = 1.0,
-    refraction_strength = 0.22,
-    chromatic_aberration = 0.08,
-    lens_distortion = 0.0,
-    fresnel_strength = 0.4,
-    specular_strength = 0.4,
-    edge_thickness = 0.10,
-    dark = {
-        tint_color = THEME.glass_tint_light or 0xf7e8b250,
-        brightness = 1.05,
-        contrast = 0.95,
-        adaptive_dim = 0.0,
-        adaptive_boost = 0.0,
-        saturation = 1.0,
-        vibrancy = 0.3,
-    },
-})
-
 -- Namespaces match WlrLayershell.namespace; mask_threshold must stay below Theme.surfaceAlpha.
 hg.layer("quickshell-bar", { preset = "bar", mask_threshold = 0.05 })
 hg.layer("quickshell-launcher", { preset = "window", mask_threshold = 0.05 })
-hg.layer("quickshell-launcher-light", { preset = "launcher-light", mask_threshold = 0.05 })

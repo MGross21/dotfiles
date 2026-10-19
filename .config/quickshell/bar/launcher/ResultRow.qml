@@ -8,7 +8,6 @@ MouseArea {
 
     required property var modelData
     required property int index
-    property Scheme scheme
     property int badge: 0 // Alt+N label; 0 hides it
     property bool reveal: false
     readonly property bool selected: ListView.isCurrentItem
@@ -79,7 +78,7 @@ MouseArea {
             height: root.selected ? 16 : 4
             radius: 2
             visible: root.modelData.running ?? false
-            color: root.scheme.accent
+            color: Theme.accent
 
             Behavior on height {
                 NumberAnimation {
@@ -98,7 +97,7 @@ MouseArea {
             }
             item: root.modelData
             size: Theme.launcherIconSize
-            color: root.danger ? root.scheme.accent : root.scheme.ink
+            color: root.danger ? Theme.accent : Theme.fg
         }
 
         Column {
@@ -112,10 +111,10 @@ MouseArea {
 
             Text {
                 width: parent.width
-                text: Fuzzy.highlight(root.modelData.title ?? "", root.modelData.positions, `${root.scheme.accent}`)
+                text: Fuzzy.highlight(root.modelData.title ?? "", root.modelData.positions, `${Theme.accent}`)
                 textFormat: Text.StyledText
-                color: root.danger ? root.scheme.accent : root.selected ? root.scheme.inkStrong : root.scheme.ink
-                font.family: Theme.font
+                color: root.danger ? Theme.accent : root.selected ? Theme.hi : Theme.fg
+                font.family: Theme.fontSans
                 font.pixelSize: Theme.fontSizeLarge
                 font.weight: root.selected ? Font.Bold : Font.Normal
                 elide: Text.ElideRight
@@ -126,8 +125,8 @@ MouseArea {
                 width: parent.width
                 visible: text !== ""
                 text: root.modelData.subtitle ?? ""
-                color: root.scheme.inkDim
-                font.family: Theme.font
+                color: Theme.inkDim
+                font.family: Theme.fontSans
                 font.pixelSize: Theme.fontSize
                 elide: Text.ElideRight
                 maximumLineCount: 1
@@ -148,21 +147,21 @@ MouseArea {
                 anchors.verticalCenter: parent.verticalCenter
                 visible: root.modelData.pinned ?? false
                 source: Icons.star
-                color: root.scheme.accent
+                color: Theme.accent
             }
 
             Icon {
                 anchors.verticalCenter: parent.verticalCenter
                 visible: root.selected && (root.modelData.actions?.length ?? 0) > 0
                 source: Icons.next
-                color: root.scheme.inkDim
+                color: Theme.inkDim
             }
 
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 visible: root.badge > 0
                 text: root.badge
-                color: root.scheme.accent
+                color: Theme.accent
                 font.family: Theme.font
                 font.pixelSize: Theme.fontSize
                 font.weight: Font.Bold

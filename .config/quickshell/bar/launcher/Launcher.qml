@@ -15,6 +15,7 @@ Scope {
 
     property bool open: false
     property bool sampling: false
+    property real paperAlpha: Theme.launcherAlpha
     property ShellScreen target: Quickshell.screens[0]
     readonly property ShellScreen focused: Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name) ?? Quickshell.screens[0]
     readonly property int listHeight: Theme.launcherRows * Theme.launcherRowHeight
@@ -96,8 +97,8 @@ Scope {
         apps.category = "";
     }
 
-    function show(light: bool): void {
-        scheme.light = light;
+    function show(alpha: real): void {
+        root.paperAlpha = alpha;
         root.sampling = false;
         root.open = true;
     }
@@ -119,21 +120,14 @@ Scope {
         return 0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b);
     }
 
-    // WCAG contrast of `ink` over `paper` blended onto a backdrop of luminance `behind`.
-    function _contrast(ink: color, paper: color, behind: real): real {
-        const ground = Theme.launcherAlpha * root._luminance(paper) + (1 - Theme.launcherAlpha) * behind;
-        const text = root._luminance(ink);
-        return (Math.max(text, ground) + 0.05) / (Math.min(text, ground) + 0.05);
-    }
-
-    function _prefersLight(backdrop: real): bool {
+    // Least paper alpha that keeps fg over base, blended onto `backdrop`, at minContrast.
+    function _paperAlpha(backdrop: real): real {
         const behind = backdrop * (1 - Theme.scrimAlpha);
-        const dark = root._contrast(Theme.fg, Theme.base, behind);
-        return dark < root.minContrast && root._contrast(Theme.base, Theme.hi, behind) > dark;
-    }
-
-    Scheme {
-        id: scheme
+        const paper = root._luminance(Theme.base);
+        const ceiling = (root._luminance(Theme.fg) + 0.05) / root.minContrast - 0.05;
+        if (behind <= ceiling || behind <= paper)
+            return Theme.launcherAlpha;
+        return Math.max(Theme.launcherAlpha, Math.min(Theme.launcherAlphaMax, (behind - ceiling) / (behind - paper)));
     }
 
     AppsProvider {
@@ -282,7 +276,7 @@ Scope {
     Timer {
         interval: 250
         running: root.sampling
-        onTriggered: root.show(false)
+        onTriggered: root.show(Theme.launcherAlpha)
     }
 
     PanelWindow {
@@ -312,7 +306,7 @@ Scope {
             sourceComponent: BackdropProbe {
                 screen: root.target
                 region: Qt.rect((root.target.width - root.paneWidth) / 2, root.paneTop, root.paneWidth, root.maxHeight)
-                onMeasured: luminance => root.show(root._prefersLight(luminance))
+                onMeasured: luminance => root.show(root._paperAlpha(luminance))
             }
         }
     }
@@ -395,7 +389,7 @@ Scope {
             screen: root.target
             color: Theme.transparent
 
-            WlrLayershell.namespace: scheme.light ? "quickshell-launcher-light" : "quickshell-launcher"
+            WlrLayershell.namespace: "quickshell-launcher"
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
             exclusionMode: ExclusionMode.Ignore
@@ -468,7 +462,7 @@ Scope {
                 Rectangle {
                     anchors.fill: parent
                     radius: Theme.launcherRadius
-                    color: Theme.tinted(scheme.paper, Theme.launcherAlpha)
+                    color: Theme.tinted(Theme.base, root.paperAlpha)
                     antialiasing: true
                 }
 
@@ -504,7 +498,7 @@ Scope {
                             radius: Theme.launcherFieldRadius
                             color: Theme.transparent
                             border.width: 1
-                            border.color: Theme.tinted(scheme.accent, Theme.selectionRimAlpha)
+                            border.color: Theme.tinted(Theme.accent, Theme.selectionRimAlpha)
                             antialiasing: true
                         }
 
@@ -517,7 +511,7 @@ Scope {
                                 verticalCenter: parent.verticalCenter
                             }
                             source: root.actionsKey !== "" ? Icons.next : root.mode.icon
-                            color: field.text === "" && root.mode === apps ? scheme.inkDim : scheme.accent
+                            color: field.text === "" && root.mode === apps ? Theme.inkDim : Theme.accent
                         }
 
                         Rectangle {
@@ -532,15 +526,15 @@ Scope {
                             width: visible ? crumbText.implicitWidth + Theme.launcherPadding : 0
                             height: Theme.launcherChipHeight
                             radius: height / 2
-                            color: Theme.tinted(scheme.accent, Theme.selectionAlpha)
+                            color: Theme.tinted(Theme.accent, Theme.selectionAlpha)
 
                             Text {
                                 id: crumbText
 
                                 anchors.centerIn: parent
                                 text: root.actionsTitle
-                                color: scheme.inkStrong
-                                font.family: Theme.font
+                                color: Theme.hi
+                                font.family: Theme.fontSans
                                 font.pixelSize: Theme.fontSize
                             }
                         }
@@ -556,10 +550,10 @@ Scope {
                                 verticalCenter: parent.verticalCenter
                             }
                             focus: true
-                            color: scheme.inkStrong
-                            selectionColor: Theme.tinted(scheme.accent, Theme.selectionRimAlpha)
-                            selectedTextColor: scheme.ink
-                            font.family: Theme.font
+                            color: Theme.hi
+                            selectionColor: Theme.tinted(Theme.accent, Theme.selectionRimAlpha)
+                            selectedTextColor: Theme.fg
+                            font.family: Theme.fontSans
                             font.pixelSize: Theme.fontSizeInput
                             clip: true
                             onTextChanged: {
@@ -630,7 +624,7 @@ Scope {
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: root.actionsKey !== "" ? "Filter actions" : root.mode.placeholder
-                                color: scheme.inkDim
+                                color: Theme.inkDim
                                 font: parent.font
                                 visible: field.text === "" || field.text === root.mode.prefix
                                 x: field.text === "" ? 0 : field.contentWidth + Theme.gap
@@ -651,7 +645,7 @@ Scope {
                                 anchors.verticalCenter: parent.verticalCenter
                                 visible: root.mode.busy
                                 source: Icons.refresh
-                                color: scheme.accent
+                                color: Theme.accent
 
                                 RotationAnimator on rotation {
                                     from: 0
@@ -666,8 +660,8 @@ Scope {
                                 anchors.verticalCenter: parent.verticalCenter
                                 visible: root.mode !== apps
                                 text: root.mode.name
-                                color: scheme.accent
-                                font.family: Theme.font
+                                color: Theme.accent
+                                font.family: Theme.fontSans
                                 font.pixelSize: Theme.fontSize
                                 font.weight: Font.Bold
                             }
@@ -710,9 +704,9 @@ Scope {
                                     width: chipLabel.implicitWidth + Theme.launcherPadding * 1.5
                                     height: Theme.launcherChipHeight
                                     radius: height / 2
-                                    color: chip.on ? Theme.tinted(scheme.accent, Theme.selectionAlpha) : chipHover.hovered ? Theme.tinted(scheme.ink, Theme.surfaceAlpha) : Theme.transparent
+                                    color: chip.on ? Theme.tinted(Theme.accent, Theme.selectionAlpha) : chipHover.hovered ? Theme.tinted(Theme.fg, Theme.surfaceAlpha) : Theme.transparent
                                     border.width: 1
-                                    border.color: chip.on ? Theme.tinted(scheme.accent, Theme.selectionRimAlpha) : Theme.tinted(scheme.ink, Theme.outlineAlpha)
+                                    border.color: chip.on ? Theme.tinted(Theme.accent, Theme.selectionRimAlpha) : Theme.tinted(Theme.fg, Theme.outlineAlpha)
                                     antialiasing: true
 
                                     Text {
@@ -720,8 +714,8 @@ Scope {
 
                                         anchors.centerIn: parent
                                         text: chip.modelData.label
-                                        color: chip.on ? scheme.inkStrong : scheme.ink
-                                        font.family: Theme.font
+                                        color: chip.on ? Theme.hi : Theme.fg
+                                        font.family: Theme.fontSans
                                         font.pixelSize: Theme.fontSize
                                         font.weight: chip.on ? Font.Bold : Font.Normal
                                     }
@@ -778,9 +772,9 @@ Scope {
                                     wrapMode: TextEdit.Wrap
                                     textFormat: ask.error !== "" ? TextEdit.PlainText : TextEdit.MarkdownText
                                     text: ask.error !== "" ? ask.error : ask.answer !== "" ? ask.answer : "Thinking…"
-                                    color: ask.error !== "" ? scheme.accent : scheme.ink
-                                    selectionColor: Theme.tinted(scheme.accent, Theme.selectionRimAlpha)
-                                    font.family: Theme.font
+                                    color: ask.error !== "" ? Theme.accent : Theme.fg
+                                    selectionColor: Theme.tinted(Theme.accent, Theme.selectionRimAlpha)
+                                    font.family: Theme.fontSans
                                     font.pixelSize: Theme.fontSizeLarge
                                 }
                             }
@@ -813,8 +807,8 @@ Scope {
                                     leftPadding: Theme.launcherPadding
                                     verticalAlignment: Text.AlignVCenter
                                     text: section.toUpperCase()
-                                    color: scheme.inkDim
-                                    font.family: Theme.font
+                                    color: Theme.inkDim
+                                    font.family: Theme.fontSans
                                     font.pixelSize: Theme.fontSizeSmall
                                     font.weight: Font.Bold
                                     font.letterSpacing: 1
@@ -822,9 +816,9 @@ Scope {
 
                                 highlight: Rectangle {
                                     radius: Theme.launcherRowRadius
-                                    color: Theme.tinted(scheme.accent, Theme.selectionAlpha)
+                                    color: Theme.tinted(Theme.accent, Theme.selectionAlpha)
                                     border.width: 1
-                                    border.color: Theme.tinted(scheme.accent, Theme.selectionRimAlpha)
+                                    border.color: Theme.tinted(Theme.accent, Theme.selectionRimAlpha)
                                     antialiasing: true
                                 }
 
@@ -832,7 +826,6 @@ Scope {
                                     id: row
 
                                     width: list.width
-                                    scheme: scheme
                                     reveal: pane.revealing && row.index < Theme.launcherRows
                                     badge: pane.altHeld && row.index >= pane.firstVisible && row.index < pane.firstVisible + 9 ? row.index - pane.firstVisible + 1 : 0
                                     onHovered: pointer => {
@@ -875,9 +868,9 @@ Scope {
 
                                 highlight: Rectangle {
                                     radius: Theme.launcherRowRadius
-                                    color: Theme.tinted(scheme.accent, Theme.selectionAlpha)
+                                    color: Theme.tinted(Theme.accent, Theme.selectionAlpha)
                                     border.width: 1
-                                    border.color: Theme.tinted(scheme.accent, Theme.selectionRimAlpha)
+                                    border.color: Theme.tinted(Theme.accent, Theme.selectionRimAlpha)
                                     antialiasing: true
                                 }
 
@@ -894,7 +887,6 @@ Scope {
                                         anchors.centerIn: parent
                                         modelData: cell.modelData
                                         index: cell.index
-                                        scheme: scheme
                                         width: tiles.cellWidth
                                         onHovered: pointer => {
                                             const moved = tiles.pointer.x >= 0 && (pointer.x !== tiles.pointer.x || pointer.y !== tiles.pointer.y);
@@ -922,8 +914,8 @@ Scope {
                                         return root.mode.placeholder;
                                     return "No matches";
                                 }
-                                color: scheme.inkDim
-                                font.family: Theme.font
+                                color: Theme.inkDim
+                                font.family: Theme.fontSans
                                 font.pixelSize: Theme.fontSizeLarge
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
@@ -935,7 +927,6 @@ Scope {
                             width: Theme.launcherPreviewWidth
                             height: Math.max(results.height, Theme.launcherRowHeight * 4)
                             item: pane.current
-                            scheme: scheme
                         }
                     }
 
@@ -959,7 +950,7 @@ Scope {
                                     return root.providers.map(p => p.prefix.trim().toLowerCase() === p.name.toLowerCase() ? p.prefix.trim() : `${p.prefix.trim()} ${p.name.toLowerCase()}`).join("   ");
                                 return `${root.mode.name.toLowerCase()} · ${root.shown.length} result${root.shown.length === 1 ? "" : "s"}`;
                             }
-                            color: scheme.inkDim
+                            color: Theme.inkDim
                             font.family: Theme.font
                             font.pixelSize: Theme.fontSizeSmall
                             elide: Text.ElideRight
@@ -985,7 +976,7 @@ Scope {
                                 hints.push("alt+1-9");
                                 return hints.join("   ");
                             }
-                            color: scheme.inkDim
+                            color: Theme.inkDim
                             font.family: Theme.font
                             font.pixelSize: Theme.fontSizeSmall
                         }
