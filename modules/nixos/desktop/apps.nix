@@ -43,6 +43,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    programs.localsend.enable = true;
+
     environment.systemPackages = lib.mkOrder 100 (
       with pkgs;
       [
