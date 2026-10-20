@@ -63,6 +63,15 @@ nix flake update
 sudo nixos-rebuild switch --flake .#msi
 ```
 
+## macOS (nix-darwin)
+
+```bash
+sh <(curl -L https://nixos.org/nix/install) --daemon
+xcode-select --install
+git clone https://github.com/MGross21/dotfiles.git ~/dotfiles
+sudo nix --extra-experimental-features 'nix-command flakes' run nix-darwin/master#darwin-rebuild -- switch --flake ~/dotfiles#mac
+```
+
 ## WSL (terminal tooling)
 
 ```bash

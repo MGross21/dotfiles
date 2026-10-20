@@ -27,6 +27,11 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
     openclaw = {
       url = "github:openclaw/nix-openclaw";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -82,6 +87,7 @@
         ] (s: f (pkgsFor s));
       mkHost = import ./lib/mkHost.nix { inherit inputs system overlay; };
       mkHome = import ./lib/mkHome.nix { inherit inputs overlay; };
+      mkDarwin = import ./lib/mkDarwin.nix { inherit inputs overlay; };
       installerSystem = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit inputs; };
@@ -152,6 +158,8 @@
       nixosConfigurations.msi = mkHost { name = "msi"; };
       nixosConfigurations.dell = mkHost { name = "dell"; };
       # End host entries
+
+      darwinConfigurations.mac = mkDarwin { name = "mac"; };
 
       homeConfigurations =
         let
