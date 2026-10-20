@@ -63,6 +63,21 @@ nix flake update
 sudo nixos-rebuild switch --flake .#msi
 ```
 
+## New Machine
+
+Boot the installer ISO, then from a working machine:
+
+```bash
+nix run github:nix-community/nixos-anywhere -- --flake .#<host> \
+  --generate-hardware-config nixos-generate-config hosts/<host>/hardware-configuration.nix root@<ip>
+```
+
+Without a second machine, on the ISO:
+
+```bash
+disko-install --flake github:MGross21/dotfiles#<host> --disk main /dev/<disk>
+```
+
 ## macOS (nix-darwin)
 
 ```bash

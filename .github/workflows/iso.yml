@@ -10,7 +10,6 @@ on:
       - 'lib/**'
       - 'modules/**'
       - 'pkgs/**'
-      - 'scripts/iso-install.sh'
       - 'themes/**'
       - '.github/workflows/iso.yml'
   workflow_dispatch:
@@ -53,7 +52,12 @@ jobs:
         run: |
           gh release delete installer-latest --yes 2>/dev/null || true
           gh api repos/${{ github.repository }}/git/refs/tags/installer-latest -X DELETE 2>/dev/null || true
-          printf 'Built from ${{ github.sha }}.\nAuto-launches the interactive installer on tty1 (disko-install). SSH enabled; nmtui for wifi.\n\nFlash: `zstd -d installer.iso.zst | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync`\n' > notes.md
+          cat > notes.md <<'EOF'
+          Built from ${{ github.sha }}.
+          Root SSH by key (`user.sshKeys`) for nixos-anywhere; `disko-install` for local installs; nmtui for wifi.
+
+          Flash: `zstd -d installer.iso.zst | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync`
+          EOF
           gh release create installer-latest installer.iso.zst \
             --title "Installer ISO (latest)" \
             --latest \

@@ -1,5 +1,4 @@
 {
-  inputs,
   pkgs,
   lib,
   config,
@@ -10,9 +9,12 @@
 
   services.openssh = {
     enable = true;
-    settings.PermitRootLogin = "yes";
-    settings.PermitEmptyPasswords = "yes";
+    settings = {
+      PermitRootLogin = "prohibit-password";
+      PasswordAuthentication = false;
+    };
   };
+  users.users.root.openssh.authorizedKeys.keys = config.user.sshKeys;
   boot.zfs.forceImportRoot = false;
 
   nix.settings = {
@@ -38,10 +40,7 @@
     vim
     parted
     gptfdisk
-    inputs.disko.packages.${pkgs.stdenv.hostPlatform.system}.disko-install
-    (pkgs.writeShellScriptBin "nixos-install-interactive" (
-      builtins.readFile ../../scripts/iso-install.sh
-    ))
+    disko
   ];
 
   services.getty.autologinUser = lib.mkForce "root";
@@ -58,11 +57,4 @@
   image.baseName = lib.mkForce "nixos_${config.system.nixos.release}_${pkgs.stdenv.hostPlatform.system}";
   isoImage.squashfsCompression = "zstd -Xcompression-level 19";
   isoImage.includeSystemBuildDependencies = false;
-
-  # Auto-launch installer when root logs in on console
-  programs.bash.loginShellInit = ''
-    if [[ "$(tty)" == /dev/tty1 ]] && [[ $EUID -eq 0 ]]; then
-      nixos-install-interactive
-    fi
-  '';
 }

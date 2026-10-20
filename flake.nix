@@ -94,6 +94,7 @@
         modules = [
           "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
           inputs.disko.nixosModules.disko
+          ./modules/shared/user.nix
           ./hosts/installer/default.nix
         ];
       };
