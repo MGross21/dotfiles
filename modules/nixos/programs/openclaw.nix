@@ -167,7 +167,7 @@ in
     users.users = {
       ${cfg.user} = {
         isSystemUser = true;
-        group = cfg.group;
+        inherit (cfg) group;
         description = "OpenClaw service account";
         home = cfg.stateDir;
         createHome = true;
@@ -194,7 +194,7 @@ in
     environment.etc.${etcRelPath} = {
       mode = "0640";
       user = "root";
-      group = cfg.group;
+      inherit (cfg) group;
       text = configJson;
     };
 
