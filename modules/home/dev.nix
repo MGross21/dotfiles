@@ -8,25 +8,7 @@ let
   cfg = config.dev;
 in
 {
-  options.dev = {
-    rust.enable = lib.mkEnableOption "Rust toolchain" // {
-      default = true;
-    };
-    python.enable = lib.mkEnableOption "Python toolchain" // {
-      default = true;
-    };
-    js.enable = lib.mkEnableOption "JavaScript toolchain" // {
-      default = true;
-    };
-    jvm.enable = lib.mkEnableOption "JVM / Kotlin toolchain" // {
-      default = true;
-    };
-    android.enable = lib.mkEnableOption "Android tooling" // {
-      default = true;
-    };
-  };
-
-  config.environment.systemPackages =
+  config.home.packages =
     with pkgs;
     [
       gnumake
@@ -83,10 +65,10 @@ in
     ++ lib.optionals cfg.android.enable [
       android-tools
     ]
-    ++ [ mold ];
+    ++ lib.optional stdenv.hostPlatform.isLinux mold;
 
   # rust-analyzer needs stdlib sources; nixpkgs rustc ships none.
-  config.environment.sessionVariables = lib.mkIf cfg.rust.enable {
+  config.home.sessionVariables = lib.mkIf cfg.rust.enable {
     RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
     RUSTC_WRAPPER = "sccache";
   };

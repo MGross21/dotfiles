@@ -18,15 +18,8 @@ lib.nixosSystem {
     inputs.stylix.nixosModules.stylix
     inputs.disko.nixosModules.disko
     inputs.home-manager.nixosModules.home-manager
-    {
-      home-manager = {
-        useGlobalPkgs = true;
-        useUserPackages = true;
-        backupFileExtension = "hm-bak";
-        extraSpecialArgs = { inherit inputs; };
-      };
-      stylix.homeManagerIntegration.autoImport = false;
-    }
+    (import ./homeManager.nix { inherit inputs; })
+    { stylix.homeManagerIntegration.autoImport = false; }
     # Every file under modules/nixos must be a NixOS module; all are imported on every host.
     { imports = lib.filesystem.listFilesRecursive ../modules/nixos; }
     ../hosts/${name}/default.nix

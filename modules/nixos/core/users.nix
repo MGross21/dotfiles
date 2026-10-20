@@ -1,8 +1,11 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
+let
+  inherit (config) user;
+in
 {
-  users.users.mgross = {
+  users.users.${user.name} = {
     isNormalUser = true;
-    description = "Michael Gross";
+    description = user.fullName;
     initialPassword = "changeme";
     extraGroups = [
       "wheel"
@@ -21,5 +24,5 @@
     shell = pkgs.zsh;
   };
 
-  home-manager.users.mgross = import ../../../home/mgross.nix;
+  home-manager.users.${user.name}.home.stateVersion = "25.11";
 }

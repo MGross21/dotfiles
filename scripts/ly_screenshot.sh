@@ -3,7 +3,7 @@
 # Reads /dev/fb0 directly — works from TTY or remote session.
 set -euo pipefail
 
-OUTPUT="${1:-$HOME/dotfiles/Pictures/screenshots/ly_$(date +%Y%m%d_%H%M%S).png}"
+OUTPUT="${1:-${NH_FLAKE:-$HOME/dotfiles}/Pictures/screenshots/ly_$(date +%Y%m%d_%H%M%S).png}"
 mkdir -p "$(dirname "$OUTPUT")"
 
 if command -v fbcat &>/dev/null; then

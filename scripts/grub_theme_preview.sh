@@ -10,7 +10,7 @@ else
   mapfile -t MATCHES < <(find /nix/store -maxdepth 1 -name "$PATTERN" -not -name "*.drv" | sort)
 
   if [[ ${#MATCHES[@]} -eq 0 ]]; then
-    echo "No GRUB theme matching '$PATTERN' in nix store. Run: nh os switch ~/dotfiles" >&2
+    echo "No GRUB theme matching '$PATTERN' in nix store. Run: nh os switch" >&2
     exit 1
   elif [[ ${#MATCHES[@]} -gt 1 ]]; then
     echo "Multiple themes found — pass a name to narrow it down:" >&2

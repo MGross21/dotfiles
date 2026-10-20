@@ -50,7 +50,6 @@ in
     programs.firefox.enable = true;
 
     environment.systemPackages = with pkgs; [
-      ghostty
 
       papirus-folders
 
@@ -69,8 +68,6 @@ in
       hyprpolkitagent
 
       dunst
-
-      nix-search-tv
     ];
 
     fonts.enableDefaultPackages = false;

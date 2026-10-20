@@ -233,7 +233,9 @@ in
     SOUND_POWER_SAVE_CONTROLLER = lib.mkForce "N";
   };
 
-  programs.zsh.shellAliases.keycolor = "msi-perkeyrgb --model GS65 --id 1038:1122 -s";
+  home-manager.sharedModules = [
+    { home.shellAliases.keycolor = "msi-perkeyrgb --model GS65 --id 1038:1122 -s"; }
+  ];
 
   systemd.user.services.keyboard-theme = {
     description = "Apply keyboard RGB from active theme";

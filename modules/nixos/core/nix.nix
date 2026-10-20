@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, ... }:
 {
   nix.settings = {
     experimental-features = [
@@ -32,7 +32,7 @@
 
   programs.nh = {
     enable = true;
-    flake = "/home/mgross/dotfiles";
+    flake = config.home-manager.users.${config.user.name}.dotfiles.dir;
     clean.enable = true;
     clean.extraArgs = "--keep-since 7d --keep 5";
   };

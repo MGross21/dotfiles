@@ -6,59 +6,36 @@
   ...
 }:
 let
-  wp =
-    path:
-    builtins.path {
-      inherit path;
-      name = baseNameOf path;
-    };
+  palettes = import ../../../themes;
   themes = {
     tomorrow-night-burns = {
-      nix = import ../../../themes/tomorrow-night-burns.nix;
-      yaml = ../../../themes/tomorrow-night-burns.yaml;
-      wallpaper = wp ../../../Pictures/wallpapers/windows11_red.png;
-      ghostty = "Tomorrow Night Burns";
       gtk = "Materia-dark-compact";
       icons = "Papirus-Dark";
       folders = "red";
       cursor = "macOS";
-      nvim = "tomorrow-night-burns";
       qs = with (import ../../../themes/tomorrow-night-burns.nix); {
-        accent = blue;
         good = green;
         warn = yellow;
         urgent = badge;
       };
     };
     tokyo-night = {
-      nix = import ../../../themes/tokyo-night.nix;
-      yaml = ../../../themes/tokyo-night.yaml;
-      wallpaper = wp ../../../Pictures/wallpapers/cosmic_bg.jpg;
-      ghostty = "TokyoNight";
       gtk = "Materia-dark-compact";
       icons = "Papirus-Dark";
       folders = "blue";
       cursor = "macOS";
-      nvim = "tokyonight-storm";
       qs = with (import ../../../themes/tokyo-night.nix); {
-        accent = blue;
         good = green;
         warn = yellow;
         urgent = red;
       };
     };
     osaka-jade = {
-      nix = import ../../../themes/osaka-jade.nix;
-      yaml = ../../../themes/osaka-jade.yaml;
-      wallpaper = wp ../../../Pictures/wallpapers/green_jade.jpg;
-      ghostty = null;
       gtk = "Materia-dark-compact";
       icons = "Papirus-Dark";
       folders = "teal";
       cursor = "macOS";
-      nvim = "bamboo";
       qs = with (import ../../../themes/osaka-jade.nix); {
-        accent = cyan;
         good = green;
         warn = brightYellow;
         urgent = red;
@@ -66,33 +43,13 @@ let
     };
   };
 
-  data = themes.${config.theming.name};
-  t = data.nix;
+  data = palettes.${config.theming.name} // themes.${config.theming.name};
   c = config.theming.colors;
   rm = lib.removePrefix "#";
   ly = c: "0x00${rm c}";
 in
 {
-  options.theming.name = lib.mkOption {
-    type = lib.types.enum (builtins.attrNames themes);
-    default = "tomorrow-night-burns";
-    description = "Active color theme. Change + nixos-rebuild to switch all managed targets.";
-  };
-
-  options.theming.colors = lib.mkOption {
-    type = lib.types.attrsOf (lib.types.either lib.types.str (lib.types.listOf lib.types.str));
-    description = "Palette of the active theme. Individual slots can be overridden per host.";
-  };
-
-  options.theming.accent = lib.mkOption {
-    type = lib.types.str;
-    description = "Accent color of the active theme.";
-  };
-
   config = {
-    theming.colors = lib.mkDefault t;
-    theming.accent = lib.mkDefault data.qs.accent;
-
     environment.systemPackages = [ (pkgs.papirus-icon-theme.override { color = data.folders; }) ];
 
     environment.sessionVariables = {
@@ -123,20 +80,7 @@ in
         name = data.cursor;
         size = 24;
       };
-      fonts = {
-        sansSerif = {
-          package = pkgs.geist-font;
-          name = "Geist";
-        };
-        monospace = {
-          package = pkgs.nerd-fonts.jetbrains-mono;
-          name = "JetBrainsMono Nerd Font";
-        };
-        serif = {
-          package = pkgs.noto-fonts;
-          name = "Noto Serif";
-        };
-      };
+      fonts = { inherit (config.theming.fonts) sansSerif monospace serif; };
       targets = {
         console.enable = true;
         regreet.enable = false; # unused DM; silences a rename warning
@@ -176,29 +120,13 @@ in
       hi = c.brightWhite;
       fontSans = config.stylix.fonts.sansSerif.name;
       fontMono = config.stylix.fonts.monospace.name;
+      inherit (config.theming) accent;
       inherit (data.qs)
-        accent
         good
         warn
         urgent
         ;
     };
-
-    environment.etc."ghostty-theme.conf".text =
-      if data.ghostty != null then
-        "theme = ${data.ghostty}\n"
-      else
-        lib.concatLines (
-          [
-            "background = ${c.bg}"
-            "foreground = ${c.fg}"
-            "cursor-color = ${c.cursor}"
-            "cursor-text = ${c.cursorText}"
-            "selection-background = ${c.selection}"
-            "selection-foreground = ${c.selectedText}"
-          ]
-          ++ lib.imap0 (i: hex: "palette = ${toString i}=#${hex}") c.ansi
-        );
 
     environment.etc."hypr/hyprpaper.conf".text = ''
       preload = ${toString data.wallpaper}
@@ -226,18 +154,6 @@ in
       Xft/RGBA "rgb"
     '';
 
-    # Read by lua/config/theme.lua.
-    environment.etc."nvim-theme.lua".text = ''
-      return {
-        name = "${data.nvim}",
-        colors = {
-      ${lib.concatStringsSep "\n" (
-        lib.mapAttrsToList (k: v: ''${k} = "${v}",'') (lib.filterAttrs (_: lib.isString) c)
-      )}
-        },
-      }
-    '';
-
     environment.etc."hypr/hyprlock.conf".text =
       let
         rgba = hex: alpha: "rgba(${rm hex}${alpha})";
@@ -263,7 +179,7 @@ in
             ${text}
           '';
         clock = script "clock" ''
-          echo "$(date +%-I:%M)<span font_family='${mono}' size='12%' letter_spacing='3072' rise='118pt' foreground='#${rm data.qs.accent}'> $(date +%p)</span>"
+          echo "$(date +%-I:%M)<span font_family='${mono}' size='12%' letter_spacing='3072' rise='118pt' foreground='#${rm config.theming.accent}'> $(date +%p)</span>"
         '';
         dateline = script "date" ''
           echo "${caps "$(date '+%A  ·  %d %B' | tr a-z A-Z)"}"
@@ -286,7 +202,7 @@ in
           esc() { sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'; }
           title=$(playerctl metadata title 2>/dev/null | esc)
           artist=$(playerctl metadata artist 2>/dev/null | esc)
-          echo "<span size=\"70%\" foreground=\"#${rm data.qs.accent}\">${caps "$state"}</span>"
+          echo "<span size=\"70%\" foreground=\"#${rm config.theming.accent}\">${caps "$state"}</span>"
           echo "<span font_weight=\"500\">$title</span>"
           echo "<span foreground=\"#${rm c.brightBlack}\">$artist</span>"
         '';
@@ -348,14 +264,14 @@ in
           shape = bottomLeft // {
             size = at 28 3;
             rounding = 2;
-            color = rgba data.qs.accent "ff";
+            color = rgba config.theming.accent "ff";
             position = at margin 500;
           };
 
           label = [
             {
               monitor = "";
-              text = "<span foreground='##${rm data.qs.accent}'>●</span>  ${caps "LOCKED"}";
+              text = "<span foreground='##${rm config.theming.accent}'>●</span>  ${caps "LOCKED"}";
               font_family = mono;
               font_size = 11;
               color = rgba c.white "99";
@@ -369,7 +285,7 @@ in
                 text = "cmd[update:60000] ${dateline}";
                 font_family = mono;
                 font_size = 12;
-                color = rgba data.qs.accent "e6";
+                color = rgba config.theming.accent "e6";
                 position = at margin 460;
               }
             )
@@ -432,7 +348,7 @@ in
             inner_color = rgba c.white "0f";
             outer_color = rgba c.white "26";
             font_color = rgba c.white "f2";
-            check_color = rgba data.qs.accent "cc";
+            check_color = rgba config.theming.accent "cc";
             fail_color = rgba data.qs.urgent "e6";
             capslock_color = rgba data.qs.warn "cc";
           };

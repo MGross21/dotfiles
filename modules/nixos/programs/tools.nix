@@ -6,68 +6,27 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    # Core utilities
     openvpn
-    wget
-    zip
-    unzip
-    rsync
-    curl
-
-    # Shell and terminal workflow
-    zsh-completions
-
-    # Terminal utilities
-    gh
-    less
-    fzf
-    sesh # bound to C-o in tmux.nix
-    neovim
-    htop
-    btop
-    powertop
-    fastfetch
-    eza
-    bat
-    fd
-    ripgrep
-    speedtest-cli
-    jq
-    impala
-    poppler
-    poppler_data
-    fontconfig
-    cava
-    docker-compose
     man-db
-    tldr
+    fontconfig
+    docker-compose
+
+    # Hardware and system TUIs
+    powertop
+    impala
     bluetui
-    ncdu
-    dust
-    gitui
-    yazi
-    bc
-    kimun
-
-    # Media/audio CLI utilities
-    ffmpeg-full
-    vulkan-tools
-    pamixer
-    alsa-utils
-    claude-code
-    claude-monitor
-    clipse
-
     efibootmgr
-    mpv-unwrapped
-
-    wl-clipboard
     usbutils
     pciutils
     psmisc
     inetutils
-
-    # Extras
     fbcat
+
+    # Media/audio
+    vulkan-tools
+    pamixer
+    alsa-utils
+    mpv-unwrapped
+    clipse
   ];
 }
