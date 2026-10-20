@@ -62,3 +62,13 @@ To stay on the latest nixos-unstable revisions:
 nix flake update
 sudo nixos-rebuild switch --flake .#msi
 ```
+
+## WSL (terminal tooling)
+
+```bash
+sh <(curl -L https://nixos.org/nix/install) --daemon
+git clone https://github.com/MGross21/dotfiles.git ~/dotfiles
+nix --extra-experimental-features 'nix-command flakes' run home-manager/master -- switch --flake ~/dotfiles#mgross@wsl -b hm-bak
+command -v zsh | sudo tee -a /etc/shells
+chsh -s "$(command -v zsh)"
+```

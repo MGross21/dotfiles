@@ -55,6 +55,7 @@
   outputs =
     inputs@{ nixpkgs, ... }:
     let
+      inherit (nixpkgs) lib;
       system = "x86_64-linux";
       overlay = import ./pkgs {
         inherit (inputs)
@@ -64,12 +65,23 @@
           omarchy
           ;
       };
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-        overlays = [ overlay ];
-      };
+      pkgsFor =
+        system:
+        import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+          overlays = [ overlay ];
+        };
+      pkgs = pkgsFor system;
+      forAllSystems =
+        f:
+        lib.genAttrs [
+          "x86_64-linux"
+          "aarch64-linux"
+          "aarch64-darwin"
+        ] (s: f (pkgsFor s));
       mkHost = import ./lib/mkHost.nix { inherit inputs system overlay; };
+      mkHome = import ./lib/mkHome.nix { inherit inputs overlay; };
       installerSystem = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit inputs; };
@@ -81,45 +93,48 @@
       };
     in
     {
-      formatter.${system} = pkgs.writeShellApplication {
-        name = "fmt";
-        runtimeInputs = [
-          pkgs.nixfmt
-          pkgs.git
-        ];
-        text = ''
-          repo_files() {
-            git ls-files '*.nix'
-            git diff --cached --name-only --diff-filter=A | grep '\.nix$' || true
-          }
+      formatter = forAllSystems (
+        pkgs:
+        pkgs.writeShellApplication {
+          name = "fmt";
+          runtimeInputs = [
+            pkgs.nixfmt
+            pkgs.git
+          ];
+          text = ''
+            repo_files() {
+              git ls-files '*.nix'
+              git diff --cached --name-only --diff-filter=A | grep '\.nix$' || true
+            }
 
-          flags=()
-          paths=()
-          for arg in "$@"; do
-            case "$arg" in
-              -*) flags+=("$arg") ;;
-              *)
-                if [ -d "$arg" ]; then
-                  mapfile -t -O "''${#paths[@]}" paths < <(repo_files | grep "^''${arg#./}" || true)
-                else
-                  paths+=("$arg")
-                fi
-                ;;
-            esac
-          done
+            flags=()
+            paths=()
+            for arg in "$@"; do
+              case "$arg" in
+                -*) flags+=("$arg") ;;
+                *)
+                  if [ -d "$arg" ]; then
+                    mapfile -t -O "''${#paths[@]}" paths < <(repo_files | grep "^''${arg#./}" || true)
+                  else
+                    paths+=("$arg")
+                  fi
+                  ;;
+              esac
+            done
 
-          if [ "''${#paths[@]}" -eq 0 ]; then
-            mapfile -t paths < <(repo_files)
-          fi
+            if [ "''${#paths[@]}" -eq 0 ]; then
+              mapfile -t paths < <(repo_files)
+            fi
 
-          if [ "''${#paths[@]}" -eq 0 ]; then
-            echo "fmt: no .nix files to format" >&2
-            exit 0
-          fi
+            if [ "''${#paths[@]}" -eq 0 ]; then
+              echo "fmt: no .nix files to format" >&2
+              exit 0
+            fi
 
-          exec nixfmt ''${flags[@]+"''${flags[@]}"} "''${paths[@]}"
-        '';
-      };
+            exec nixfmt ''${flags[@]+"''${flags[@]}"} "''${paths[@]}"
+          '';
+        }
+      );
 
       nixosConfigurations.installer = installerSystem;
       packages.${system} = {
@@ -137,5 +152,22 @@
       nixosConfigurations.msi = mkHost { name = "msi"; };
       nixosConfigurations.dell = mkHost { name = "dell"; };
       # End host entries
+
+      homeConfigurations =
+        let
+          user = (lib.evalModules { modules = [ ./modules/shared/user.nix ]; }).config.user.name;
+        in
+        lib.mapAttrs'
+          (
+            host: system:
+            lib.nameValuePair "${user}@${host}" (mkHome {
+              name = "${user}@${host}";
+              inherit system;
+            })
+          )
+          {
+            wsl = "x86_64-linux";
+            wsl-arm = "aarch64-linux";
+          };
     };
 }
