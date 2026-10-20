@@ -64,17 +64,31 @@ in
   };
 
   boot.initrd.kernelModules = [ "i915" ]; # early KMS for plymouth
-  boot.kernelModules = lib.mkBefore [
-    "nvidia-drm"
-    "ec_sys" # required by MControlCenter for EC access
-  ];
+  boot.kernelModules = [ "ec_sys" ]; # required by MControlCenter for EC access
+
+  # The nvidia module force-loads nvidia_uvm via modules-load, which blocks sysinit.
+  environment.etc."modules-load.d/nixos.conf".source = lib.mkForce (
+    pkgs.writeText "nixos.conf" (lib.concatLines (lib.remove "nvidia_uvm" config.boot.kernelModules))
+  );
+  systemd.services.nvidia-modules = {
+    description = "Load NVIDIA DRM and UVM modules";
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "exec";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.kmod}/bin/modprobe -a nvidia_drm nvidia_uvm";
+    };
+  };
   boot.kernelParams = [
     "mem_sleep_default=deep"
     "nologo"
     "pcie_aspm=force" # BIOS withholds ASPM control; TLP's PCIE_ASPM_* are no-ops without it
     "i915.enable_psr=2"
     "i915.enable_fbc=1"
+    "i915.enable_guc=2"
     "nmi_watchdog=0"
+    "nowatchdog"
+    "preempt=full"
     "mitigations=off" # single-user trusted machine
     "quiet"
     "udev.log_level=3"
@@ -83,7 +97,17 @@ in
     "systemd.show_status=false"
     "vt.global_cursor_default=0"
     "plymouth.ignore-serial-consoles"
+    # PID 1 otherwise waits 333ms per stage on a size query the VT never answers.
+    "systemd.tty.rows.console=67"
+    "systemd.tty.columns.console=240"
   ];
+
+  # i7-9750H is CPUID 06-9e-0a; no LUKS/LVM/TPM unlock on this disk.
+  hardware.cpu.intel.microcodePackage = pkgs.microcode-intel.overrideAttrs {
+    postPatch = "find intel-ucode -type f ! -name 06-9e-0a -delete";
+  };
+  boot.initrd.systemd.tpm2.enable = false;
+  boot.initrd.services.lvm.enable = false;
 
   boot.extraModprobeConfig = ''
     options iwlwifi power_save=0
@@ -182,6 +206,15 @@ in
 
   services.displayManager.ly.settings.battery_id = "BAT1";
   services.thermald.enable = true;
+
+  # Defaulted on by the nvidia module; logind handles lid/power keys.
+  services.acpid.enable = false;
+
+  services.scx = {
+    enable = true;
+    scheduler = "scx_lavd";
+    extraArgs = [ "--autopower" ]; # follows TLP's EPP per power source
+  };
 
   # coreOffset also sets cache; p1/p2 stay unset because power-source-switch owns RAPL.
   services.undervolt = {

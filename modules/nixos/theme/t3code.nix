@@ -32,6 +32,7 @@ let
     }
   );
   t3 = lib.getExe' pkgs.t3code "t3";
+  jq = lib.getExe pkgs.jq;
 in
 {
   # Must be a regular file; T3 ignores symlinked themes.
@@ -43,7 +44,7 @@ in
           dir="$HOME/.t3/userdata/themes"
           run install -Dm644 ${theme} "$dir/.nixos.json.tmp"
           run mv -f "$dir/.nixos.json.tmp" "$dir/nixos.json"
-          if ! ${t3} theme show 2>/dev/null | grep -qF 'Environment theme: "nixos"'; then
+          if [ "$(${jq} -r .defaultTheme "$HOME/.t3/userdata/settings.json" 2>/dev/null)" != nixos ]; then
             run ${t3} theme set nixos
           fi
         '';

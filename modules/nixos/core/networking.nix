@@ -2,12 +2,7 @@
 {
   networking.networkmanager.enable = true;
   networking.modemmanager.enable = false;
-  networking.networkmanager.settings = {
-    wifi = {
-      "bg-scan" = false;
-      "scan-rand-mac-address" = "no";
-    };
-  };
+  networking.networkmanager.wifi.scanRandMacAddress = false;
   networking.firewall = {
     allowedTCPPorts = [
       8080

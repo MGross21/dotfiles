@@ -1,6 +1,9 @@
 { ... }:
 {
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    startWhenNeeded = true;
+  };
   programs.ssh.extraConfig = ''
     Host *
       SetEnv TERM=xterm-256color
