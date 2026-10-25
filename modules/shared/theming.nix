@@ -24,13 +24,13 @@ in
     name = lib.mkOption {
       type = lib.types.enum (builtins.attrNames themes);
       default = "tomorrow-night-burns";
-      description = "Active color theme. Change + rebuild to switch all managed targets.";
+      description = "Active color theme.";
     };
 
     colors = lib.mkOption {
       type = lib.types.attrsOf (lib.types.either lib.types.str (lib.types.listOf lib.types.str));
       default = data.colors;
-      description = "Palette of the active theme. Individual slots can be overridden per host.";
+      description = "Palette of the active theme.";
     };
 
     accent = lib.mkOption {

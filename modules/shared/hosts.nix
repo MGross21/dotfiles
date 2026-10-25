@@ -11,22 +11,24 @@ in
             hostKey = lib.mkOption {
               type = lib.types.nullOr lib.types.str;
               default = null;
+              description = "Host public key pinned in known_hosts.";
             };
             userKeys = lib.mkOption {
               type = lib.types.listOf lib.types.str;
               default = [ ];
+              description = "User public keys authorized to log in.";
             };
           };
         }
       );
       default = { };
-      description = "Machines keyed by Tailscale name; hostKey pins the host, userKeys may log in.";
+      description = "Known machines, keyed by hostname.";
     };
 
     sshKnownHosts = lib.mkOption {
       type = lib.types.attrsOf lib.types.anything;
       readOnly = true;
-      description = "programs.ssh.knownHosts entries derived from hosts.";
+      description = "Known-hosts entries derived from `hosts`.";
     };
   };
 

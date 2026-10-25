@@ -80,10 +80,7 @@ in
         }
       ]
     '';
-    description = ''
-      Omarchy marketplace bar-widget plugins to load into the quickshell bar.
-      Pin each as its own `flake = false` input; `nix flake update <input>` bumps it.
-    '';
+    description = "Omarchy marketplace widget plugins loaded into the bar.";
   };
 
   config = lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {

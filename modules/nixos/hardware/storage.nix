@@ -13,7 +13,7 @@ in
     device = lib.mkOption {
       type = lib.types.str;
       default = "/dev/disk/by-id/PLACEHOLDER";
-      description = "Whole disk that the layout is written to. Overridden per-host.";
+      description = "Whole disk that the layout is written to.";
     };
   };
 

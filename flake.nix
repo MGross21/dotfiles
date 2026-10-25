@@ -1,5 +1,5 @@
 {
-  description = "Michael's NixOS configuration";
+  description = "NixOS and nix-darwin configuration";
 
   nixConfig = {
     extra-substituters = [
