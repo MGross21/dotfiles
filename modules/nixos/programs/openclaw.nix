@@ -229,7 +229,6 @@ in
         ProtectKernelModules = true;
         ProtectKernelTunables = true;
         LockPersonality = true;
-        MemoryDenyWriteExecute = true;
         RestrictNamespaces = true;
         RestrictRealtime = true;
         RestrictSUIDSGID = true;
@@ -239,7 +238,7 @@ in
         AmbientCapabilities = "";
         EnvironmentFile = cfg.environmentFiles;
         ReadWritePaths = [ cfg.stateDir ];
-        ReadOnlyPaths = [ "/run/secrets" ];
+        ReadOnlyPaths = [ "-/run/secrets" ];
         RestrictAddressFamilies = [
           "AF_UNIX"
           "AF_INET"
