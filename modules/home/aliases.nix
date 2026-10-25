@@ -69,7 +69,7 @@
     groot = "git rev-parse --show-toplevel";
 
     # Nix
-    nixgc = "nh clean all --keep 2";
+    nixgc = "nh clean all --keep 2 --no-direnv";
     nixhash = "nix-prefetch-url --unpack --type sha256";
     search = "nix-search-tv print | fzf --preview 'nix-search-tv preview {}' --scheme history";
 
