@@ -88,16 +88,20 @@
       mkHost = import ./lib/mkHost.nix { inherit inputs system overlay; };
       mkHome = import ./lib/mkHome.nix { inherit inputs overlay; };
       mkDarwin = import ./lib/mkDarwin.nix { inherit inputs overlay; };
-      installerSystem = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = { inherit inputs; };
-        modules = [
-          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-          inputs.disko.nixosModules.disko
-          ./modules/shared/user.nix
-          ./hosts/installer/default.nix
-        ];
-      };
+      mkInstaller =
+        system:
+        lib.nixosSystem {
+          specialArgs = { inherit inputs; };
+          modules = [
+            { nixpkgs.hostPlatform = system; }
+            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+            inputs.disko.nixosModules.disko
+            ./modules/shared/user.nix
+            ./hosts/installer/default.nix
+          ];
+        };
+      installer = mkInstaller "x86_64-linux";
+      installer-aarch64 = mkInstaller "aarch64-linux";
     in
     {
       formatter = forAllSystems (
@@ -143,9 +147,9 @@
         }
       );
 
-      nixosConfigurations.installer = installerSystem;
+      nixosConfigurations = { inherit installer installer-aarch64; };
       packages.${system} = {
-        installer = installerSystem.config.system.build.isoImage;
+        installer = installer.config.system.build.isoImage;
         inherit (pkgs)
           kimun
           msi-perkeyrgb
@@ -154,6 +158,7 @@
           mactahoe-cursor-theme
           ;
       };
+      packages.aarch64-linux.installer = installer-aarch64.config.system.build.isoImage;
 
       # Host entries (managed by new_host_nix.sh)
       nixosConfigurations.msi = mkHost { name = "msi"; };

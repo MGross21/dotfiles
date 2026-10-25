@@ -16,9 +16,14 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    strategy:
+      matrix:
+        include:
+          - system: x86_64-linux
+            runner: ubuntu-latest
+          - system: aarch64-linux
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
 
     steps:
       - uses: actions/checkout@v4
@@ -36,19 +41,37 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@v8
 
       - name: Build ISO
-        run: nix build .#installer --out-link result -L --keep-going
+        run: nix build .#packages.${{ matrix.system }}.installer --out-link result -L --keep-going
 
       - name: Compress ISO
         run: |
           ISO=$(ls result/iso/*.iso)
-          zstd -19 -T0 --no-progress "$ISO" -o installer.iso.zst
+          zstd -19 -T0 --no-progress "$ISO" -o "installer-${{ matrix.system }}.iso.zst"
           echo "Original:   $(du -sh "$ISO" | cut -f1)"
-          echo "Compressed: $(du -sh installer.iso.zst | cut -f1)"
+          echo "Compressed: $(du -sh "installer-${{ matrix.system }}.iso.zst" | cut -f1)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installer-${{ matrix.system }}
+          path: installer-${{ matrix.system }}.iso.zst
+          compression-level: 0
+
+  release:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
 
       - name: Release
-        if: github.ref == 'refs/heads/main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
         run: |
           gh release delete installer-latest --yes 2>/dev/null || true
           gh api repos/${{ github.repository }}/git/refs/tags/installer-latest -X DELETE 2>/dev/null || true
@@ -56,9 +79,10 @@ jobs:
           Built from ${{ github.sha }}.
           Root SSH by key (`user.sshKeys`) for nixos-anywhere; `disko-install` for local installs; nmtui for wifi.
 
-          Flash: `zstd -d installer.iso.zst | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync`
+          Flash: `zstd -dc installer-<system>.iso.zst | sudo dd of=/dev/sdX bs=4M status=progress conv=fsync`
           EOF
-          gh release create installer-latest installer.iso.zst \
+          gh release create installer-latest installer-*.iso.zst \
+            --target ${{ github.sha }} \
             --title "Installer ISO (latest)" \
             --latest \
             --notes-file notes.md
