@@ -11,7 +11,6 @@
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  boot.initrd.systemd.enable = true;
   boot.initrd.compressor = "zstd";
   boot.initrd.compressorArgs = [
     "-19"
@@ -24,5 +23,4 @@
 
   boot.plymouth.enable = true;
   boot.consoleLogLevel = 0;
-  boot.initrd.verbose = false;
 }
