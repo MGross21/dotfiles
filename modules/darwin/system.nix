@@ -8,6 +8,7 @@ in
   system.primaryUser = user.name;
 
   users.users.${user.name}.home = home;
+  programs.ssh.knownHosts = config.sshKnownHosts;
   home-manager.users.${user.name}.home.stateVersion = "25.11";
 
   nix.settings = {

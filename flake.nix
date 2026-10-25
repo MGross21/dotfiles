@@ -97,6 +97,7 @@
             "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
             inputs.disko.nixosModules.disko
             ./modules/shared/user.nix
+            ./modules/shared/hosts.nix
             ./hosts/installer/default.nix
           ];
         };

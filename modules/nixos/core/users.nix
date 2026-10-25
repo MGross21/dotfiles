@@ -7,6 +7,7 @@ in
     isNormalUser = true;
     description = user.fullName;
     initialPassword = "changeme";
+    openssh.authorizedKeys.keys = user.sshKeys;
     extraGroups = [
       "wheel"
       "networkmanager"

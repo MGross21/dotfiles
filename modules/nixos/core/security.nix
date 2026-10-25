@@ -1,22 +1,5 @@
 { ... }:
 {
-  services.openssh = {
-    enable = true;
-    startWhenNeeded = true;
-  };
-  programs.ssh.extraConfig = ''
-    Host *
-      SetEnv TERM=xterm-256color
-      ConnectTimeout 10
-      ConnectionAttempts 2
-      ServerAliveInterval 60
-      ServerAliveCountMax 3
-      ControlMaster auto
-      ControlPath ~/.ssh/cm-%C
-      ControlPersist 10m
-      AddKeysToAgent yes
-  '';
-
   services.gnome.gnome-keyring.enable = true;
 
   security.pam.services.login.enableGnomeKeyring = true;
