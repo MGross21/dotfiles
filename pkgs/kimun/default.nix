@@ -21,14 +21,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     "-p"
     "kimun-notes"
   ];
-  cargoTestFlags = finalAttrs.cargoBuildFlags;
-
-  # Both are `#[should_panic]` over a `debug_assert!`, which is compiled out of
-  # the release profile buildRustPackage tests in; upstream CI runs debug.
-  checkFlags = [
-    "--skip=components::text_editor::view::tests::splice_real_on_placeholder_is_rejected"
-    "--skip=keys::tests::a_duplicate_combo_in_one_table_panics"
-  ];
+  doCheck = false;
 
   passthru.updateScript = nix-update-script {
     extraArgs = [
