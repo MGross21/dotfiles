@@ -44,6 +44,7 @@ in
       }
       ''
         export HOME=$TMPDIR
+        unset SSL_CERT_FILE
         installShellCompletion --cmd uvx --zsh <(uvx --generate-shell-completion zsh)
       ''
     )
