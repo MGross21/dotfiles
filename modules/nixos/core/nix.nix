@@ -32,7 +32,9 @@
 
   programs.nh = {
     enable = true;
-    flake = config.home-manager.users.${config.user.name}.dotfiles.dir;
+    flake = lib.mkIf (
+      config.host.role == "workstation"
+    ) config.home-manager.users.${config.user.name}.dotfiles.dir;
     clean.enable = true;
     clean.extraArgs = "--keep-since 7d --keep 5 --no-direnv";
   };

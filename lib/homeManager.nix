@@ -10,7 +10,16 @@
     sharedModules =
       lib.filesystem.listFilesRecursive ../modules/shared
       ++ lib.filesystem.listFilesRecursive ../modules/home
-      ++ [ { inherit (config) theming user dev; } ];
+      ++ [
+        {
+          inherit (config)
+            theming
+            user
+            dev
+            host
+            ;
+        }
+      ];
   };
 
   imports = lib.filesystem.listFilesRecursive ../modules/shared;

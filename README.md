@@ -72,6 +72,12 @@ nix run github:nix-community/nixos-anywhere -- --flake .#<host> \
   --generate-hardware-config nixos-generate-config hosts/<host>/hardware-configuration.nix root@<ip>
 ```
 
+Workstations, after first login:
+
+```bash
+git clone https://github.com/MGross21/dotfiles.git ~/dotfiles
+```
+
 Without a second machine, on the ISO:
 
 ```bash

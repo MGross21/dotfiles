@@ -87,7 +87,9 @@ in
     environment.etc."xdg/quickshell/bar".source = pkgs.linkFarm "quickshell-bar" (
       map (name: {
         inherit name;
-        path = "${config.programs.nh.flake}/.config/quickshell/bar/${name}";
+        path =
+          config.home-manager.users.${config.user.name}.lib.dotfiles.source
+            ".config/quickshell/bar/${name}";
       }) (builtins.attrNames (builtins.readDir ../../../.config/quickshell/bar))
       ++ [
         {

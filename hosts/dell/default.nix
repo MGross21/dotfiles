@@ -8,14 +8,7 @@
 
   theming.name = "tokyo-night";
 
-  system.autoUpgrade = {
-    enable = true;
-    flake = "github:MGross21/dotfiles#dell";
-    dates = "04:00";
-    randomizedDelaySec = "30min";
-    persistent = true;
-    allowReboot = false;
-  };
+  host.role = "server";
 
   dev = {
     rust.enable = true;
