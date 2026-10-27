@@ -65,7 +65,7 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@v8
 
       - name: Formatting
-        run: nix fmt -- --check
+        run: nix fmt -- --ci
 
       - name: statix
         run: nix run nixpkgs#statix -- check .

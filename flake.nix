@@ -113,48 +113,7 @@
       installer-aarch64 = mkInstaller "aarch64-linux";
     in
     {
-      formatter = forAllSystems (
-        pkgs:
-        pkgs.writeShellApplication {
-          name = "fmt";
-          runtimeInputs = [
-            pkgs.nixfmt
-            pkgs.git
-          ];
-          text = ''
-            repo_files() {
-              git ls-files '*.nix'
-              git diff --cached --name-only --diff-filter=A | grep '\.nix$' || true
-            }
-
-            flags=()
-            paths=()
-            for arg in "$@"; do
-              case "$arg" in
-                -*) flags+=("$arg") ;;
-                *)
-                  if [ -d "$arg" ]; then
-                    mapfile -t -O "''${#paths[@]}" paths < <(repo_files | grep "^''${arg#./}" || true)
-                  else
-                    paths+=("$arg")
-                  fi
-                  ;;
-              esac
-            done
-
-            if [ "''${#paths[@]}" -eq 0 ]; then
-              mapfile -t paths < <(repo_files)
-            fi
-
-            if [ "''${#paths[@]}" -eq 0 ]; then
-              echo "fmt: no .nix files to format" >&2
-              exit 0
-            fi
-
-            exec nixfmt ''${flags[@]+"''${flags[@]}"} "''${paths[@]}"
-          '';
-        }
-      );
+      formatter = forAllSystems (pkgs: pkgs.nixfmt-tree);
 
       nixosConfigurations = { inherit installer installer-aarch64; };
       packages.${system} = {

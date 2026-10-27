@@ -93,11 +93,12 @@
       "sound.target"
       "post-resume.target"
     ];
+    path = [ pkgs.alsa-utils ];
     serviceConfig.Type = "oneshot";
     # -c PCH: card index is unstable, the NVIDIA HDA controller also registers.
     script = ''
-      ${pkgs.alsa-utils}/bin/amixer -c PCH -q sset 'Internal Mic Boost' 0
-      ${pkgs.alsa-utils}/bin/amixer -c PCH -q sset 'Capture' 97%
+      amixer -c PCH -q sset 'Internal Mic Boost' 0
+      amixer -c PCH -q sset 'Capture' 97%
     '';
   };
 }

@@ -175,25 +175,21 @@ let
     }
   ];
 
-  ucaXml = ''
-    <?xml version="1.0" encoding="UTF-8"?>
-    <actions>
-    ${lib.concatMapStrings (a: ''
-      <action>
-        <icon>${a.icon}</icon>
-        <name>${a.name}</name>
-        <submenu>${a.submenu or ""}</submenu>
-        <unique-id>${a.id}</unique-id>
-        <command>${a.command}</command>
-        <description>${a.name}</description>
-        <range>${a.range or "*"}</range>
-        <patterns>${a.patterns or "*"}</patterns>
-        ${lib.optionalString (a.dirs or false) "<directories/>"}
-        ${lib.concatMapStrings (t: "<${t}/>") (a.types or [ ])}
-      </action>
-    '') actions}
-    </actions>
-  '';
+  ucaXml = (pkgs.formats.xml { }).generate "uca.xml" {
+    actions.action = map (
+      a:
+      {
+        inherit (a) icon name command;
+        submenu = a.submenu or "";
+        unique-id = a.id;
+        description = a.name;
+        range = a.range or "*";
+        patterns = a.patterns or "*";
+      }
+      // lib.optionalAttrs (a.dirs or false) { directories = null; }
+      // lib.genAttrs (a.types or [ ]) (_: null)
+    ) actions;
+  };
 
   accels = lib.concatMapStrings (a: ''
     (gtk_accel_path "<Actions>/ThunarActions/uca-action-${a.id}" "${a.accel}")
@@ -252,7 +248,7 @@ lib.mkIf config.desktop.enable {
       # Thunar replaces these symlinks on save; force reclaims them.
       xdg.configFile = {
         "Thunar/uca.xml" = {
-          text = ucaXml;
+          source = ucaXml;
           force = true;
         };
         "Thunar/accels.scm" = {

@@ -118,7 +118,7 @@ in
       bind -r > swap-window -d -t +1
 
       bind-key -n C-o run-shell "sesh connect \"$(
-        sesh list --icons | ${pkgs.fzf}/bin/fzf-tmux -p 80%,70% \
+        sesh list --icons | ${lib.getExe' pkgs.fzf "fzf-tmux"} -p 80%,70% \
           --no-sort --ansi --border-label ' sesh ' --prompt '⚡ '
       )\""
     '';

@@ -14,6 +14,12 @@ in
     wallpaper = wallpaperOf "windows11_red.png";
     nvim = "tomorrow-night-burns";
     ghostty = "Tomorrow Night Burns";
+    folders = "red";
+    qs = {
+      good = colors.green;
+      warn = colors.yellow;
+      urgent = colors.badge;
+    };
   };
   tokyo-night = rec {
     colors = import ./tokyo-night.nix;
@@ -22,6 +28,12 @@ in
     wallpaper = wallpaperOf "cosmic_bg.jpg";
     nvim = "tokyonight-storm";
     ghostty = "TokyoNight";
+    folders = "blue";
+    qs = {
+      good = colors.green;
+      warn = colors.yellow;
+      urgent = colors.red;
+    };
   };
   osaka-jade = rec {
     colors = import ./osaka-jade.nix;
@@ -31,5 +43,11 @@ in
     nvim = "bamboo";
     # No built-in Ghostty theme; modules/home/ghostty.nix generates one from colors.
     ghostty = null;
+    folders = "teal";
+    qs = {
+      good = colors.green;
+      warn = colors.brightYellow;
+      urgent = colors.red;
+    };
   };
 }

@@ -6,7 +6,7 @@
   ...
 }:
 let
-  loginctl = "${pkgs.systemd}/bin/loginctl";
+  loginctl = lib.getExe' pkgs.systemd "loginctl";
   idle = cmd: "${lib.getExe idlectl} ${cmd}";
 
   idlectl = pkgs.writeShellApplication {

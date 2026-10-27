@@ -9,17 +9,11 @@
         ...
       }:
       let
-        # Link target is the working tree, so managed config stays writable in place.
-        fromRepo = path: config.lib.file.mkOutOfStoreSymlink "${config.dotfiles.dir}/${path}";
+        inherit (config.lib.dotfiles) fromRepo;
+        recursive = !config.dotfiles.mutable;
 
         configEntries = [
-          "alacritty.toml"
-          "dunst"
           "hypr"
-          "liquid-glass"
-          "ly"
-          "neofetch"
-          "README.md"
         ];
 
         vscodeTheme = pkgs.fetchFromGitHub {
@@ -32,11 +26,18 @@
       {
         xdg.configFile = lib.genAttrs configEntries (name: {
           source = fromRepo ".config/${name}";
+          inherit recursive;
         });
 
         home.file = {
-          "Pictures/wallpapers".source = fromRepo "Pictures/wallpapers";
-          "Pictures/profiles".source = fromRepo "Pictures/profiles";
+          "Pictures/wallpapers" = {
+            source = fromRepo "Pictures/wallpapers";
+            inherit recursive;
+          };
+          "Pictures/profiles" = {
+            source = fromRepo "Pictures/profiles";
+            inherit recursive;
+          };
           ".vscode/extensions/alii.vscode-tomorrow-night-burns-master".source = vscodeTheme;
         };
 

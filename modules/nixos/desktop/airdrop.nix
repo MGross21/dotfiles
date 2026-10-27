@@ -10,7 +10,7 @@ in
 {
   imports = [ inputs.owly.nixosModules.default ];
 
-  options.desktop.airdrop.enable = lib.mkEnableOption "AirDrop over AWDL via owly";
+  options.desktop.airdrop.enable = lib.mkEnableOption "AirDrop file sharing";
 
   config = lib.mkIf (config.desktop.enable && cfg.enable) {
     services.owly.enable = true;

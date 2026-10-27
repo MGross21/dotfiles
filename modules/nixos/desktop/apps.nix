@@ -31,13 +31,13 @@ in
   options.apps = {
     enable = lib.mkEnableOption "the optional application set";
 
-    creative.enable = lib.mkEnableOption "Creative apps" // {
+    creative.enable = lib.mkEnableOption "creative apps" // {
       default = true;
     };
-    media.enable = lib.mkEnableOption "Media apps" // {
+    media.enable = lib.mkEnableOption "media apps" // {
       default = true;
     };
-    gaming.enable = lib.mkEnableOption "Gaming / chat apps" // {
+    gaming.enable = lib.mkEnableOption "gaming and chat apps" // {
       default = true;
     };
   };
@@ -45,7 +45,7 @@ in
   config = lib.mkIf cfg.enable {
     programs.localsend.enable = true;
 
-    environment.systemPackages = lib.mkOrder 100 (
+    environment.systemPackages =
       with pkgs;
       [
         vscode
@@ -64,7 +64,6 @@ in
       ++ lib.optionals (cfg.gaming.enable && isX86_64) [
         discord
         steam
-      ]
-    );
+      ];
   };
 }

@@ -10,7 +10,7 @@ let
 
   hyprMonitor =
     args:
-    "${config.programs.hyprland.package}/bin/hyprctl eval \"hl.monitor({output='$SHIKANE_OUTPUT_NAME',mode='preferred',scale=1,${args}})\"";
+    "${lib.getExe' config.programs.hyprland.package "hyprctl"} eval \"hl.monitor({output='$SHIKANE_OUTPUT_NAME',mode='preferred',scale=1,${args}})\"";
 
   displayMode = pkgs.writeShellApplication {
     name = "display-mode";

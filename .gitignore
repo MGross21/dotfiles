@@ -6,25 +6,9 @@
 
 # Whitelist: only the home-manager-managed entries are tracked.
 .config/*
-!.config/alacritty.toml
-!.config/cava/
-!.config/dunst/
-!.config/fastfetch/
-!.config/ghostty/
 !.config/hypr/
-!.config/liquid-glass/
-!.config/ly/
-!.config/neofetch/
 !.config/nvim/
 !.config/quickshell/
-!.config/README.md
-!.config/spotify-launcher.conf
-!.config/wofi/
-!.config/xsettingsd/
-
-# Rewritten at runtime inside the tracked directories above.
-.config/cava/shaders/
-.config/cava/themes/
 
 Pictures/camera/
 **/*_hyprshot.png

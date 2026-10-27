@@ -6,6 +6,7 @@
 }:
 let
   accentHex = lib.removePrefix "#" config.theming.colors.blue;
+  modprobe = lib.getExe' pkgs.kmod "modprobe";
   # `hyprctl keyword` is rejected under the Lua parser, hence eval + hl.monitor().
   powerSourceSwitch = pkgs.writeShellScript "power-source-switch" ''
     set -u
@@ -29,7 +30,7 @@ let
       uid=$(echo "$dir" | cut -d/ -f4)
       sig=$(basename "$dir")
       HYPRLAND_INSTANCE_SIGNATURE="$sig" XDG_RUNTIME_DIR="/run/user/$uid" \
-        ${pkgs.hyprland}/bin/hyprctl eval \
+        ${lib.getExe' pkgs.hyprland "hyprctl"} eval \
           "hl.monitor({output='eDP-1',mode='1920x1080@$mode',position='0x0',scale=1.0})" || true
     done
   '';
@@ -79,7 +80,7 @@ in
     serviceConfig = {
       Type = "exec";
       RemainAfterExit = true;
-      ExecStart = "${pkgs.kmod}/bin/modprobe -a nvidia_drm nvidia_uvm";
+      ExecStart = "${modprobe} -a nvidia_drm nvidia_uvm";
     };
   };
   boot.kernelParams = [
@@ -143,6 +144,9 @@ in
   # Colon-separated list, so the path must be colon-free — /dev/dri/by-path names split.
   environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/igpu";
   environment.sessionVariables.LIBVA_DRIVER_NAME = "iHD";
+  # Mesa-only EGL keeps hyprpaper on the iGPU.
+  systemd.user.services.hyprpaper.environment.__EGL_VENDOR_LIBRARY_FILENAMES =
+    "${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json";
   programs.firefox.preferences = {
     "media.ffmpeg.vaapi.enabled" = true;
     "media.av1.enabled" = false;
@@ -195,14 +199,14 @@ in
       RemainAfterExit = true;
       ExecStart = pkgs.writeShellScript "ax210-pre-suspend" ''
         echo 0 > /sys/bus/pci/devices/0000:3d:00.0/d3cold_allowed
-        ${pkgs.kmod}/bin/modprobe -r iwlmvm || true
-        ${pkgs.kmod}/bin/modprobe -r iwlwifi || true
+        ${modprobe} -r iwlmvm || true
+        ${modprobe} -r iwlwifi || true
       '';
       ExecStop = pkgs.writeShellScript "ax210-post-resume" ''
-        ${pkgs.kmod}/bin/modprobe iwlwifi
+        ${modprobe} iwlwifi
         sleep 2
-        ${pkgs.kmod}/bin/modprobe iwlmvm
-        ${pkgs.util-linux}/bin/rfkill unblock wifi
+        ${modprobe} iwlmvm
+        ${lib.getExe' pkgs.util-linux "rfkill"} unblock wifi
       '';
     };
   };
@@ -280,7 +284,7 @@ in
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
-      ExecStart = "${pkgs.msi-perkeyrgb}/bin/msi-perkeyrgb --model GS65 --id 1038:1122 -s ${accentHex}";
+      ExecStart = "${lib.getExe' pkgs.msi-perkeyrgb "msi-perkeyrgb"} --model GS65 --id 1038:1122 -s ${accentHex}";
     };
   };
 }

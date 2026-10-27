@@ -65,9 +65,7 @@ in
 
       libsecret
       seahorse
-      hyprpolkitagent
 
-      dunst
     ];
 
     fonts.enableDefaultPackages = false;

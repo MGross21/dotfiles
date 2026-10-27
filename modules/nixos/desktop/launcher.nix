@@ -40,7 +40,7 @@ let
       };
       name = lib.mkOption {
         type = lib.types.str;
-        description = "Label shown in the launcher's mode chips and footer.";
+        description = "Label shown for this mode.";
       };
       icon = lib.mkOption {
         type = lib.types.str;
@@ -64,7 +64,7 @@ let
       };
       exec = lib.mkOption {
         type = lib.types.listOf lib.types.str;
-        description = "Argv run for the chosen row through `uwsm app`; `{}` becomes its value.";
+        description = "Argv run for the chosen row; `{}` becomes its value.";
       };
     };
   };

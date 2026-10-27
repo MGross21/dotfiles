@@ -6,44 +6,9 @@
   ...
 }:
 let
-  palettes = import ../../../themes;
-  themes = {
-    tomorrow-night-burns = {
-      gtk = "Materia-dark-compact";
-      icons = "Papirus-Dark";
-      folders = "red";
-      cursor = "macOS";
-      qs = with (import ../../../themes/tomorrow-night-burns.nix); {
-        good = green;
-        warn = yellow;
-        urgent = badge;
-      };
-    };
-    tokyo-night = {
-      gtk = "Materia-dark-compact";
-      icons = "Papirus-Dark";
-      folders = "blue";
-      cursor = "macOS";
-      qs = with (import ../../../themes/tokyo-night.nix); {
-        good = green;
-        warn = yellow;
-        urgent = red;
-      };
-    };
-    osaka-jade = {
-      gtk = "Materia-dark-compact";
-      icons = "Papirus-Dark";
-      folders = "teal";
-      cursor = "macOS";
-      qs = with (import ../../../themes/osaka-jade.nix); {
-        good = green;
-        warn = brightYellow;
-        urgent = red;
-      };
-    };
-  };
-
-  data = palettes.${config.theming.name} // themes.${config.theming.name};
+  data = (import ../../../themes).${config.theming.name};
+  gtkTheme = "Materia-dark-compact";
+  iconTheme = "Papirus-Dark";
   c = config.theming.colors;
   rm = lib.removePrefix "#";
   ly = c: "0x00${rm c}";
@@ -104,6 +69,23 @@ in
           enable = true;
           inherit (config.stylix.cursor) package name size;
         };
+        services.xsettingsd = {
+          enable = config.desktop.enable && config.desktop.environment == "hyprland";
+          settings = {
+            "Net/ThemeName" = gtkTheme;
+            "Net/IconThemeName" = iconTheme;
+            "Gtk/CursorThemeName" = config.stylix.cursor.name;
+            "Gtk/CursorThemeSize" = config.stylix.cursor.size;
+            "Net/SoundThemeName" = "freedesktop";
+            "Net/EnableEventSounds" = true;
+            "Net/EnableInputFeedbackSounds" = false;
+            "Xft/Antialias" = true;
+            "Xft/Hinting" = true;
+            "Xft/HintStyle" = "hintslight";
+            "Xft/RGBA" = "rgb";
+          };
+        };
+        systemd.user.services.xsettingsd.Unit.ConditionEnvironment = "DISPLAY";
         dconf.settings."org/gnome/desktop/interface" = {
           cursor-theme = config.stylix.cursor.name;
           cursor-size = config.stylix.cursor.size;
@@ -112,7 +94,7 @@ in
           Appearance = {
             custom_palette = true;
             color_scheme_path = "${qt6ctColors}";
-            icon_theme = data.icons;
+            icon_theme = iconTheme;
             standard_dialogs = "default";
             style = "Fusion";
           };
@@ -131,7 +113,7 @@ in
       polarity = "dark";
       cursor = lib.mkDefault {
         package = pkgs.apple-cursor;
-        name = data.cursor;
+        name = "macOS";
         size = 24;
       };
       fonts = { inherit (config.theming.fonts) sansSerif monospace serif; };
@@ -192,20 +174,6 @@ in
 
       ipc = true
       splash = false
-    '';
-
-    environment.etc."xsettingsd/xsettingsd.conf".text = ''
-      Net/ThemeName "${data.gtk}"
-      Net/IconThemeName "${data.icons}"
-      Gtk/CursorThemeName "${config.stylix.cursor.name}"
-      Gtk/CursorThemeSize ${toString config.stylix.cursor.size}
-      Net/SoundThemeName "freedesktop"
-      Net/EnableEventSounds 1
-      Net/EnableInputFeedbackSounds 0
-      Xft/Antialias 1
-      Xft/Hinting 1
-      Xft/HintStyle "hintslight"
-      Xft/RGBA "rgb"
     '';
 
     environment.etc."hypr/hyprlock.conf".text =

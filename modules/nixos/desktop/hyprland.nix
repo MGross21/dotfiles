@@ -77,6 +77,10 @@ let
   };
 in
 lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
+  environment.etc."hypr/xdph.conf".text = inputs.home-manager.lib.hm.generators.toHyprconf {
+    attrs.screencopy.max_fps = 60;
+  };
+
   environment.etc."hypr/plugins.lua".text = ''
     hl.plugin.load("${hyprglass-plugin}/lib/libhyprglass.so")
   '';
@@ -107,9 +111,9 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
     auth_fails = 10;
     bigclock = "en";
     bigclock_12hr = true;
-    brightness_down_cmd = "${pkgs.brightnessctl}/bin/brightnessctl -q -n s 10%-";
+    brightness_down_cmd = "${lib.getExe pkgs.brightnessctl} -q -n s 10%-";
     brightness_down_key = "F5";
-    brightness_up_cmd = "${pkgs.brightnessctl}/bin/brightnessctl -q -n s +10%";
+    brightness_up_cmd = "${lib.getExe pkgs.brightnessctl} -q -n s +10%";
     brightness_up_key = "F6";
     clear_password = true;
     cmatrix_min_codepoint = "0x21";
@@ -132,17 +136,106 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
 
   location.provider = "geoclue2";
 
+  home-manager.sharedModules = [
+    {
+      services.gammastep = {
+        enable = true;
+        provider = "geoclue2";
+        temperature = {
+          day = 6500;
+          night = 3000;
+        };
+        settings.general.adjustment-method = "wayland";
+      };
+      services.hyprpolkitagent.enable = true;
+      services.dunst = {
+        enable = true;
+        settings =
+          let
+            c = config.theming.colors;
+          in
+          {
+            global = {
+              monitor = 0;
+              width = 280;
+              height = "(0, 80)";
+              origin = "top-right";
+              offset = "(15, 15)";
+              indicate_hidden = true;
+              shrink = true;
+              transparency = 0;
+              separator_height = 0;
+              padding = 14;
+              horizontal_padding = 18;
+              frame_width = 1;
+              frame_color = c.black;
+              separator_color = c.bg;
+              sort = true;
+              idle_threshold = 120;
+              font = "${config.theming.fonts.monospace.name} 9";
+              line_height = 0;
+              markup = "full";
+              format = "<b>%s</b>\\n%b";
+              alignment = "left";
+              vertical_alignment = "top";
+              show_age_threshold = 60;
+              word_wrap = true;
+              ellipsize = "end";
+              ignore_newline = false;
+              stack_duplicates = true;
+              hide_duplicate_count = false;
+              show_indicators = true;
+              icon_position = "left";
+              min_icon_size = 16;
+              max_icon_size = 32;
+              sticky_history = true;
+              history_length = 100;
+              title = "Dunst";
+              class = "Dunst";
+              corner_radius = 12;
+              always_run_script = true;
+              mouse_left_click = "close_current";
+              mouse_middle_click = "do_action";
+              mouse_right_click = "close_all";
+              close = "ctrl+shift+space";
+              close_all = "ctrl+shift+BackSpace";
+              history = "ctrl+shift+period";
+              context = "ctrl+shift+comma";
+            };
+            urgency_low = {
+              background = c.bg;
+              foreground = c.fg;
+              frame_color = c.black;
+              timeout = 3;
+            };
+            urgency_normal = {
+              background = c.black;
+              foreground = c.fg;
+              frame_color = c.brightBlack;
+              timeout = 5;
+            };
+            urgency_critical = {
+              background = c.black;
+              foreground = c.fg;
+              frame_color = c.red;
+              timeout = 0;
+            };
+          };
+      };
+    }
+  ];
+
   services.geoclue2.appConfig.gammastep = {
     isAllowed = true;
     isSystem = true;
   };
 
+  # Ahead of papirus so tela/gnome-themes win the shared icon dirs in system-path.
   environment.systemPackages = lib.mkOrder 200 (
     with pkgs;
     [
       hyprpaper
       hyprpicker
-      gammastep
       hyprshot
 
       ly
@@ -154,14 +247,12 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
       gpu-screen-recorder-gtk
       record-toggle
       uwsm
-      xsettingsd
 
       nwg-look
       gnome-themes-extra
       adwaita-icon-theme
       materia-theme
       tela-circle-icon-theme
-
     ]
   );
 
@@ -190,7 +281,7 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
       ++ map (user: "/etc/profiles/per-user/${user}") (lib.attrNames config.home-manager.users);
     serviceConfig = {
       Type = "simple";
-      ExecStart = "${pkgs.quickshell}/bin/qs -c bar";
+      ExecStart = "${lib.getExe' pkgs.quickshell "qs"} -c bar";
       Restart = "on-failure";
       RestartSec = "3";
     };
@@ -201,10 +292,9 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
     wantedBy = [ "graphical-session.target" ];
     after = [ "graphical-session.target" ];
     partOf = [ "graphical-session.target" ];
-    environment.__EGL_VENDOR_LIBRARY_FILENAMES = "${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json";
     serviceConfig = {
       Type = "simple";
-      ExecStart = "${pkgs.hyprpaper}/bin/hyprpaper -c /etc/hypr/hyprpaper.conf";
+      ExecStart = "${lib.getExe pkgs.hyprpaper} -c /etc/hypr/hyprpaper.conf";
       Restart = "on-failure";
     };
   };
@@ -220,33 +310,8 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
     description = "Restart hyprpaper on theme change";
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "${pkgs.systemd}/bin/systemctl --user restart hyprpaper.service";
+      ExecStart = "${lib.getExe' pkgs.systemd "systemctl"} --user restart hyprpaper.service";
     };
   };
 
-  systemd.user.services.gammastep = {
-    description = "Night light (geoclue2-located sunset/sunrise)";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    partOf = [ "graphical-session.target" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.gammastep}/bin/gammastep -m wayland -l geoclue2 -t 6500:3000";
-      Restart = "always";
-      RestartSec = "10";
-    };
-  };
-
-  systemd.user.services.xsettingsd = {
-    description = "XSettings daemon for GTK theme consistency";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    unitConfig.ConditionEnvironment = "DISPLAY";
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.xsettingsd}/bin/xsettingsd -c /etc/xsettingsd/xsettingsd.conf";
-      Restart = "on-failure";
-      RestartSec = "3";
-    };
-  };
 }

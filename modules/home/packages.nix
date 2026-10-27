@@ -28,8 +28,6 @@
       htop
       btop
       gitui
-      fastfetch
-      cava
       speedtest-cli
       nix-search-tv
       poppler
