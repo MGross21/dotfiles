@@ -419,16 +419,16 @@
     "omarchy": {
       "flake": false,
       "locked": {
-        "lastModified": 1793109226,
+        "lastModified": 1793109516,
         "narHash": "sha256-spu9b69RZOHc9wPL3HemNLdleLEkLFnVxIj8IwkiMK0=",
         "owner": "omacom",
         "repo": "omarchy",
-        "rev": "bc220e7028d5ab0ee467a0f094dd1a8da98b6c0a",
+        "rev": "5978d93ae7da0a325b7493501911e3f1266cadd3",
         "type": "github"
       },
       "original": {
         "owner": "omacom",
-        "ref": "quattro",
+        "ref": "v4.5.0-rc2",
         "repo": "omarchy",
         "type": "github"
       }
