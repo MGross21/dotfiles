@@ -457,6 +457,27 @@
         "type": "github"
       }
     },
+    "owly": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793013263,
+        "narHash": "sha256-QOmHCgKTB9Wh9idQ95Fm6QWbkSKZo4Y+sNjIjgIHJMk=",
+        "owner": "t4t5",
+        "repo": "owly",
+        "rev": "9a676e11d011c34ea32798a2541f2b1eeb66e731",
+        "type": "github"
+      },
+      "original": {
+        "owner": "t4t5",
+        "repo": "owly",
+        "rev": "9a676e11d011c34ea32798a2541f2b1eeb66e731",
+        "type": "github"
+      }
+    },
     "qmd": {
       "inputs": {
         "flake-utils": [
@@ -496,6 +517,7 @@
         "nixpkgs-materia": "nixpkgs-materia",
         "omarchy": "omarchy",
         "openclaw": "openclaw",
+        "owly": "owly",
         "spotifast": "spotifast",
         "stylix": "stylix",
         "xdph-remote": "xdph-remote"

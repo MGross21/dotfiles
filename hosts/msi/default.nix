@@ -47,6 +47,7 @@ in
     enable = true;
     environment = "hyprland";
     deskflow.enable = true;
+    airdrop.enable = true;
   };
 
   dev = {
