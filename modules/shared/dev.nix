@@ -14,5 +14,6 @@ in
     js.enable = toolchain "JavaScript toolchain";
     jvm.enable = toolchain "JVM / Kotlin toolchain";
     android.enable = toolchain "Android tooling";
+    apple.enable = toolchain "Swift / iOS toolchain";
   };
 }

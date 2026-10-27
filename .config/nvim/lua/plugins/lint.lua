@@ -7,6 +7,7 @@ return {
         sh = { "shellcheck" },
         bash = { "shellcheck" },
         nix = { "statix" },
+        swift = { "swiftlint" },
       },
     },
   },

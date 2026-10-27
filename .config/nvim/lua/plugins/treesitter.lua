@@ -19,6 +19,7 @@ return {
         "rust",
         "scss",
         "ssh_config",
+        "swift",
         "zig",
       },
     },

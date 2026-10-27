@@ -13,6 +13,7 @@ return {
         rust = { "rustfmt" },
         toml = { "taplo" },
         kotlin = { "ktlint" },
+        swift = { "swift_format" },
       },
       formatters = {
         shfmt = { prepend_args = { "-i", "2", "-ci" } },

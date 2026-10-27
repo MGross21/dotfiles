@@ -23,6 +23,7 @@
     js.enable = true;
     jvm.enable = true;
     android.enable = true;
+    apple.enable = false;
   };
 
   storage.disko = {

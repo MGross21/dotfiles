@@ -65,6 +65,22 @@ in
     ++ lib.optionals cfg.android.enable [
       android-tools
     ]
+    ++ lib.optionals cfg.apple.enable [
+      swiftlint
+      swift-format
+    ]
+    # Darwin uses the Xcode toolchain for swift and sourcekit-lsp.
+    ++ lib.optionals (cfg.apple.enable && stdenv.hostPlatform.isLinux) [
+      swift
+      swiftpm
+      sourcekit-lsp
+      xtool
+      libimobiledevice
+    ]
+    ++ lib.optionals (cfg.apple.enable && stdenv.hostPlatform.isDarwin) [
+      xcodegen
+      xcbeautify
+    ]
     ++ lib.optional stdenv.hostPlatform.isLinux mold;
 
   # rust-analyzer needs stdlib sources; nixpkgs rustc ships none.

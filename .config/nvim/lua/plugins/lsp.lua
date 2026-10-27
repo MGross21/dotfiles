@@ -29,6 +29,7 @@ return {
           },
         },
         bashls = {},
+        sourcekit = { filetypes = { "swift" } },
       },
     },
   },
