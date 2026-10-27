@@ -43,6 +43,10 @@
       url = "github:hyprnux/hyprglass/v0.7.0";
       flake = false;
     };
+    xdph-remote = {
+      url = "github:spotdemo4/xdg-desktop-portal-hyprland";
+      flake = false;
+    };
     omarchy = {
       url = "github:omacom/omarchy/quattro";
       flake = false;

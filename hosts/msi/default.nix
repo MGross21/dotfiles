@@ -46,6 +46,7 @@ in
   desktop = {
     enable = true;
     environment = "hyprland";
+    deskflow.enable = true;
   };
 
   dev = {

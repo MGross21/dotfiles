@@ -497,7 +497,8 @@
         "omarchy": "omarchy",
         "openclaw": "openclaw",
         "spotifast": "spotifast",
-        "stylix": "stylix"
+        "stylix": "stylix",
+        "xdph-remote": "xdph-remote"
       }
     },
     "rust-overlay": {
@@ -666,6 +667,22 @@
       "original": {
         "owner": "tinted-theming",
         "repo": "base16-zed",
+        "type": "github"
+      }
+    },
+    "xdph-remote": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791867863,
+        "narHash": "sha256-N0Fiu4dH35fMc6koCUVg6iBGYAuDaRkaosQBokzukg0=",
+        "owner": "spotdemo4",
+        "repo": "xdg-desktop-portal-hyprland",
+        "rev": "544e4b880b6019da7eb367f9d58302be5ab22f20",
+        "type": "github"
+      },
+      "original": {
+        "owner": "spotdemo4",
+        "repo": "xdg-desktop-portal-hyprland",
         "type": "github"
       }
     }
