@@ -21,6 +21,15 @@ Singleton {
     property bool connected: kind !== "none"
     property bool scanning: false
 
+    readonly property string qrPath: `${Quickshell.env("XDG_RUNTIME_DIR")}/wifi-share.png`
+    readonly property string scanPath: `${Quickshell.env("XDG_RUNTIME_DIR")}/wifi-scan.jpg`
+    property bool qrReady: false
+    // Bumped per render so the Image reloads the same path.
+    property int qrStamp: 0
+    readonly property bool _baseIsDark: Theme.base.hslLightness < Theme.hi.hslLightness
+    readonly property color qrDark: _baseIsDark ? Theme.base : Theme.hi
+    readonly property color qrLight: _baseIsDark ? Theme.hi : Theme.base
+
     // [{ ssid, signal, security, active, saved }]
     property var networks: []
 
@@ -156,6 +165,89 @@ Singleton {
             root._run(["nmcli", "device", "wifi", "connect", ssid, "password", password]);
         else
             root._run(["nmcli", "connection", "up", "id", ssid]);
+    }
+
+    Process {
+        id: qrShare
+        command: ["sh", "-c", `
+            umask 077
+            esc() { printf %s "$1" | sed 's/[\\\\;,:"]/\\\\&/g'; }
+            get() { nmcli -e no -s -g "$1" connection show "$2"; }
+            ssid=$(get 802-11-wireless.ssid "$1") || exit 1
+            case "$(get 802-11-wireless-security.key-mgmt "$1")" in
+                wpa-psk|sae) auth="T:WPA;P:$(esc "$(get 802-11-wireless-security.psk "$1")");" ;;
+                "") auth="T:nopass;" ;;
+                *) exit 1 ;;
+            esac
+            printf 'WIFI:S:%s;%s;' "$(esc "$ssid")" "$auth" | qrencode -s 6 -m 2 --foreground="$3" --background="$4" -o "$2"
+        `, "sh", root.ssid, root.qrPath, root.qrDark.toString().slice(1), root.qrLight.toString().slice(1)]
+        onExited: code => {
+            root.qrReady = code === 0;
+            root.qrStamp++;
+        }
+    }
+
+    signal qrJoined
+
+    // The frame is deleted after decoding.
+    Process {
+        id: qrDecode
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (root._joinQr(text.trim()))
+                    root.qrJoined();
+            }
+        }
+    }
+
+    function shareQr(): void {
+        root.qrReady = false;
+        qrShare.running = true;
+    }
+
+    function decodeQr(path: string): void {
+        if (qrDecode.running)
+            return;
+        qrDecode.command = ["sh", "-c", `zbarimg -q --raw -Sdisable -Sqrcode.enable "$1"; s=$?; rm -f "$1"; exit $s`, "sh", path];
+        qrDecode.running = true;
+    }
+
+    // WIFI:S:<ssid>;T:<auth>;P:<pass>;H:<hidden>;; with backslash escapes.
+    function _joinQr(payload: string): bool {
+        if (!payload.startsWith("WIFI:"))
+            return false;
+        const f = {};
+        let key = "";
+        let val = "";
+        let inKey = true;
+        for (let i = 5; i < payload.length; i++) {
+            let ch = payload[i];
+            if (ch === "\\" && i + 1 < payload.length)
+                ch = payload[++i];
+            else if (ch === ":" && inKey) {
+                inKey = false;
+                continue;
+            } else if (ch === ";") {
+                if (key)
+                    f[key] = val;
+                key = val = "";
+                inKey = true;
+                continue;
+            }
+            if (inKey)
+                key += ch;
+            else
+                val += ch;
+        }
+        if (!f.S)
+            return false;
+        const args = ["nmcli", "device", "wifi", "connect", f.S];
+        if (f.P)
+            args.push("password", f.P);
+        if (f.H === "true")
+            args.push("hidden", "yes");
+        root._run(args);
+        return true;
     }
 
     function disconnect(ssid: string): void {

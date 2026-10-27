@@ -1,4 +1,5 @@
 import QtQuick
+import QtMultimedia
 import "../components"
 import "../config"
 import "../services"
@@ -7,6 +8,8 @@ Popout {
     id: root
 
     property string pendingSsid: ""
+    property bool sharing: false
+    property bool scanningQr: false
 
     property bool _regrabbing: false
 
@@ -26,10 +29,42 @@ Popout {
     onVisibleChanged: {
         if (_regrabbing)
             return;
-        if (visible)
+        if (visible) {
             Network.rescan();
-        else
+        } else {
             pendingSsid = "";
+            sharing = false;
+            scanningQr = false;
+        }
+    }
+
+    Connections {
+        target: Network
+        function onQrJoined(): void {
+            root.visible = false;
+        }
+    }
+
+    CaptureSession {
+        camera: Camera {
+            id: camera
+            active: root.visible && root.scanningQr
+        }
+        imageCapture: ImageCapture {
+            id: frameCapture
+            onImageSaved: (id, path) => Network.decodeQr(path)
+        }
+        videoOutput: preview
+    }
+
+    Timer {
+        interval: 600
+        repeat: true
+        running: camera.active
+        onTriggered: {
+            if (frameCapture.readyForCapture)
+                frameCapture.captureToFile(Network.scanPath);
+        }
     }
 
     Column {
@@ -258,6 +293,149 @@ Popout {
                         }
                     }
                 }
+            }
+        }
+
+        Rectangle {
+            width: Theme.listWidth
+            height: 1
+            color: Theme.surface(Theme.rimAlpha)
+            visible: Network.wifiEnabled
+        }
+
+        // ── QR share / join ───────────────────────────────────────────
+        Row {
+            spacing: 4
+            visible: Network.wifiEnabled
+
+            Repeater {
+                model: [
+                    {
+                        label: root.sharing ? "Hide QR" : "Share",
+                        icon: Icons.share,
+                        enabled: Network.kind === "wifi",
+                        action: () => {
+                            root.sharing = !root.sharing;
+                            root.scanningQr = false;
+                            if (root.sharing)
+                                Network.shareQr();
+                        }
+                    },
+                    {
+                        label: root.scanningQr ? "Stop scan" : "Scan QR",
+                        icon: Icons.camera,
+                        enabled: true,
+                        action: () => {
+                            root.scanningQr = !root.scanningQr;
+                            root.sharing = false;
+                        }
+                    }
+                ]
+
+                delegate: Item {
+                    id: qrBtn
+                    required property var modelData
+
+                    width: (Theme.listWidth - 4) / 2
+                    height: 28
+                    opacity: modelData.enabled ? 1.0 : 0.4
+
+                    Glass {
+                        anchors.fill: parent
+                        radius: 7
+                        alpha: qrHover.hovered && qrBtn.modelData.enabled ? Theme.surfaceHoverAlpha : Theme.surfaceAlpha
+                        rim: qrHover.hovered
+                    }
+
+                    Row {
+                        anchors.centerIn: parent
+                        spacing: 6
+
+                        Icon {
+                            anchors.verticalCenter: parent.verticalCenter
+                            size: 14
+                            source: qrBtn.modelData.icon
+                            color: Theme.fg
+                        }
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: qrBtn.modelData.label
+                            color: Theme.fg
+                            font.family: Theme.font
+                            font.pixelSize: Theme.fontSize
+                        }
+                    }
+
+                    HoverHandler {
+                        id: qrHover
+                    }
+
+                    TapHandler {
+                        enabled: qrBtn.modelData.enabled
+                        onTapped: qrBtn.modelData.action()
+                    }
+                }
+            }
+        }
+
+        Item {
+            width: Theme.listWidth
+            height: qrImage.height + 8
+            visible: root.sharing && Network.qrReady
+
+            Rectangle {
+                anchors.centerIn: qrImage
+                width: qrImage.width + 8
+                height: qrImage.height + 8
+                radius: 8
+                color: Network.qrLight
+            }
+
+            Image {
+                id: qrImage
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: 4
+                width: 180
+                height: 180
+                fillMode: Image.PreserveAspectFit
+                smooth: false
+                cache: false
+                source: Network.qrReady ? `file://${Network.qrPath}?${Network.qrStamp}` : ""
+            }
+        }
+
+        Column {
+            spacing: 6
+            visible: root.scanningQr
+
+            Rectangle {
+                width: Theme.listWidth
+                height: 188
+                radius: 8
+                color: "black"
+                clip: true
+
+                VideoOutput {
+                    id: preview
+                    anchors.fill: parent
+                    fillMode: VideoOutput.PreserveAspectCrop
+                    // Mirrored like a selfie view; decoding uses the raw frame.
+                    transform: Scale {
+                        origin.x: preview.width / 2
+                        xScale: -1
+                    }
+                }
+            }
+
+            Text {
+                width: Theme.listWidth
+                horizontalAlignment: Text.AlignHCenter
+                text: camera.errorString || "Hold a wifi QR code up to the camera"
+                color: Theme.fgDim
+                font.family: Theme.font
+                font.pixelSize: Theme.fontSizeSmall
+                elide: Text.ElideRight
             }
         }
     }

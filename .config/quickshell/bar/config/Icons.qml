@@ -51,6 +51,8 @@ Singleton {
     readonly property string logout: Quickshell.iconPath("system-log-out-symbolic")
     readonly property string next: Quickshell.iconPath("go-next-symbolic")
     readonly property string server: Quickshell.iconPath("network-server-symbolic")
+    readonly property string share: Quickshell.iconPath("send-to-symbolic")
+    readonly property string camera: Quickshell.iconPath("camera-photo-symbolic")
 
     function named(name: string): string {
         return Quickshell.iconPath(name, "application-x-executable-symbolic");

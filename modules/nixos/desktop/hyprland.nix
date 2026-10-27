@@ -148,6 +148,7 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
       ly
 
       quickshell
+      qt6.qtmultimedia
       brightnessctl
       playerctl
       gpu-screen-recorder-gtk
@@ -179,6 +180,8 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
         gnused
         systemd
         networkmanager
+        qrencode
+        zbar
         ghostty
         uwsm
         "/run/wrappers"
