@@ -6,6 +6,7 @@
 }:
 let
   cfg = config.dev;
+  swiftc = cfg.apple.enable && !pkgs.swiftPackages.swiftc.meta.broken;
 in
 {
   config.home.packages =
@@ -65,15 +66,15 @@ in
     ++ lib.optionals cfg.android.enable [
       android-tools
     ]
-    ++ lib.optionals cfg.apple.enable [
-      swiftlint
-      swift-format
-    ]
+    ++ lib.optionals cfg.apple.enable [ swiftlint ]
+    ++ lib.optionals swiftc [ swift-format ]
     # Darwin uses the Xcode toolchain for swift and sourcekit-lsp.
-    ++ lib.optionals (cfg.apple.enable && stdenv.hostPlatform.isLinux) [
+    ++ lib.optionals (swiftc && stdenv.hostPlatform.isLinux) [
       swift
       swiftpm
       sourcekit-lsp
+    ]
+    ++ lib.optionals (cfg.apple.enable && stdenv.hostPlatform.isLinux) [
       xtool
       libimobiledevice
     ]
