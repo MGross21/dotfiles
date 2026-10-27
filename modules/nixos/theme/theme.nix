@@ -47,6 +47,47 @@ let
   c = config.theming.colors;
   rm = lib.removePrefix "#";
   ly = c: "0x00${rm c}";
+
+  qtFont = font: ''"${font.name},${toString config.stylix.fonts.sizes.applications}"'';
+  qt6ctColors =
+    let
+      b = config.lib.stylix.colors;
+      # QPalette::ColorRole order.
+      roles =
+        text:
+        lib.concatMapStringsSep ", " (hex: "#ff${hex}") [
+          text
+          b.base01
+          b.base03
+          b.base02
+          b.base00
+          b.base02
+          text
+          b.base07
+          text
+          b.base01
+          b.base00
+          "000000"
+          (rm config.theming.accent)
+          b.base00
+          b.base0D
+          b.base0E
+          b.base02
+          b.base00
+          b.base01
+          b.base05
+          b.base04
+        ];
+    in
+    pkgs.writeText "stylix.conf" (
+      lib.generators.toINI { } {
+        ColorScheme = {
+          active_colors = roles b.base05;
+          inactive_colors = roles b.base05;
+          disabled_colors = roles b.base03;
+        };
+      }
+    );
 in
 {
   config = {
@@ -66,6 +107,19 @@ in
         dconf.settings."org/gnome/desktop/interface" = {
           cursor-theme = config.stylix.cursor.name;
           cursor-size = config.stylix.cursor.size;
+        };
+        xdg.configFile."qt6ct/qt6ct.conf".text = lib.generators.toINI { } {
+          Appearance = {
+            custom_palette = true;
+            color_scheme_path = "${qt6ctColors}";
+            icon_theme = data.icons;
+            standard_dialogs = "default";
+            style = "Fusion";
+          };
+          Fonts = {
+            general = qtFont config.stylix.fonts.sansSerif;
+            fixed = qtFont config.stylix.fonts.monospace;
+          };
         };
       }
     ];
