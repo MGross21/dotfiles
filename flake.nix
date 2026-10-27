@@ -172,6 +172,7 @@
       # Host entries (managed by new_host_nix.sh)
       nixosConfigurations.msi = mkHost { name = "msi"; };
       nixosConfigurations.dell = mkHost { name = "dell"; };
+      nixosConfigurations.pc = mkHost { name = "pc"; };
       # End host entries
 
       darwinConfigurations.mac = mkDarwin { name = "mac"; };

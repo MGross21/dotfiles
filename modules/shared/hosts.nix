@@ -39,10 +39,7 @@ in
         hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINTp/wmRjY21qX9p1IwNhHZlKuMY/l0Bu3G66omK2rda";
         userKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOLGtw+U+bs3PlGQdtPohB+/ciRvZ3U+eZlzsEYIh7Ga" ];
       };
-      pc = {
-        hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMtNOq+jOKCE8llSUAX/eSDoY18rjKg/g41kau2mzz83";
-        userKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB2+Vgs3nf85+RXlfSC7r4sGfT7Zl4qVFYnW1RtbRQa3" ];
-      };
+      pc.hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAGf67qegk4FRDWRntylJsTg1D1Z/dWL6B78HgZY1DWq";
     };
 
     sshKnownHosts = lib.mapAttrs (name: h: {
