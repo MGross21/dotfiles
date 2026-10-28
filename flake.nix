@@ -19,6 +19,7 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    preservation.url = "github:nix-community/preservation";
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -132,6 +133,10 @@
       nixosConfigurations.msi = mkHost { name = "msi"; };
       nixosConfigurations.dell = mkHost { name = "dell"; };
       nixosConfigurations.pc = mkHost { name = "pc"; };
+      nixosConfigurations.usb = mkHost {
+        name = "usb";
+        modules = [ inputs.preservation.nixosModules.preservation ];
+      };
       # End host entries
 
       darwinConfigurations.mac = mkDarwin { name = "mac"; };
