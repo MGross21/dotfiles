@@ -86,9 +86,31 @@ in
           };
         };
         systemd.user.services.xsettingsd.Unit.ConditionEnvironment = "DISPLAY";
+        home.pointerCursor.gtk.enable = config.desktop.enable;
+        gtk = lib.mkIf config.desktop.enable {
+          enable = true;
+          theme = {
+            name = gtkTheme;
+            package = pkgs.materia-theme;
+          };
+          iconTheme.name = iconTheme;
+          font = {
+            name = "Ubuntu";
+            size = 11;
+          };
+          gtk3.extraConfig.gtk-application-prefer-dark-theme = true;
+          gtk4 = {
+            theme = {
+              name = gtkTheme;
+              package = pkgs.materia-theme;
+            };
+            extraConfig.gtk-application-prefer-dark-theme = true;
+          };
+        };
         dconf.settings."org/gnome/desktop/interface" = {
           cursor-theme = config.stylix.cursor.name;
           cursor-size = config.stylix.cursor.size;
+          color-scheme = "prefer-dark";
         };
         xdg.configFile."qt6ct/qt6ct.conf".text = lib.generators.toINI { } {
           Appearance = {
