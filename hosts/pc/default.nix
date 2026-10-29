@@ -6,6 +6,7 @@
   theming.name = "tokyo-night";
 
   desktop.enable = true;
+  desktop.primaryMonitor = "DP-1";
 
   dev = {
     rust.enable = true;

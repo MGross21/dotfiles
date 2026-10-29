@@ -264,13 +264,14 @@ in
           done
           echo "${caps "$parts"}"
         '';
+        monitor = config.desktop.primaryMonitor;
         bottomLeft = {
-          monitor = "";
+          inherit monitor;
           halign = "left";
           valign = "bottom";
         };
         bottomRight = {
-          monitor = "";
+          inherit monitor;
           halign = "right";
           valign = "bottom";
           text_align = "right";
@@ -314,7 +315,7 @@ in
 
           label = [
             {
-              monitor = "";
+              inherit monitor;
               text = "<span foreground='##${rm config.theming.accent}'>●</span>  ${caps "LOCKED"}";
               font_family = mono;
               font_size = 11;

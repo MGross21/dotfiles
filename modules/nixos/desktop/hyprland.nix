@@ -85,6 +85,18 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
     hl.plugin.load("${hyprglass-plugin}/lib/libhyprglass.so")
   '';
 
+  environment.etc."hypr/workspaces.lua".text =
+    lib.optionalString (config.desktop.primaryMonitor != "")
+      ''
+        hl.workspace_rule(${
+          lib.generators.toLua { } {
+            workspace = "1";
+            monitor = config.desktop.primaryMonitor;
+            default = true;
+          }
+        })
+      '';
+
   programs.hyprland = {
     enable = true;
     withUWSM = true;

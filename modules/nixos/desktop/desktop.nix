@@ -19,6 +19,12 @@ in
       default = "hyprland";
       description = "Active desktop environment.";
     };
+
+    primaryMonitor = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      description = "Output for workspace 1 and lock screen widgets; empty means unpinned.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
