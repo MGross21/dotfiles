@@ -1,4 +1,12 @@
-{ config, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  accentHex = lib.removePrefix "#" config.theming.colors.blue;
+in
 {
   imports = [ ./hardware-configuration.nix ];
 
@@ -51,5 +59,38 @@
   storage.disko = {
     enable = true;
     device = "/dev/disk/by-id/usb-SABRENT_ROCKET-PRO_DD56419883C42-0:0";
+  };
+
+  services.hardware.openrgb.enable = true;
+
+  systemd.services.peripheral-theme = {
+    description = "Apply peripheral RGB from active theme";
+    wantedBy = [ "openrgb.service" ];
+    after = [ "openrgb.service" ];
+    requires = [ "openrgb.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      # Exits nonzero until the OpenRGB server has detected the devices.
+      Restart = "on-failure";
+      RestartSec = 5;
+      ExecStart = lib.escapeShellArgs (
+        [ (lib.getExe pkgs.openrgb) ]
+        ++
+          lib.concatMap
+            (device: [
+              "-d"
+              device
+              "-m"
+              "static"
+              "-c"
+              accentHex
+            ])
+            [
+              "Pro Gaming Keyboard"
+              "Tunable RGB Gaming Mouse G502"
+            ]
+      );
+    };
   };
 }
