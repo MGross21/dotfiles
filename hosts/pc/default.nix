@@ -1,4 +1,12 @@
-{ config, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  accentHex = lib.removePrefix "#" config.theming.colors.blue;
+in
 {
   imports = [ ./hardware-configuration.nix ];
 
@@ -51,5 +59,29 @@
   storage.disko = {
     enable = true;
     device = "/dev/disk/by-id/usb-SABRENT_ROCKET-PRO_DD56419883C42-0:0";
+  };
+
+  # Logitech G Pro keyboard (g810-led) and G502 Proteus Spectrum (OpenRGB).
+  services.g810-led = {
+    enable = true;
+    profile = ''
+      a ${accentHex}
+      c
+    '';
+  };
+  services.hardware.openrgb.enable = true;
+
+  systemd.user.services.peripheral-theme = {
+    description = "Apply peripheral RGB from active theme";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = [
+        "${lib.getExe' pkgs.g810-led "gpro-led"} -p /etc/g810-led/profile"
+        "${lib.getExe pkgs.openrgb} -d \"Logitech G502 Proteus Spectrum Gaming Mouse\" -m static -c ${accentHex}"
+      ];
+    };
   };
 }
