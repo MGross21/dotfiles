@@ -13,6 +13,17 @@ let
     (pkgs.callPackage "${inputs.xdph-remote}/nix/default.nix" {
       src = inputs.xdph-remote;
       version = "git-${inputs.xdph-remote.shortRev}";
+      # Needs >= 0.8.0; drop once nixpkgs ships it.
+      hyprland-protocols = pkgs.hyprland-protocols.overrideAttrs {
+        version = "0.8.0";
+        src = pkgs.fetchFromGitHub {
+          owner = "hyprwm";
+          repo = "hyprland-protocols";
+          tag = "v0.8.0";
+          hash = "sha256-g09dB6NCTzD4F6YgYrGXRhUfG52xwxUtlMAbHvv/1gE=";
+        };
+        nativeBuildInputs = [ pkgs.cmake ];
+      };
     }).overrideAttrs
       (old: {
         buildInputs =
