@@ -33,11 +33,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
-    openclaw = {
-      url = "github:openclaw/nix-openclaw";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nix-openclaw-tools.inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # Its prebuilt node segfaults against our nixpkgs; keep its own pin.
+    openclaw.url = "github:openclaw/nix-openclaw";
     spotifast.url = "github:crmne/spotifast/v0.12.0";
     owly = {
       url = "github:t4t5/owly/9a676e11d011c34ea32798a2541f2b1eeb66e731";
@@ -131,7 +128,10 @@
 
       # Host entries (managed by new_host_nix.sh)
       nixosConfigurations.msi = mkHost { name = "msi"; };
-      nixosConfigurations.dell = mkHost { name = "dell"; };
+      nixosConfigurations.dell = mkHost {
+        name = "dell";
+        modules = [ inputs.openclaw.nixosModules.openclaw-gateway ];
+      };
       nixosConfigurations.pc = mkHost { name = "pc"; };
       nixosConfigurations.usb = mkHost {
         name = "usb";

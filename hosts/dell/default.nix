@@ -1,6 +1,9 @@
 { ... }:
 {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [
+    ./hardware-configuration.nix
+    ./openclaw.nix
+  ];
 
   networking.hostName = "dell";
 
