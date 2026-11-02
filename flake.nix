@@ -42,7 +42,7 @@
     };
     # Plugin ABI is tied to one Hyprland release; bump in lockstep with nixpkgs' hyprland.
     hyprglass = {
-      url = "github:hyprnux/hyprglass/v0.7.0";
+      url = "github:hyprnux/hyprglass/v1.1.0";
       flake = false;
     };
     xdph-remote = {
