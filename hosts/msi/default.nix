@@ -110,7 +110,10 @@ in
   hardware.graphics.enable = true;
   hardware.graphics.enable32Bit = true;
   hardware.graphics.extraPackages = [ pkgs.intel-media-driver ];
-  boot.blacklistedKernelModules = [ "nouveau" ];
+  boot.blacklistedKernelModules = [
+    "nouveau"
+    "psmouse"
+  ];
 
   specialisation.dgpu.configuration =
     { config, ... }:
