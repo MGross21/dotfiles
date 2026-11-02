@@ -4,7 +4,7 @@
     timeout = 0;
     systemd-boot = {
       enable = true;
-      configurationLimit = 10;
+      configurationLimit = 5;
     };
     efi.canTouchEfiVariables = true;
   };
@@ -20,6 +20,8 @@
   systemd.services.NetworkManager-wait-online.enable = false;
 
   boot.tmp.cleanOnBoot = true;
+
+  services.journald.settings.Journal.SystemMaxUse = "200M";
 
   boot.plymouth.enable = true;
   boot.consoleLogLevel = 0;
