@@ -6,11 +6,6 @@ Provider {
 
     readonly property var engines: [
         {
-            key: "ddg",
-            title: "DuckDuckGo",
-            url: "https://duckduckgo.com/?q="
-        },
-        {
             key: "google",
             title: "Google",
             url: "https://www.google.com/search?q="
@@ -34,11 +29,6 @@ Provider {
             key: "youtube",
             title: "YouTube",
             url: "https://www.youtube.com/results?search_query="
-        },
-        {
-            key: "wikipedia",
-            title: "Wikipedia",
-            url: "https://en.wikipedia.org/w/index.php?search="
         }
     ]
 
