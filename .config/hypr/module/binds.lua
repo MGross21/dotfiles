@@ -9,7 +9,6 @@ local browser = vars.browser
 
 hl.bind(mainMod .. " + return", hl.dsp.exec_cmd(term))
 hl.bind(mainMod .. " + C", hl.dsp.window.close())
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("uwsm stop || exit"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fm))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + space", hl.dsp.exec_cmd(menu))
