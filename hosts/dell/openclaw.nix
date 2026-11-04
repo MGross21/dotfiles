@@ -27,9 +27,23 @@ let
   gateway = config.services.openclaw-gateway;
   openclawPkgs = inputs.openclaw.packages.${pkgs.stdenv.hostPlatform.system};
   tokenEnv = "${gateway.stateDir}/gateway.env";
+  discordEnv = "${gateway.stateDir}/discord.env";
   decisionModel = "gliclass-edge-v3.0";
+  openclawAdmin = pkgs.writeShellScriptBin "openclaw-admin" ''
+    if [ "$(id -un)" != ${gateway.user} ]; then
+      exec /run/wrappers/bin/sudo -u ${gateway.user} "$0" "$@"
+    fi
+    set -a
+    . ${tokenEnv}
+    [ -r ${discordEnv} ] && . ${discordEnv}
+    set +a
+    export OPENCLAW_STATE_DIR=${gateway.stateDir} OPENCLAW_CONFIG_PATH=${gateway.configPath}
+    exec ${gateway.package}/bin/openclaw "$@"
+  '';
 in
 {
+  environment.systemPackages = [ openclawAdmin ];
+
   services.llama-cpp = {
     enable = true;
     settings = {
@@ -39,6 +53,7 @@ in
       threads = 4;
       cache-reuse = 256;
       flash-attn = "on";
+      parallel = 1;
     };
   };
 
@@ -54,7 +69,10 @@ in
   services.openclaw-gateway = {
     enable = true;
     package = openclawPkgs.openclaw-gateway;
-    environmentFiles = [ "-${tokenEnv}" ];
+    environmentFiles = [
+      "-${tokenEnv}"
+      "-${discordEnv}"
+    ];
     execStartPre = [
       (toString (
         pkgs.writeShellScript "openclaw-gateway-token" ''
@@ -81,7 +99,24 @@ in
         };
       };
       plugins = {
-        load.paths = [ "${openclawPkgs.openclaw-runtime-plugin-onnx}" ];
+        load.paths = [
+          "${openclawPkgs.openclaw-runtime-plugin-onnx}"
+          "${openclawPkgs.openclaw-runtime-plugin-discord}"
+        ];
+        deny = [
+          "acpx"
+          "anthropic"
+          "browser"
+          "canvas"
+          "cua-computer"
+          "file-transfer"
+          "geolocation"
+          "github"
+          "ollama"
+          "talk-voice"
+          "xai"
+        ];
+        entries.discord.enabled = true;
         entries.onnx = {
           enabled = true;
           config = {
@@ -89,6 +124,18 @@ in
             maxLoadedModels = 1;
           };
         };
+      };
+      channels.discord = {
+        enabled = true;
+        token = {
+          source = "env";
+          provider = "default";
+          id = "DISCORD_BOT_TOKEN";
+        };
+        dmPolicy = "allowlist";
+        allowFrom = [ "291420737204649985" ];
+        groupPolicy = "allowlist";
+        voice.enabled = false;
       };
       agents.defaults = {
         model.primary = "local/qwen3.6-35b-a3b";
@@ -118,6 +165,7 @@ in
   };
 
   systemd.services.openclaw-gateway = {
+    restartTriggers = [ config.environment.etc."openclaw/openclaw.json".source ];
     after = [
       "llama-cpp.service"
       "network-online.target"
