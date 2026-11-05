@@ -115,43 +115,45 @@ in
     "psmouse"
   ];
 
-  specialisation.dgpu.configuration =
-    { config, ... }:
-    {
-      system.nixos.tags = [ "dgpu" ];
-      hardware.nvidia = {
-        open = true;
-        modesetting.enable = true;
-        powerManagement.enable = true;
-        nvidiaSettings = false;
-        prime = {
-          offload.enable = true;
-          offload.enableOffloadCmd = true;
-          intelBusId = "PCI:0:2:0";
-          nvidiaBusId = "PCI:1:0:0";
-        };
-        package = config.boot.kernelPackages.nvidiaPackages.stable;
-      };
-      services.xserver.videoDrivers = [ "nvidia" ];
-      # The nvidia module force-loads nvidia_uvm via modules-load, which blocks sysinit.
-      environment.etc."modules-load.d/nixos.conf".source = lib.mkForce (
-        pkgs.writeText "nixos.conf" (lib.concatLines (lib.remove "nvidia_uvm" config.boot.kernelModules))
-      );
-      systemd.services.nvidia-modules = {
-        description = "Load NVIDIA DRM and UVM modules";
-        wantedBy = [ "multi-user.target" ];
-        serviceConfig = {
-          Type = "exec";
-          RemainAfterExit = true;
-          ExecStart = "${modprobe} -a nvidia_drm nvidia_uvm";
-        };
-      };
-      environment.sessionVariables.AQ_DRM_DEVICES = lib.mkForce "/dev/dri/igpu:/dev/dri/dgpu";
+  hardware.nvidia = {
+    open = true;
+    modesetting.enable = true;
+    powerManagement.enable = true;
+    nvidiaSettings = false;
+    prime = {
+      offload.enable = true;
+      offload.enableOffloadCmd = true;
+      intelBusId = "PCI:0:2:0";
+      nvidiaBusId = "PCI:1:0:0";
     };
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+  };
+  services.xserver.videoDrivers = [ "nvidia" ];
+  # The nvidia module force-loads nvidia_uvm via modules-load, which blocks sysinit.
+  environment.etc."modules-load.d/nixos.conf".source = lib.mkForce (
+    pkgs.writeText "nixos.conf" (lib.concatLines (lib.remove "nvidia_uvm" config.boot.kernelModules))
+  );
+  systemd.services.nvidia-modules = lib.mkIf config.hardware.nvidia.enabled {
+    description = "Load NVIDIA DRM and UVM modules";
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "exec";
+      RemainAfterExit = true;
+      ExecStart = "${modprobe} -a nvidia_drm nvidia_uvm";
+    };
+  };
+
+  specialisation.battery.configuration = {
+    system.nixos.tags = [ "battery" ];
+    services.xserver.videoDrivers = lib.mkForce [ "modesetting" ];
+    environment.sessionVariables.AQ_DRM_DEVICES = lib.mkForce "/dev/dri/igpu";
+  };
 
   # Colon-separated list, so the path must be colon-free — /dev/dri/by-path names split.
-  environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/igpu";
+  environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/igpu:/dev/dri/dgpu";
   environment.sessionVariables.LIBVA_DRIVER_NAME = "iHD";
+  # RT main thread gets SIGKILLed by RLIMIT_RTTIME on any >200ms stall.
+  environment.sessionVariables.HYPRLAND_NO_RT = "1";
   # Mesa-only EGL keeps hyprpaper on the iGPU.
   systemd.user.services.hyprpaper.environment.__EGL_VENDOR_LIBRARY_FILENAMES =
     "${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json";
@@ -197,7 +199,7 @@ in
     KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="1122", MODE="0666"
     SUBSYSTEM=="power_supply", KERNEL=="ADP1", TAG+="systemd", ENV{SYSTEMD_WANTS}+="power-source-switch.service"
   ''
-  # dGPU removed from the bus by default; HDMI and USB-C DP are wired to it, so external displays need the `dgpu` specialisation.
+  # `battery` removes the dGPU from the bus; HDMI and USB-C DP are wired to it, so external displays need the default config.
   + lib.optionalString (!config.hardware.nvidia.enabled) ''
     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{power/control}="auto", ATTR{remove}="1"
   '';
@@ -227,7 +229,7 @@ in
   services.displayManager.ly.settings.battery_id = "BAT1";
   services.thermald.enable = true;
 
-  # Defaulted on by the nvidia module in `dgpu`; logind handles lid/power keys.
+  # Defaulted on by the nvidia module; logind handles lid/power keys.
   services.acpid.enable = false;
 
   services.scx = {
