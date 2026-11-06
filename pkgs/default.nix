@@ -14,6 +14,7 @@ final: prev: {
   xtool = final.callPackage ./xtool { };
 
   omarchy-shell-compat = final.callPackage ./omarchy-shell-compat { src = omarchy; };
+  omarchy-shell = final.callPackage ./omarchy-shell { src = omarchy; };
 
   mactahoe-gtk-theme = final.callPackage ./mactahoe/gtk.nix { src = mactahoe-gtk; };
   mactahoe-icon-theme = final.callPackage ./mactahoe/icons.nix { src = mactahoe-icons; };
