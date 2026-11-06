@@ -115,4 +115,4 @@ jobs:
           done
 
       - name: Promote to deploy
-        run: git push origin "$GITHUB_SHA:refs/heads/deploy"
+        run: git push --force origin "$GITHUB_SHA:refs/heads/deploy"

@@ -77,7 +77,7 @@ in
               foreground = c.fg;
               accent = config.theming.accent;
               muted = c.brightBlack;
-              red = c.red;
+              inherit (c) red;
             };
       }
     ];
