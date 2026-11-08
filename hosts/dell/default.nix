@@ -1,8 +1,9 @@
-{ ... }:
+{ inputs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
     ./openclaw.nix
+    inputs.openclaw.nixosModules.openclaw-gateway
   ];
 
   networking.hostName = "dell";

@@ -9,7 +9,7 @@ Creates:
   hosts/<host>/default.nix
   hosts/<host>/hardware-configuration.nix
 
-Also adds a flake host entry in flake.nix if missing.
+hosts/ is auto-discovered by the flake; no flake.nix entry is needed.
 
 Host resolution order:
   1) --host NAME
@@ -80,8 +80,7 @@ fi
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 cd "$repo_root"
 
-flake_file="$repo_root/flake.nix"
-if [[ ! -f "$flake_file" ]]; then
+if [[ ! -f "$repo_root/flake.nix" ]]; then
   echo "flake.nix not found in $repo_root" >&2
   exit 1
 fi
@@ -164,32 +163,8 @@ EOF
   echo "Created placeholder: $hw_file"
 fi
 
-if grep -q "nixosConfigurations\.${host}[[:space:]]*=" "$flake_file"; then
-  echo "Flake entry already exists for host: $host"
-else
-  tmp_file="$(mktemp)"
-  awk -v block="$(cat <<EOF
-      nixosConfigurations.${host} = mkHost { name = "${host}"; };
-EOF
-)" '
-    /^      # End host entries$/ && !inserted {
-      print block
-      inserted = 1
-    }
-    { print }
-    END {
-      if (!inserted) {
-        print "Did not find host insertion marker in flake.nix" > "/dev/stderr"
-        exit 2
-      }
-    }
-  ' "$flake_file" > "$tmp_file"
-  mv "$tmp_file" "$flake_file"
-  echo "Added flake host entry: nixosConfigurations.$host"
-fi
-
 echo
-echo "Done."
+echo "Done. Stage it so the flake sees it: git add hosts/$host"
 echo
 echo "Deploy to new machine (target booted into NixOS minimal ISO):"
 echo

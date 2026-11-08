@@ -39,14 +39,7 @@ jobs:
       # Must precede the flake check: realises the openclaw IFD path that
       # `--no-build` cannot fetch itself.
       - name: Configurations
-        run: |
-          for attr in $(.github/targets.sh ${{ matrix.system }}); do
-            echo "::group::$attr"
-            nix eval --raw ".#$attr.drvPath"
-            echo
-            nix build --dry-run ".#$attr"
-            echo "::endgroup::"
-          done
+        run: nix build --dry-run .#legacyPackages.${{ matrix.system }}.configurations
 
       - name: Flake check
         if: matrix.system == 'x86_64-linux'

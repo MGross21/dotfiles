@@ -1,9 +1,17 @@
-{ config, lib, ... }:
+{
+  config,
+  inputs,
+  lib,
+  ...
+}:
 let
   inherit (config.user) name;
 in
 {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [
+    ./hardware-configuration.nix
+    inputs.preservation.nixosModules.preservation
+  ];
 
   networking.hostName = "nixos";
   theming.name = "tokyo-night";

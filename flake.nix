@@ -14,6 +14,11 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
+    import-tree.url = "github:vic/import-tree";
     nixpkgs-materia.url = "github:NixOS/nixpkgs/nixos-25.05";
     disko = {
       url = "github:nix-community/disko";
@@ -67,99 +72,5 @@
     };
   };
 
-  outputs =
-    inputs@{ nixpkgs, ... }:
-    let
-      inherit (nixpkgs) lib;
-      system = "x86_64-linux";
-      overlay = import ./pkgs {
-        inherit (inputs)
-          mactahoe-gtk
-          mactahoe-icons
-          nixpkgs-materia
-          omarchy
-          ;
-      };
-      pkgsFor =
-        system:
-        import nixpkgs {
-          inherit system;
-          config.allowUnfree = true;
-          overlays = [ overlay ];
-        };
-      pkgs = pkgsFor system;
-      forAllSystems =
-        f:
-        lib.genAttrs [
-          "x86_64-linux"
-          "aarch64-linux"
-          "aarch64-darwin"
-        ] (s: f (pkgsFor s));
-      mkHost = import ./lib/mkHost.nix { inherit inputs system overlay; };
-      mkHome = import ./lib/mkHome.nix { inherit inputs overlay; };
-      mkDarwin = import ./lib/mkDarwin.nix { inherit inputs overlay; };
-      mkInstaller =
-        system:
-        lib.nixosSystem {
-          specialArgs = { inherit inputs; };
-          modules = [
-            { nixpkgs.hostPlatform = system; }
-            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-            inputs.disko.nixosModules.disko
-            ./modules/shared/user.nix
-            ./modules/shared/hosts.nix
-            ./hosts/installer/default.nix
-          ];
-        };
-      installer = mkInstaller "x86_64-linux";
-      installer-aarch64 = mkInstaller "aarch64-linux";
-    in
-    {
-      formatter = forAllSystems (pkgs: pkgs.nixfmt-tree);
-
-      nixosConfigurations = { inherit installer installer-aarch64; };
-      packages.${system} = {
-        installer = installer.config.system.build.isoImage;
-        inherit (pkgs)
-          kimun
-          msi-perkeyrgb
-          mactahoe-gtk-theme
-          mactahoe-icon-theme
-          mactahoe-cursor-theme
-          ;
-      };
-      packages.aarch64-linux.installer = installer-aarch64.config.system.build.isoImage;
-
-      # Host entries (managed by new_host_nix.sh)
-      nixosConfigurations.msi = mkHost { name = "msi"; };
-      nixosConfigurations.dell = mkHost {
-        name = "dell";
-        modules = [ inputs.openclaw.nixosModules.openclaw-gateway ];
-      };
-      nixosConfigurations.pc = mkHost { name = "pc"; };
-      nixosConfigurations.usb = mkHost {
-        name = "usb";
-        modules = [ inputs.preservation.nixosModules.preservation ];
-      };
-      # End host entries
-
-      darwinConfigurations.mac = mkDarwin { name = "mac"; };
-
-      homeConfigurations =
-        let
-          user = (lib.evalModules { modules = [ ./modules/shared/user.nix ]; }).config.user.name;
-        in
-        lib.mapAttrs'
-          (
-            host: system:
-            lib.nameValuePair "${user}@${host}" (mkHome {
-              name = "${user}@${host}";
-              inherit system;
-            })
-          )
-          {
-            wsl = "x86_64-linux";
-            wsl-arm = "aarch64-linux";
-          };
-    };
+  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./parts);
 }
