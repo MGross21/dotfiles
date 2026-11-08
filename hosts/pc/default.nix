@@ -6,6 +6,19 @@
 }:
 let
   accentHex = lib.removePrefix "#" config.theming.colors.blue;
+  rebootWindows = pkgs.writeShellApplication {
+    name = "reboot-windows";
+    runtimeInputs = [
+      pkgs.efibootmgr
+      pkgs.gawk
+    ];
+    text = ''
+      entry=$(efibootmgr | awk '/Windows Boot Manager/ { print substr($1, 5, 4); exit }')
+      [ -n "$entry" ] || { echo "no Windows Boot Manager entry" >&2; exit 1; }
+      sudo efibootmgr --bootnext "$entry" >/dev/null
+      systemctl reboot
+    '';
+  };
 in
 {
   imports = [ ./hardware-configuration.nix ];
@@ -46,6 +59,14 @@ in
   };
   services.xserver.videoDrivers = [ "nvidia" ];
   boot.blacklistedKernelModules = [ "nouveau" ];
+
+  llm = {
+    lend = true;
+    cuda = true;
+  };
+
+  networking.networkmanager.settings.connection."ethernet.wake-on-lan" = "magic";
+  environment.systemPackages = [ rebootWindows ];
 
   # min(RAM, 8 GiB); outranks the disk swap partition, which stays as overflow.
   zramSwap = {

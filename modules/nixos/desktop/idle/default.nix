@@ -58,72 +58,81 @@ let
     '';
   };
 in
-lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
-  programs.hyprlock.enable = true;
-  services.hypridle.enable = true;
+{
+  options.desktop.idle.listeners = lib.mkOption {
+    type = lib.types.listOf lib.types.attrs;
+    default = [ ];
+    description = "Extra hypridle listeners.";
+  };
 
-  environment.systemPackages = [
-    idlectl
-    keepawake
-    agent-awake
-  ];
+  config = lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
+    programs.hyprlock.enable = true;
+    services.hypridle.enable = true;
 
-  environment.etc."hypr/hypridle.conf".text = inputs.home-manager.lib.hm.generators.toHyprconf {
-    attrs = {
-      general = {
-        lock_cmd = idle "lock";
-        before_sleep_cmd = "${loginctl} lock-session";
-        after_sleep_cmd = idle "dpms-on";
-        inhibit_sleep = 3;
+    environment.systemPackages = [
+      idlectl
+      keepawake
+      agent-awake
+    ];
+
+    environment.etc."hypr/hypridle.conf".text = inputs.home-manager.lib.hm.generators.toHyprconf {
+      attrs = {
+        general = {
+          lock_cmd = idle "lock";
+          before_sleep_cmd = "${loginctl} lock-session";
+          after_sleep_cmd = idle "dpms-on";
+          inhibit_sleep = 3;
+        };
+        listener = [
+          {
+            timeout = 570;
+            on-timeout = idle "dim";
+            on-resume = idle "undim";
+          }
+          {
+            timeout = 600;
+            on-timeout = "${loginctl} lock-session";
+          }
+          {
+            timeout = 60;
+            on-timeout = idle "dpms-off";
+            on-resume = idle "dpms-on";
+          }
+          {
+            timeout = 630;
+            on-timeout = idle "dpms-off";
+            on-resume = idle "dpms-on";
+          }
+          {
+            timeout = 1800;
+            on-timeout = idle "suspend";
+          }
+        ]
+        ++ config.desktop.idle.listeners;
       };
-      listener = [
-        {
-          timeout = 570;
-          on-timeout = idle "dim";
-          on-resume = idle "undim";
-        }
-        {
-          timeout = 600;
-          on-timeout = "${loginctl} lock-session";
-        }
-        {
-          timeout = 60;
-          on-timeout = idle "dpms-off";
-          on-resume = idle "dpms-on";
-        }
-        {
-          timeout = 630;
-          on-timeout = idle "dpms-off";
-          on-resume = idle "dpms-on";
-        }
-        {
-          timeout = 1800;
-          on-timeout = idle "suspend";
-        }
+    };
+
+    systemd.user.services.hypridle = {
+      serviceConfig.ExecStart = [
+        ""
+        "${lib.getExe config.services.hypridle.package} -c /etc/hypr/hypridle.conf"
       ];
     };
-  };
 
-  systemd.user.services.hypridle = {
-    serviceConfig.ExecStart = [
-      ""
-      "${lib.getExe config.services.hypridle.package} -c /etc/hypr/hypridle.conf"
-    ];
-  };
-
-  systemd.user.services.wayland-pipewire-idle-inhibit = {
-    description = "Inhibit idle while audio is playing";
-    wantedBy = [ "graphical-session.target" ];
-    after = [
-      "graphical-session.target"
-      "hypridle.service"
-    ];
-    partOf = [ "graphical-session.target" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${lib.getExe pkgs.wayland-pipewire-idle-inhibit} --idle-inhibitor d-bus --media-minimum-duration 10 --quiet";
-      Restart = "on-failure";
-      RestartSec = "5";
+    systemd.user.services.wayland-pipewire-idle-inhibit = {
+      description = "Inhibit idle while audio is playing";
+      wantedBy = [ "graphical-session.target" ];
+      after = [
+        "graphical-session.target"
+        "hypridle.service"
+      ];
+      partOf = [ "graphical-session.target" ];
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${lib.getExe pkgs.wayland-pipewire-idle-inhibit} --idle-inhibitor d-bus --media-minimum-duration 10 --quiet";
+        Restart = "on-failure";
+        RestartSec = "5";
+      };
     };
   };
 }

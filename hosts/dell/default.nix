@@ -2,7 +2,7 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./openclaw.nix
+    ./openclaw
     inputs.openclaw.nixosModules.openclaw-gateway
   ];
 
@@ -13,6 +13,7 @@
   theming.name = "tokyo-night";
 
   host.role = "server";
+  monitoring.server.enable = true;
 
   dev = {
     rust.enable = true;

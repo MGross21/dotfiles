@@ -8,4 +8,6 @@ lib.mkIf (config.host.role == "server") {
     dates = lib.mkDefault "04:00";
     randomizedDelaySec = lib.mkDefault "30min";
   };
+
+  alerts.units = [ "nixos-upgrade" ];
 }

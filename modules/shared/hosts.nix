@@ -18,11 +18,28 @@ in
               default = [ ];
               description = "User public keys authorized to log in.";
             };
+            mac = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              description = "Wired NIC MAC address for Wake-on-LAN.";
+            };
+            gpuMetrics = lib.mkOption {
+              type = lib.types.bool;
+              default = false;
+              description = "Export NVIDIA GPU metrics to Prometheus.";
+            };
           };
         }
       );
       default = { };
       description = "Known machines, keyed by hostname.";
+    };
+
+    tailnet = lib.mkOption {
+      type = lib.types.str;
+      default = tailnet;
+      readOnly = true;
+      description = "Tailscale MagicDNS suffix.";
     };
 
     sshKnownHosts = lib.mkOption {
@@ -39,7 +56,11 @@ in
         hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINTp/wmRjY21qX9p1IwNhHZlKuMY/l0Bu3G66omK2rda";
         userKeys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOLGtw+U+bs3PlGQdtPohB+/ciRvZ3U+eZlzsEYIh7Ga" ];
       };
-      pc.hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAGf67qegk4FRDWRntylJsTg1D1Z/dWL6B78HgZY1DWq";
+      pc = {
+        hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAGf67qegk4FRDWRntylJsTg1D1Z/dWL6B78HgZY1DWq";
+        mac = "ec:75:0c:83:40:36";
+        gpuMetrics = true;
+      };
     };
 
     sshKnownHosts = lib.mapAttrs (name: h: {
