@@ -11,19 +11,8 @@ let
   template = import "${inputs.stylix}/modules/vscode/templates/theme.nix";
   cap = s: lib.toUpper (lib.substring 0 1 s) + lib.substring 1 (-1) s;
 
-  rgb =
-    h:
-    map (i: lib.fromHexString (lib.substring i 2 (lib.removePrefix "#" h)) / 255.0) [
-      0
-      2
-      4
-    ];
-  toHex =
-    cs:
-    "#"
-    + lib.concatMapStrings (
-      x: lib.toLower (lib.fixedWidthString 2 "0" (lib.toHexString (builtins.floor (x * 255 + 0.5))))
-    ) cs;
+  inherit (inputs.nix-colorizer) hex oklch;
+  lower = lib.toLower;
   root5 = a: lib.foldl' (y: _: (4 * y + a / (y * y * y * y)) / 5) 1.0 (lib.range 1 40);
   linear =
     x:
@@ -37,9 +26,9 @@ let
   luminance =
     h:
     let
-      l = map linear (rgb h);
+      c = hex.to.srgb h;
     in
-    0.2126 * lib.elemAt l 0 + 0.7152 * lib.elemAt l 1 + 7.22e-2 * lib.elemAt l 2;
+    0.2126 * linear c.r + 0.7152 * linear c.g + 7.22e-2 * linear c.b;
   contrast =
     a: b:
     let
@@ -50,92 +39,20 @@ let
   fit =
     target: bg: h:
     let
-      onDark = luminance bg < 0.18;
+      shift = if luminance bg < 0.18 then hex.lighten else hex.darken;
       go =
-        f:
+        d:
         let
-          x = toHex (map (ch: if onDark then 1 - (1 - ch) * f else ch * f) (rgb h));
+          x = lower (shift h d);
         in
-        if f <= 0 || contrast x bg >= target then x else go (f - 2.0e-2);
+        if d >= 1 || contrast x bg >= target then x else go (d + 2.0e-2);
     in
-    go 1.0;
+    if contrast h bg >= target then h else go 2.0e-2;
 
+  degrees = 180 / 3.141592653589793;
+  hue = h: (hex.to.oklch h).h * degrees;
+  rotate = h: o: lower (oklch.to.hex (hex.to.oklch h // { h = (hue h + o) / degrees; }));
   abs = x: if x < 0 then -x else x;
-  hsl =
-    h:
-    let
-      ch = rgb h;
-      r = lib.elemAt ch 0;
-      g = lib.elemAt ch 1;
-      b = lib.elemAt ch 2;
-      mx = lib.max r (lib.max g b);
-      mn = lib.min r (lib.min g b);
-      d = mx - mn;
-      l = (mx + mn) / 2;
-      sector =
-        if mx == r then
-          (g - b) / d + (if g < b then 6 else 0)
-        else if mx == g then
-          (b - r) / d + 2
-        else
-          (r - g) / d + 4;
-    in
-    {
-      inherit l;
-      h = if d == 0 then 0.0 else 60 * sector;
-      s = if d == 0 then 0.0 else d / (1 - abs (2 * l - 1));
-    };
-  fromHsl =
-    {
-      h,
-      s,
-      l,
-    }:
-    let
-      hp = h / 60;
-      chroma = (1 - abs (2 * l - 1)) * s;
-      x = chroma * (1 - abs (hp - 2 * builtins.floor (hp / 2) - 1));
-      m = l - chroma / 2;
-      seg = builtins.floor hp;
-      ch =
-        if seg == 0 then
-          [
-            chroma
-            x
-            0
-          ]
-        else if seg == 1 then
-          [
-            x
-            chroma
-            0
-          ]
-        else if seg == 2 then
-          [
-            0
-            chroma
-            x
-          ]
-        else if seg == 3 then
-          [
-            0
-            x
-            chroma
-          ]
-        else if seg == 4 then
-          [
-            x
-            0
-            chroma
-          ]
-        else
-          [
-            chroma
-            0
-            x
-          ];
-    in
-    toHex (map (v: v + m) ch);
   wrap =
     h:
     if h < 0 then
@@ -156,19 +73,19 @@ let
       step =
         acc: n:
         let
-          base = hsl p.${n};
+          base = wrap (hue p.${n});
           clear = h: lib.all (o: hueGap h o >= minGap) acc.hues;
           offsets = lib.concatMap (k: [
             k
             (-k)
           ]) (map (k: k * 5.0) (lib.range 0 9));
-          pick = lib.findFirst (o: clear (wrap (base.h + o))) 0.0 offsets;
-          h = wrap (base.h + pick);
+          pick = lib.findFirst (o: clear (wrap (base + o))) 0.0 offsets;
+          h = wrap (base + pick);
         in
         {
           hues = acc.hues ++ [ h ];
           out = acc.out // {
-            ${n} = if pick == 0.0 then p.${n} else fromHsl (base // { inherit h; });
+            ${n} = if pick == 0.0 then p.${n} else rotate p.${n} pick;
           };
         };
     in

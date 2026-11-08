@@ -4,6 +4,7 @@
     ./hardware-configuration.nix
     ./openclaw
     inputs.openclaw.nixosModules.openclaw-gateway
+    inputs.srvos.nixosModules.mixins-terminfo
   ];
 
   networking.hostName = "dell";
