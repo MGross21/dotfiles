@@ -282,59 +282,13 @@ in
     };
 
     siteFunctions = {
-      sshe = ''
-        local host="$1"
-        local local_tmp remote_tmp
-        local_tmp=$(mktemp)
-        remote_tmp="/tmp/.aliases_$$"
-        alias | sed 's/^/alias /' >| "$local_tmp"
-        scp -q "$local_tmp" "$host:$remote_tmp"
-        rm -f "$local_tmp"
-        ssh -t "$host" "
-          if command -v zsh >/dev/null 2>&1; then
-            d=\$(mktemp -d)
-            printf '%s\n' 'source \$HOME/.zshrc 2>/dev/null' 'source $remote_tmp' > \"\$d/.zshrc\"
-            ZDOTDIR=\$d zsh
-            rm -rf \"\$d\"
-          else
-            bash --init-file $remote_tmp
-          fi
-          rm -f $remote_tmp
-        "
-      '';
-
-      _auto_venv = ''
-        local target_venv=""
-        local dir="$PWD"
-
-        while [[ "$dir" != "/" ]]; do
-          if [[ -f "$dir/.venv/bin/activate" ]]; then
-            target_venv="$dir/.venv"
-            break
-          fi
-          dir="''${dir:h}"
-        done
-
-        if [[ -n "$target_venv" ]]; then
-          [[ "$VIRTUAL_ENV" != "$target_venv" ]] && source "$target_venv/bin/activate"
-        elif [[ -n "$VIRTUAL_ENV" ]]; then
-          deactivate 2>/dev/null
-        fi
-      '';
+      sshe = builtins.readFile ./sshe.zsh;
     };
 
-    initContent = lib.mkMerge [
-      ''
-        [[ $TERM == dumb ]] && unsetopt zle && PS1='$ '
+    initContent = ''
+      [[ $TERM == dumb ]] && unsetopt zle && PS1='$ '
 
-        ${zstyles}
-      ''
-      # After the siteFunctions autoload line.
-      (lib.mkOrder 1050 ''
-        autoload -U add-zsh-hook
-        add-zsh-hook chpwd _auto_venv
-        _auto_venv
-      '')
-    ];
+      ${zstyles}
+    '';
   };
 }
