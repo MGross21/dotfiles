@@ -139,6 +139,7 @@ in
         model.primary = "pool/${model.id}";
         decisionModel = "onnx/${decisionModel}";
         experimental.decisionAssistance = true;
+        timeoutSeconds = 0;
       };
       models = {
         mode = "merge";
