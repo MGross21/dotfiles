@@ -26,6 +26,8 @@ in
   networking.hostName = "pc";
   theming.name = "tokyo-night";
 
+  host.autoUpgrade = true;
+
   desktop.enable = true;
   desktop.primaryMonitor = "DP-1";
 

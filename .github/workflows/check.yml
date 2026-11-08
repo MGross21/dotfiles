@@ -31,10 +31,6 @@ jobs:
             accept-flake-config   = true
             abort-on-warn         = true
             narinfo-cache-negative-ttl = 0
-            extra-substituters    = https://nix-community.cachix.org https://hyprland.cachix.org
-            extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=
-
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
 
       # Must precede the flake check: realises the openclaw IFD path that
       # `--no-build` cannot fetch itself.
@@ -55,8 +51,6 @@ jobs:
         with:
           nix_path: nixpkgs=channel:nixos-unstable
 
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
-
       - name: Formatting
         run: nix fmt -- --ci
 
@@ -67,11 +61,40 @@ jobs:
         run: nix run nixpkgs#deadnix -- --fail --exclude hosts/*/hardware-configuration.nix -- .
 
       - name: shellcheck
-        run: nix run nixpkgs#shellcheck -- scripts/*.sh .github/*.sh
+        run: git ls-files -z '*.sh' | xargs -0 nix run nixpkgs#shellcheck -- -s bash
+
+      - name: ruff
+        run: nix run nixpkgs#ruff -- check scripts
+
+      - name: actionlint
+        run: nix run nixpkgs#actionlint
+
+  vm-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config   = true
+            system-features       = nixos-test benchmark big-parallel kvm
+
+      - name: Checks
+        run: nix run nixpkgs#nix-fast-build -- --flake .#checks.x86_64-linux --no-nom --no-link
 
   promote:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [eval, lint]
+    needs: [eval, lint, vm-test]
     runs-on: ubuntu-latest
     concurrency:
       group: promote
@@ -94,18 +117,21 @@ jobs:
             experimental-features = nix-command flakes
             accept-flake-config   = true
             narinfo-cache-negative-ttl = 0
-            extra-substituters    = https://nix-community.cachix.org https://hyprland.cachix.org
-            extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=
+            extra-substituters    = https://nix-community.cachix.org https://hyprland.cachix.org https://cache.nixos-cuda.org
+            extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc= cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M=
 
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: cachix/cachix-action@v16
+        with:
+          name: mgross-nix
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          skipPush: true
 
-      - name: Build servers
-        run: |
-          for host in $(.github/servers.sh); do
-            echo "::group::$host"
-            nix build -L --no-link ".#nixosConfigurations.$host.config.system.build.toplevel"
-            echo "::endgroup::"
-          done
+      - name: Build auto-upgraded hosts
+        run: nix run nixpkgs#nix-fast-build -- --flake .#legacyPackages.x86_64-linux.autoUpgrade --no-nom --out-link result
+
+      # NVIDIA and CUDA licenses forbid re-hosting on a public cache.
+      - name: Push to cachix
+        run: nix run .#cachix-push -- mgross-nix ./result-*
 
       - name: Promote to deploy
         run: git push --force origin "$GITHUB_SHA:refs/heads/deploy"

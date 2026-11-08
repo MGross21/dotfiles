@@ -15,7 +15,27 @@
       );
     in
     {
-      legacyPackages.configurations = pkgs.linkFarm "configurations" (nixos // darwin // home);
+      legacyPackages = {
+        configurations = pkgs.linkFarm "configurations" (nixos // darwin // home);
+        autoUpgrade = lib.mapAttrs (_: c: c.config.system.build.toplevel) (
+          lib.filterAttrs (_: c: c.config.host.autoUpgrade or false) (forSystem self.nixosConfigurations)
+        );
+      };
 
+      apps.cachix-push = {
+        type = "app";
+        program = lib.getExe (
+          pkgs.writeShellApplication {
+            name = "cachix-push";
+            runtimeInputs = with pkgs; [
+              cachix
+              nix
+              python3
+            ];
+            text = ''exec python3 ${../scripts/cachix-push.py} "$@"'';
+          }
+        );
+        meta.description = "Push closures to Cachix without NVIDIA or CUDA paths";
+      };
     };
 }
