@@ -129,16 +129,11 @@ in
     ];
 
     stylix = {
-      enable = true;
-      base16Scheme = data.yaml;
-      image = lib.mkDefault data.wallpaper;
-      polarity = "dark";
       cursor = lib.mkDefault {
         package = pkgs.apple-cursor;
         name = "macOS";
         size = 24;
       };
-      fonts = { inherit (config.theming.fonts) sansSerif monospace serif; };
       targets = {
         console.enable = true;
         regreet.enable = false; # unused DM; silences a rename warning

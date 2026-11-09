@@ -5,7 +5,7 @@
   ...
 }:
 let
-  accentHex = lib.removePrefix "#" config.theming.colors.blue;
+  accentHex = lib.removePrefix "#" config.theming.accent;
   modprobe = lib.getExe' pkgs.kmod "modprobe";
   powerSourceSwitch = lib.getExe (
     pkgs.writeShellApplication {
@@ -90,28 +90,19 @@ in
   '';
 
   # GTX 1660 Ti Mobile (TU116M) + Intel UHD 630
-  hardware.graphics.enable = true;
-  hardware.graphics.enable32Bit = true;
+  gpu.nvidia.enable = true;
   hardware.graphics.extraPackages = [ pkgs.intel-media-driver ];
-  boot.blacklistedKernelModules = [
-    "nouveau"
-    "psmouse"
-  ];
+  boot.blacklistedKernelModules = [ "psmouse" ];
 
   hardware.nvidia = {
-    open = true;
-    modesetting.enable = true;
     powerManagement.enable = true;
-    nvidiaSettings = false;
     prime = {
       offload.enable = true;
       offload.enableOffloadCmd = true;
       intelBusId = "PCI:0:2:0";
       nvidiaBusId = "PCI:1:0:0";
     };
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
-  services.xserver.videoDrivers = [ "nvidia" ];
   # The nvidia module force-loads nvidia_uvm via modules-load, which blocks sysinit.
   environment.etc."modules-load.d/nixos.conf".source = lib.mkForce (
     pkgs.writeText "nixos.conf" (lib.concatLines (lib.remove "nvidia_uvm" config.boot.kernelModules))
@@ -248,9 +239,6 @@ in
     enable = true;
     memoryPercent = 50;
   };
-
-  boot.kernel.sysctl."vm.swappiness" = 180;
-  boot.kernel.sysctl."vm.page-cluster" = 0;
 
   # Sole owner of governor/EPP/boost; conflicts with auto-cpufreq.
   services.tlp.settings = {

@@ -7,6 +7,18 @@
 let
   data = (import ../../themes).${config.theming.name};
   c = config.theming.colors;
+  ansi = [
+    "black"
+    "red"
+    "green"
+    "yellow"
+    "blue"
+    "magenta"
+    "cyan"
+    "white"
+  ];
+  ansiOrder =
+    ansi ++ map (n: "bright${lib.toUpper (lib.substring 0 1 n)}${lib.substring 1 (-1) n}") ansi;
 in
 {
   programs.ghostty = {
@@ -23,7 +35,7 @@ in
         cursor-text = c.cursorText;
         selection-background = c.selection;
         selection-foreground = c.selectedText;
-        palette = lib.imap0 (i: hex: "${toString i}=#${hex}") c.ansi;
+        palette = lib.imap0 (i: name: "${toString i}=${c.${name}}") ansiOrder;
       };
     };
 

@@ -47,7 +47,7 @@ in
     return ${
       lib.generators.toLua { } {
         name = themes.${config.theming.name}.nvim;
-        colors = lib.filterAttrs (_: lib.isString) config.theming.colors;
+        inherit (config.theming) colors;
       }
     }
   '';

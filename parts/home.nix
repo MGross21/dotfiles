@@ -25,21 +25,11 @@ let
                 homeDirectory = "${
                   if pkgs.stdenv.hostPlatform.isDarwin then "/Users" else "/home"
                 }/${config.user.name}";
-                stateVersion = "25.11";
               };
 
+              dotfiles.homeConfiguration = name;
               programs.home-manager.enable = true;
               targets.genericLinux.enable = pkgs.stdenv.hostPlatform.isLinux;
-
-              programs.nh = {
-                enable = true;
-                flake = config.dotfiles.dir;
-              };
-
-              home.shellAliases = {
-                update = "nix flake update --flake ${config.dotfiles.dir} && nh home switch ${config.dotfiles.dir} -c ${name}";
-                hmswitch = "nh home switch ${config.dotfiles.dir} -c ${name}";
-              };
             }
           )
         ];

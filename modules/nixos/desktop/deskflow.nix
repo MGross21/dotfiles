@@ -51,7 +51,15 @@ in
   config = lib.mkIf (config.desktop.enable && cfg.enable) {
     environment.systemPackages = [ deskflow ];
 
-    networking.firewall.allowedTCPPorts = [ 24800 ];
+    hardware.uinput.enable = true;
+
+    networking.firewall = {
+      allowedTCPPorts = [
+        24800
+        24850
+      ];
+      allowedUDPPorts = [ 5353 ];
+    };
 
     programs.hyprland.portalPackage = lib.mkIf (config.desktop.environment == "hyprland") xdph-remote;
   };

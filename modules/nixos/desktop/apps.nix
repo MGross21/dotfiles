@@ -44,6 +44,7 @@ in
 
   config = lib.mkIf cfg.enable {
     programs.localsend.enable = true;
+    programs.steam.enable = cfg.gaming.enable && isX86_64;
 
     environment.systemPackages =
       with pkgs;
@@ -61,9 +62,6 @@ in
         spotifast
         gthumb
       ]
-      ++ lib.optionals (cfg.gaming.enable && isX86_64) [
-        discord
-        steam
-      ];
+      ++ lib.optional (cfg.gaming.enable && isX86_64) discord;
   };
 }

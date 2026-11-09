@@ -1,0 +1,14 @@
+# Host recipients are the hostKeys in modules/shared/hosts.nix converted with ssh-to-age.
+keys:
+  - &user ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOLGtw+U+bs3PlGQdtPohB+/ciRvZ3U+eZlzsEYIh7Ga
+  - &dell age1dhzay55mfwc6lzjam32trqzffywkl7249r54ulft9t2qz70y6uzs4m36ny
+  - &msi age1hlvxcp0gumpzcwpfcj2x79kmfevusl740n4zsk898z3vvh53a46sucu9jt
+  - &pc age1y8c8jetah74ral5vpysxasnu05vxhtyrdfdwhwf477mp7e7enqfqrfdgzf
+creation_rules:
+  - path_regex: ^secrets/[^/]+\.yaml$
+    key_groups:
+      - age:
+          - *user
+          - *dell
+          - *msi
+          - *pc

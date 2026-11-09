@@ -38,7 +38,6 @@
 | **Distribution**  | [NixOS](https://nixos.org)                                           |         *Nix btw*           |
 | **Window Manager**| [Hyprland](https://wiki.hyprland.org)                                |    Tiling / Wayland         |
 | **Graphics**      | [NVIDIA](https://wiki.archlinux.org/title/NVIDIA)                    |     Open Kernel Modules     |
-| **GRUB Theme**    | [Sekiro](https://github.com/AbijithBalaji/sekiro_grub_theme)         |      From the Ashes         |
 | **Terminal**      | [Ghostty](https://github.com/mitchellh/ghostty)                  | Fast, GPU-accelerated       |
 | **Shell**         | [Zsh](https://www.zsh.org)                                           |    Z-Shell (*"zish"*)       |
 | **Font**          | [Ubuntu](https://design.ubuntu.com/font/)                            |         *sacrilegious*      |

@@ -18,19 +18,16 @@
     mkdir = "mkdir -pv";
     ren = "mv -vi --no-copy";
     rmdir = "rmdir -v";
-    grep = "rg --smart-case --hidden --color=auto";
-    find = "fd --hidden --exclude .git";
-    cat = "bat --paging=auto --style=plain --color=always --theme=ansi";
-    bat = "bat";
+    grep = "rg";
+    find = "fd";
+    cat = "bat --color=always";
     ping = "ping -c 3";
     dd = "dd bs=4M status=progress conv=fsync,noerror";
     bc = "bc -ql";
 
     # Listing and editor
-    ls = "eza --color=auto --icons=auto";
-    la = "eza -a --color=auto --icons=auto";
-    ll = "eza -lah --color=auto --icons=auto";
-    tree = "eza --tree --level=3 --color=auto --icons=auto";
+    ll = "eza -lah";
+    tree = "eza --tree --level=3";
     vim = "$EDITOR";
     vi = "$EDITOR";
     v = "$EDITOR";

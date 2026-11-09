@@ -23,5 +23,4 @@ in
 
   users.users.root.openssh.authorizedKeys.keys = lib.mkIf rootLogin config.user.sshKeys;
 
-  programs.ssh.knownHosts = config.sshKnownHosts;
 }

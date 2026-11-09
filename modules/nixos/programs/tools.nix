@@ -7,7 +7,6 @@
 
   environment.systemPackages = with pkgs; [
     openvpn
-    man-db
     fontconfig
     docker-compose
 

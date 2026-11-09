@@ -84,13 +84,5 @@ in
 
   home-manager.users.${name}.dotfiles.mutable = false;
 
-  specialisation.nvidia.configuration = {
-    hardware.nvidia = {
-      open = true;
-      modesetting.enable = true;
-      nvidiaSettings = false;
-      package = config.boot.kernelPackages.nvidiaPackages.stable;
-    };
-    services.xserver.videoDrivers = [ "nvidia" ];
-  };
+  specialisation.nvidia.configuration.gpu.nvidia.enable = true;
 }

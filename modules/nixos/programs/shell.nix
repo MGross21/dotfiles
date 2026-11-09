@@ -19,13 +19,7 @@
     }
   );
 
-  # Interactive setup lives in modules/home/shell.nix; compinit and the prompt run there.
-  programs.zsh = {
-    enable = true;
-    enableGlobalCompInit = false;
-    enableLsColors = false;
-    promptInit = "";
-  };
+  programs.zsh.enableLsColors = false;
 
   users.defaultUserShell = pkgs.zsh;
 }

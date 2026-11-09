@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, lib, ... }:
 let
   inherit (config) user;
 in
@@ -11,19 +11,13 @@ in
     extraGroups = [
       "wheel"
       "networkmanager"
-      "docker"
       "audio"
       "video"
       "dialout"
       "uucp"
       "input"
-      "uinput"
-      "storage"
-      "optical"
-      "ollama"
-    ];
-    shell = pkgs.zsh;
+    ]
+    ++ lib.optional config.virtualisation.docker.enable "docker"
+    ++ lib.optional config.hardware.uinput.enable "uinput";
   };
-
-  home-manager.users.${user.name}.home.stateVersion = "25.11";
 }

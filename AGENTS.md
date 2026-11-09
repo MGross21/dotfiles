@@ -4,7 +4,7 @@
 
 This repository is a NixOS and nix-darwin dotfiles/setup repo.
 
-- Layout: `hosts/`, `modules/nixos/`, `modules/darwin/`, portable home-manager in `modules/home/`, options shared by all in `modules/shared/`.
+- Layout: `hosts/`, `modules/nixos/`, `modules/darwin/`, NixOS+darwin common in `modules/system/`, portable home-manager in `modules/home/`, options shared by all in `modules/shared/`.
 - The main NixOS host is `msi`, built from the flake output.
 
 ## Working Notes

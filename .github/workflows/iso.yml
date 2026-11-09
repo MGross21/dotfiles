@@ -3,14 +3,16 @@ name: Build Installer ISO
 on:
   push:
     branches: [main]
+    # Everything the installer closure evaluates; see mkInstaller in parts/hosts.nix.
     paths:
       - 'flake.nix'
       - 'flake.lock'
+      - 'parts/hosts.nix'
+      - 'parts/packages.nix'
       - 'hosts/installer/**'
-      - 'lib/**'
-      - 'modules/**'
-      - 'pkgs/**'
-      - 'themes/**'
+      - 'modules/system/nix.nix'
+      - 'modules/shared/user.nix'
+      - 'modules/shared/hosts.nix'
       - '.github/workflows/iso.yml'
   workflow_dispatch:
 
@@ -30,13 +32,9 @@ jobs:
 
       - uses: cachix/install-nix-action@v31
         with:
-          nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: |
-            experimental-features = nix-command flakes
-            accept-flake-config   = true
+            accept-flake-config = true
             narinfo-cache-negative-ttl = 0
-            extra-substituters    = https://nix-community.cachix.org https://hyprland.cachix.org
-            extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=
 
       - uses: DeterminateSystems/magic-nix-cache-action@v15
 

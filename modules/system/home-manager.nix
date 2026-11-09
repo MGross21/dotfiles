@@ -8,11 +8,12 @@
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "hm-bak";
+    users.${config.user.name} = { };
     extraSpecialArgs = { inherit inputs; };
     # Shared options are set on the host and mirrored into every user.
     sharedModules = [
-      (inputs.import-tree ./shared)
-      (inputs.import-tree ./home)
+      (inputs.import-tree ../shared)
+      (inputs.import-tree ../home)
       {
         inherit (config)
           theming
@@ -24,5 +25,5 @@
     ];
   };
 
-  imports = [ (inputs.import-tree ./shared) ];
+  imports = [ (inputs.import-tree ../shared) ];
 }

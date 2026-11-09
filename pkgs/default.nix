@@ -1,15 +1,10 @@
 {
   mactahoe-gtk,
   mactahoe-icons,
-  nixpkgs-materia,
   omarchy,
 }:
 final: prev: {
-  materia-theme = nixpkgs-materia.legacyPackages.${prev.stdenv.hostPlatform.system}.materia-theme;
-
   kimun = final.callPackage ./kimun { };
-
-  kondo = final.callPackage ./kondo { };
 
   msi-perkeyrgb = final.callPackage ./msi-perkeyrgb { };
 

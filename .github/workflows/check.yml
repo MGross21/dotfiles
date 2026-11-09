@@ -30,11 +30,9 @@ jobs:
 
       - uses: cachix/install-nix-action@v31
         with:
-          nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: |
-            experimental-features = nix-command flakes
-            accept-flake-config   = true
-            abort-on-warn         = true
+            accept-flake-config = true
+            abort-on-warn = true
             narinfo-cache-negative-ttl = 0
 
       # Must precede the flake check: realises the openclaw IFD path that
@@ -46,36 +44,7 @@ jobs:
         if: matrix.system == 'x86_64-linux'
         run: nix flake check --no-build --all-systems -L
 
-  lint:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: cachix/install-nix-action@v31
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
-
-      - name: Formatting
-        run: nix fmt -- --ci
-
-      - name: statix
-        run: nix run nixpkgs#statix -- check .
-
-      - name: deadnix
-        run: nix run nixpkgs#deadnix -- --fail --exclude hosts/*/hardware-configuration.nix -- .
-
-      - name: shellcheck
-        run: git ls-files -z '*.sh' | xargs -0 nix run nixpkgs#shellcheck -- -s bash
-
-      - name: ruff
-        run: nix run nixpkgs#ruff -- check scripts
-
-      - name: actionlint
-        run: nix run nixpkgs#actionlint
-
-  vm-test:
+  checks:
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -90,18 +59,17 @@ jobs:
 
       - uses: cachix/install-nix-action@v31
         with:
-          nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: |
-            experimental-features = nix-command flakes
-            accept-flake-config   = true
-            system-features       = nixos-test benchmark big-parallel kvm
+            accept-flake-config = true
+            system-features = nixos-test benchmark big-parallel kvm
 
+      # treefmt (format + lint) and the VM tests.
       - name: Checks
-        run: nix run nixpkgs#nix-fast-build -- --flake .#checks.x86_64-linux --no-nom --no-link
+        run: nix run --inputs-from . nixpkgs#nix-fast-build -- --flake .#checks.x86_64-linux --no-nom --no-link
 
   promote:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [eval, lint, vm-test]
+    needs: [eval, checks]
     runs-on: ubuntu-latest
     timeout-minutes: 120
     concurrency:
@@ -120,13 +88,9 @@ jobs:
 
       - uses: cachix/install-nix-action@v31
         with:
-          nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: |
-            experimental-features = nix-command flakes
-            accept-flake-config   = true
+            accept-flake-config = true
             narinfo-cache-negative-ttl = 0
-            extra-substituters    = https://nix-community.cachix.org https://hyprland.cachix.org https://cache.nixos-cuda.org
-            extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc= cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M=
 
       - uses: cachix/cachix-action@v17
         with:
@@ -137,7 +101,7 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@v15
 
       - name: Build auto-upgraded hosts
-        run: nix run nixpkgs#nix-fast-build -- --flake .#legacyPackages.x86_64-linux.autoUpgrade --no-nom --out-link result
+        run: nix run --inputs-from . nixpkgs#nix-fast-build -- --flake .#legacyPackages.x86_64-linux.autoUpgrade --no-nom --out-link result
 
       # NVIDIA and CUDA licenses forbid re-hosting on a public cache.
       - name: Push to cachix

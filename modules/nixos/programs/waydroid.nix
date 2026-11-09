@@ -9,11 +9,11 @@ let
     path: hash:
     pkgs.fetchurl {
       url = "mirror://sourceforge/waydroid/images/${path}";
-      sha256 = hash;
+      inherit hash;
     };
 
-  system = fetchImage "system/lineage/waydroid_x86_64/lineage-20.0-20260927-GAPPS-waydroid_x86_64-system.zip" "1d79df0b17ab8f79d66fd3b5f94500cc02f1abe149cf8caa391380092ede6e2a";
-  vendor = fetchImage "vendor/waydroid_x86_64/lineage-20.0-20261022-MAINLINE-waydroid_x86_64-vendor.zip" "91663c337013145208b6c533d7e1fa2a915a9864ddc8fc56966f40cd759648ac";
+  system = fetchImage "system/lineage/waydroid_x86_64/lineage-20.0-20260927-GAPPS-waydroid_x86_64-system.zip" "sha256-HXnfCxerj3nWb9O1+UUAzALxq+FJz4yqOROACS7ebio=";
+  vendor = fetchImage "vendor/waydroid_x86_64/lineage-20.0-20261022-MAINLINE-waydroid_x86_64-vendor.zip" "sha256-kWY8M3ATFFIItsUz1+H6KpFamGTdyPxWlm9AzXWWSKw=";
 
   images = pkgs.runCommand "waydroid-images" { nativeBuildInputs = [ pkgs.unzip ]; } ''
     mkdir $out

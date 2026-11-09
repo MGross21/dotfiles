@@ -1,4 +1,4 @@
-rec {
+{
   # UI / semantic
   bg = "#151515";
   fg = "#a1b0b8";
@@ -30,24 +30,4 @@ rec {
   brightWhite = "#f5f5f5";
 
   # Ordered list for console.colors / any slot-indexed consumer
-  # Index: 0=black 1=red 2=green 3=yellow 4=blue 5=magenta 6=cyan 7=white
-  #        8=brBlack 9=brRed 10=brGreen 11=brYellow 12=brBlue 13=brMagenta 14=brCyan 15=brWhite
-  ansi = builtins.map (builtins.substring 1 6) [
-    black
-    red
-    green
-    yellow
-    blue
-    magenta
-    cyan
-    white
-    brightBlack
-    brightRed
-    brightGreen
-    brightYellow
-    brightBlue
-    brightMagenta
-    brightCyan
-    brightWhite
-  ];
 }

@@ -17,17 +17,6 @@
   users.users.root.openssh.authorizedKeys.keys = config.user.sshKeys;
   boot.zfs.forceImportRoot = false;
 
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-    accept-flake-config = true;
-  };
-  nix.extraOptions = ''
-    warn-dirty = false
-  '';
-
   # Keeps the in-RAM /nix store overlay from OOMing while building the closure.
   zramSwap = {
     enable = true;

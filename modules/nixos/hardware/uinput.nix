@@ -1,1 +1,0 @@
-{ hardware.uinput.enable = true; }

@@ -5,7 +5,7 @@
   ...
 }:
 let
-  accentHex = lib.removePrefix "#" config.theming.colors.blue;
+  accentHex = lib.removePrefix "#" config.theming.accent;
   rebootWindows = pkgs.writeShellApplication {
     name = "reboot-windows";
     runtimeInputs = [
@@ -52,16 +52,7 @@ in
 
   # RTX 2070 (TU106)
   nixpkgs.config.cudaCapabilities = [ "7.5" ];
-  hardware.graphics.enable = true;
-  hardware.graphics.enable32Bit = true;
-  hardware.nvidia = {
-    open = true;
-    modesetting.enable = true;
-    nvidiaSettings = false;
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
-  };
-  services.xserver.videoDrivers = [ "nvidia" ];
-  boot.blacklistedKernelModules = [ "nouveau" ];
+  gpu.nvidia.enable = true;
 
   llm = {
     lend = true;
@@ -77,8 +68,6 @@ in
     memoryPercent = 100;
     memoryMax = 8 * 1024 * 1024 * 1024;
   };
-  boot.kernel.sysctl."vm.swappiness" = 180;
-  boot.kernel.sysctl."vm.page-cluster" = 0;
 
   storage.disko = {
     enable = true;

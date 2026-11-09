@@ -28,7 +28,7 @@ in
     };
 
     colors = lib.mkOption {
-      type = lib.types.attrsOf (lib.types.either lib.types.str (lib.types.listOf lib.types.str));
+      type = lib.types.attrsOf lib.types.str;
       default = data.colors;
       description = "Palette of the active theme.";
     };

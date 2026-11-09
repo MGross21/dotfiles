@@ -15,7 +15,6 @@
     inherit (inputs)
       mactahoe-gtk
       mactahoe-icons
-      nixpkgs-materia
       omarchy
       ;
   };
@@ -28,8 +27,6 @@
         config.allowUnfree = true;
         overlays = [ self.overlays.default ];
       };
-
-      formatter = pkgs.nixfmt-tree;
 
       packages = lib.mkMerge [
         (lib.mkIf (system == "x86_64-linux") {

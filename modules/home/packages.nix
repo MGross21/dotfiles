@@ -17,10 +17,6 @@
       bc
       zsh-completions
 
-      eza
-      bat
-      fd
-      ripgrep
       jq
       tldr
       ncdu

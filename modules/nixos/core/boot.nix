@@ -21,6 +21,8 @@
 
   boot.tmp.cleanOnBoot = true;
 
+  services.userborn.enable = true;
+
   services.journald.settings.Journal.SystemMaxUse = "200M";
 
   boot.plymouth.enable = true;

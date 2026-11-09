@@ -20,7 +20,7 @@
           owner = "MGross21";
           repo = "vscode-tomorrow-night-burns";
           rev = "fa722503c82a455c4131071a0b101aeecbb68313";
-          sha256 = "05g6a9nr8nqf2aj4gcvblxpp8i86n12y41b3hvfknjgijxliip2b";
+          hash = "sha256-S9wYaZfxSTvdhmMF4kWwBkV0b6drs0ekEg5blG1S5hU=";
         };
       in
       {

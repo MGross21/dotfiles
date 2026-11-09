@@ -1,7 +1,6 @@
 {
   inputs,
   lib,
-  self,
   ...
 }:
 let
@@ -19,6 +18,7 @@ let
         { nixpkgs.hostPlatform = system; }
         "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
         inputs.disko.nixosModules.disko
+        ../modules/system/nix.nix
         ../modules/shared/user.nix
         ../modules/shared/hosts.nix
         ../hosts/installer
@@ -30,15 +30,12 @@ in
     lib.genAttrs nixosHosts (
       name:
       lib.nixosSystem {
-        system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
-          { nixpkgs.overlays = [ self.overlays.default ]; }
           inputs.stylix.nixosModules.stylix
           inputs.disko.nixosModules.disko
           inputs.home-manager.nixosModules.home-manager
-          ../modules/home-manager.nix
-          { stylix.homeManagerIntegration.autoImport = false; }
+          (inputs.import-tree ../modules/system)
           (inputs.import-tree ../modules/nixos)
           ../hosts/${name}
         ];
@@ -54,17 +51,11 @@ in
     inputs.nix-darwin.lib.darwinSystem {
       specialArgs = { inherit inputs; };
       modules = [
-        {
-          nixpkgs = {
-            hostPlatform = "aarch64-darwin";
-            overlays = [ self.overlays.default ];
-            config.allowUnfree = true;
-          };
-        }
+        { nixpkgs.hostPlatform = "aarch64-darwin"; }
         inputs.home-manager.darwinModules.home-manager
         inputs.nix-homebrew.darwinModules.nix-homebrew
         inputs.stylix.darwinModules.stylix
-        ../modules/home-manager.nix
+        (inputs.import-tree ../modules/system)
         (inputs.import-tree ../modules/darwin)
         ../hosts/${name}
       ];

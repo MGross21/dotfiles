@@ -7,7 +7,7 @@
 let
   c = config.theming.colors;
   inherit (config.theming) accent;
-  fdExcludes = "--follow --exclude .git --exclude node_modules --exclude __pycache__ --exclude .venv";
+  fdExcludes = "--follow --exclude node_modules --exclude __pycache__ --exclude .venv";
   homeHash = lib.head (lib.splitString "-" (baseNameOf config.home.path));
 
   zstyle =
@@ -148,6 +148,35 @@ in
     historyWidget.options = [
       "--preview 'echo {}'"
       "--preview-window=up:3"
+    ];
+  };
+
+  programs.eza = {
+    enable = true;
+    icons = "auto";
+    colors = "auto";
+  };
+
+  programs.bat = {
+    enable = true;
+    config = {
+      theme = "ansi";
+      style = "plain";
+    };
+  };
+
+  programs.fd = {
+    enable = true;
+    hidden = true;
+    ignores = [ ".git/" ];
+  };
+
+  programs.ripgrep = {
+    enable = true;
+    arguments = [
+      "--smart-case"
+      "--hidden"
+      "--glob=!.git/"
     ];
   };
 

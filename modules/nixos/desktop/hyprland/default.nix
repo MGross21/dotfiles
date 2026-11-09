@@ -65,16 +65,12 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
   programs.hyprland = {
     enable = true;
     withUWSM = true;
-    xwayland.enable = true;
   };
 
   programs.gpu-screen-recorder.enable = true;
 
   xdg.portal = {
-    enable = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-gtk
-    ];
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
     config.common.default = [
       "hyprland"
       "gtk"
@@ -215,15 +211,12 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
       hyprpicker
       hyprshot
 
-      ly
-
       quickshell
       qt6.qtmultimedia
       brightnessctl
       playerctl
       gpu-screen-recorder-gtk
       record-toggle
-      uwsm
 
       nwg-look
       gnome-themes-extra
