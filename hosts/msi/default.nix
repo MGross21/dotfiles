@@ -215,10 +215,13 @@ in
   # Defaulted on by the nvidia module; logind handles lid/power keys.
   services.acpid.enable = false;
 
-  services.scx = {
+  services.scx-loader = {
     enable = true;
-    scheduler = "scx_lavd";
-    extraArgs = [ "--autopower" ]; # follows TLP's EPP per power source
+    config = {
+      default_sched = "scx_lavd";
+      default_mode = "Auto";
+      scheds.scx_lavd.auto_mode = [ "--autopower" ]; # follows TLP's EPP per power source
+    };
   };
 
   # coreOffset also sets cache; p1/p2 stay unset because power-source-switch owns RAPL.
