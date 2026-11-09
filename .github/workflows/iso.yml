@@ -26,7 +26,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: cachix/install-nix-action@v31
         with:
@@ -38,7 +38,7 @@ jobs:
             extra-substituters    = https://nix-community.cachix.org https://hyprland.cachix.org
             extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=
 
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: DeterminateSystems/magic-nix-cache-action@v15
 
       - name: Build ISO
         run: nix build .#packages.${{ matrix.system }}.installer --out-link result -L --keep-going
@@ -50,7 +50,7 @@ jobs:
           echo "Original:   $(du -sh "$ISO" | cut -f1)"
           echo "Compressed: $(du -sh "installer-${{ matrix.system }}.iso.zst" | cut -f1)"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: installer-${{ matrix.system }}
           path: installer-${{ matrix.system }}.iso.zst
@@ -64,7 +64,7 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           merge-multiple: true
 

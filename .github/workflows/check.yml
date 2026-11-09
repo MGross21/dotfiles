@@ -6,8 +6,13 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('check-{0}', github.ref) || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   eval:
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -21,7 +26,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: cachix/install-nix-action@v31
         with:
@@ -43,9 +48,10 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: cachix/install-nix-action@v31
         with:
@@ -71,9 +77,10 @@ jobs:
 
   vm-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Enable KVM
         run: |
@@ -96,16 +103,17 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [eval, lint, vm-test]
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     concurrency:
       group: promote
-      cancel-in-progress: true
+      cancel-in-progress: false
 
     steps:
       - name: Free disk space
-        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache
+        run: nohup sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache >/dev/null 2>&1 &
 
       # GITHUB_TOKEN cannot move a ref across workflow-file changes.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           token: ${{ secrets.DEPLOY_TOKEN }}
@@ -120,11 +128,13 @@ jobs:
             extra-substituters    = https://nix-community.cachix.org https://hyprland.cachix.org https://cache.nixos-cuda.org
             extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc= cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M=
 
-      - uses: cachix/cachix-action@v16
+      - uses: cachix/cachix-action@v17
         with:
           name: mgross-nix
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
           skipPush: true
+
+      - uses: DeterminateSystems/magic-nix-cache-action@v15
 
       - name: Build auto-upgraded hosts
         run: nix run nixpkgs#nix-fast-build -- --flake .#legacyPackages.x86_64-linux.autoUpgrade --no-nom --out-link result

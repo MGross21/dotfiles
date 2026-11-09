@@ -51,6 +51,7 @@ in
   time.hardwareClockInLocalTime = true;
 
   # RTX 2070 (TU106)
+  nixpkgs.config.cudaCapabilities = [ "7.5" ];
   hardware.graphics.enable = true;
   hardware.graphics.enable32Bit = true;
   hardware.nvidia = {
