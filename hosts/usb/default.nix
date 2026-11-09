@@ -36,7 +36,6 @@ in
 
   users.mutableUsers = false;
   users.users.${name} = {
-    initialPassword = lib.mkForce null;
     hashedPasswordFile = "/persist/passwords/${name}";
   };
 

@@ -6,7 +6,7 @@ in
   users.users.${user.name} = {
     isNormalUser = true;
     description = user.fullName;
-    initialPassword = "changeme";
+    initialPassword = lib.mkIf (config.users.users.${user.name}.hashedPasswordFile == null) "changeme";
     openssh.authorizedKeys.keys = user.sshKeys;
     extraGroups = [
       "wheel"
