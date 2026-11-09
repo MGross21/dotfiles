@@ -70,7 +70,7 @@ in
     ++ lib.optionals swiftc [ swift-format ]
     # Darwin uses the Xcode toolchain for swift and sourcekit-lsp.
     ++ lib.optionals (swiftc && stdenv.hostPlatform.isLinux) [
-      swift
+      (lib.lowPrio swift)
       swiftpm
       sourcekit-lsp
     ]

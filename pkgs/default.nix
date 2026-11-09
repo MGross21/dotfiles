@@ -9,9 +9,20 @@ final: prev: {
 
   kimun = final.callPackage ./kimun { };
 
+  kondo = final.callPackage ./kondo { };
+
   msi-perkeyrgb = final.callPackage ./msi-perkeyrgb { };
 
   xtool = final.callPackage ./xtool { };
+
+  t3code = prev.t3code.override { enableCodex = false; };
+
+  pixi = prev.pixi.overrideAttrs (old: {
+    buildInputs = old.buildInputs ++ [
+      final.aws-lc
+      final.zstd
+    ];
+  });
 
   omarchy-shell-compat = final.callPackage ./omarchy-shell-compat { src = omarchy; };
   omarchy-shell = final.callPackage ./omarchy-shell { src = omarchy; };

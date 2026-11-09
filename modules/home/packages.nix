@@ -34,6 +34,7 @@
       poppler_data
       ffmpeg-full
       kimun
+      kondo
 
       claude-code
       claude-monitor
