@@ -6,26 +6,29 @@
   <thead>
     <tr>
       <th>Theme</th>
-      <th>Boot Screen</th>
       <th>Login</th>
       <th>Desktop</th>
-      <th>Application Themes</th>
+      <th>Applications</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><b>Tomorrow Night Burns</b></td>
-      <td><img src="Pictures/screenshots/version3_1_boot.png" width="240" alt="Tomorrow Night Burns boot screen"/></td>
-      <td><img src="Pictures/screenshots/version3_1_login.png" width="240" alt="Tomorrow Night Burns login screen"/></td>
-      <td><img src="Pictures/screenshots/version3_1.png" width="240" alt="Tomorrow Night Burns desktop"/></td>
-      <td><img src="Pictures/screenshots/version3_1_desktop.png" width="240" alt="Tomorrow Night Burns application themes"/></td>
+      <td><b>Osaka Jade</b></td>
+      <td><img src="Pictures/screenshots/version3_3/osaka-jade_login.png" width="240" alt="Osaka Jade login screen"/></td>
+      <td><img src="Pictures/screenshots/version3_3/osaka-jade_desktop.png" width="240" alt="Osaka Jade desktop"/></td>
+      <td><img src="Pictures/screenshots/version3_3/osaka-jade_apps.png" width="240" alt="Osaka Jade application themes"/></td>
     </tr>
     <tr>
       <td><b>Tokyo Night</b></td>
-      <td><img src="Pictures/screenshots/version3_2_boot.png" width="240" alt="Tokyo Night boot screen"/></td>
-      <td><img src="Pictures/screenshots/version3_2_login.png" width="240" alt="Tokyo Night login screen"/></td>
-      <td><img src="Pictures/screenshots/version_3_2.png" width="240" alt="Tokyo Night desktop"/></td>
-      <td><em>Coming soon</em></td>
+      <td><img src="Pictures/screenshots/version3_3/tokyo-night_login.png" width="240" alt="Tokyo Night login screen"/></td>
+      <td><img src="Pictures/screenshots/version3_3/tokyo-night_desktop.png" width="240" alt="Tokyo Night desktop"/></td>
+      <td><img src="Pictures/screenshots/version3_3/tokyo-night_apps.png" width="240" alt="Tokyo Night application themes"/></td>
+    </tr>
+    <tr>
+      <td><b>Tomorrow Night Burns</b></td>
+      <td><img src="Pictures/screenshots/version3_3/tomorrow-night-burns_login.png" width="240" alt="Tomorrow Night Burns login screen"/></td>
+      <td><img src="Pictures/screenshots/version3_3/tomorrow-night-burns_desktop.png" width="240" alt="Tomorrow Night Burns desktop"/></td>
+      <td><img src="Pictures/screenshots/version3_3/tomorrow-night-burns_apps.png" width="240" alt="Tomorrow Night Burns application themes"/></td>
     </tr>
   </tbody>
 </table>
