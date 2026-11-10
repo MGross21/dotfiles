@@ -134,6 +134,22 @@ in
         allowFrom = [ owner ];
         groupPolicy = "allowlist";
         voice.enabled = false;
+        execApprovals = {
+          enabled = true;
+          approvers = [ owner ];
+          target = "dm";
+          cleanupAfterResolve = true;
+        };
+      };
+      tools = {
+        deny = [ "github_publish" ];
+        exec = {
+          mode = "ask";
+          host = "gateway";
+          strictInlineEval = true;
+        };
+        elevated.enabled = false;
+        fs.workspaceOnly = true;
       };
       agents.defaults = {
         model.primary = "pool/${model.id}";
@@ -167,6 +183,7 @@ in
       "network-online.target"
     ];
     serviceConfig = {
+      RestartPreventExitStatus = 78;
       NoNewPrivileges = true;
       PrivateTmp = true;
       PrivateDevices = true;
@@ -192,6 +209,33 @@ in
         "AF_INET"
         "AF_INET6"
       ];
+      IPAddressAllow = [
+        "localhost"
+        "100.100.100.100"
+        "fd7a:115c:a1e0::53"
+      ];
+      IPAddressDeny = [
+        "0.0.0.0/8"
+        "10.0.0.0/8"
+        "100.64.0.0/10"
+        "169.254.0.0/16"
+        "172.16.0.0/12"
+        "192.168.0.0/16"
+        "224.0.0.0/4"
+        "fc00::/7"
+        "fe80::/10"
+        "ff00::/8"
+      ];
     };
+  };
+
+  environment.etc."openclaw/openclaw.json" = {
+    mode = lib.mkForce "0400";
+    inherit (gateway) user group;
+  };
+
+  systemd.tmpfiles.settings."00-0-${config.networking.hostName}-openclaw".${gateway.stateDir}.d = {
+    mode = "0700";
+    inherit (gateway) user group;
   };
 }

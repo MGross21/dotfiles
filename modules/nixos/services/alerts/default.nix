@@ -19,6 +19,7 @@ let
     runtimeEnv = {
       ALERT_HOST = host;
       RELAY_URL = relayUrl;
+      COOLDOWN = toString cfg.cooldown;
     };
     text = builtins.readFile ./notify-failure.sh;
   };
@@ -36,6 +37,11 @@ in
       type = lib.types.listOf lib.types.str;
       default = [ ];
       description = "Units that send an alert to the relay host when they fail.";
+    };
+    cooldown = lib.mkOption {
+      type = lib.types.ints.unsigned;
+      default = 1800;
+      description = "Seconds to suppress repeat alerts for the same unit.";
     };
     relayHost = lib.mkOption {
       type = lib.types.str;
@@ -73,6 +79,7 @@ in
               Type = "oneshot";
               ExecStart = "${lib.getExe notify} %i";
               DynamicUser = true;
+              StateDirectory = "notify-failure/%i";
               SupplementaryGroups = [ "systemd-journal" ];
             };
           };
