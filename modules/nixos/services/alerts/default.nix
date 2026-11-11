@@ -52,6 +52,7 @@ in
       type = lib.types.port;
       default = 8182;
       readOnly = true;
+      description = "Tailnet port the relay host listens on for alerts.";
     };
     relay = {
       enable = lib.mkEnableOption "delivering tailnet alerts with `relay.command`";

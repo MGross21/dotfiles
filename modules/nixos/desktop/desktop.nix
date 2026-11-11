@@ -22,8 +22,8 @@ in
 
     primaryMonitor = lib.mkOption {
       type = lib.types.str;
-      default = "";
-      description = "Output for workspace 1 and lock screen widgets; empty means unpinned.";
+      default = ""; # unpinned
+      description = "Output for workspace 1 and lock screen widgets.";
     };
   };
 

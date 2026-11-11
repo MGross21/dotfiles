@@ -37,7 +37,7 @@ let
       };
       src = lib.mkOption {
         type = lib.types.path;
-        description = "Plugin source, usually a `flake = false` flake input.";
+        description = "Plugin source tree.";
       };
       dir = lib.mkOption {
         type = lib.types.str;
@@ -52,8 +52,8 @@ let
             "right"
           ]
         );
-        default = null;
-        description = "Bar island to place the widget in; null uses the manifest's defaultSection.";
+        default = null; # manifest defaultSection
+        description = "Bar island to place the widget in.";
       };
       settings = lib.mkOption {
         type = lib.types.attrsOf lib.types.anything;

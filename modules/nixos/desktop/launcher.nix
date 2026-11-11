@@ -25,8 +25,8 @@ let
       };
       value = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
-        default = null;
-        description = "Substituted for `{}` in `exec`; null uses the title.";
+        default = null; # title
+        description = "Substituted for `{}` in `exec`.";
       };
     };
   };
@@ -49,8 +49,8 @@ let
       };
       placeholder = lib.mkOption {
         type = lib.types.str;
-        default = "";
-        description = "Search field placeholder; empty uses `Search <name>`.";
+        default = ""; # `Search <name>`
+        description = "Search field placeholder.";
       };
       entries = lib.mkOption {
         type = lib.types.listOf entry;

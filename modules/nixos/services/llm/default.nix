@@ -100,15 +100,18 @@ in
       type = lib.types.port;
       default = 8180;
       readOnly = true;
+      description = "Port of the llama.cpp server.";
     };
     proxyPort = lib.mkOption {
       type = lib.types.port;
       default = 8181;
       readOnly = true;
+      description = "Port of the proxy that pools the local server with `borrowFrom`.";
     };
     model = lib.mkOption {
       type = lib.types.attrs;
       readOnly = true;
+      description = "Identifier, display name and context window of the served model.";
       default = {
         id = "qwen3.6-35b-a3b";
         name = "Qwen3.6 35B-A3B";

@@ -18,8 +18,8 @@ in
 {
   options.dotfiles.homeConfiguration = lib.mkOption {
     type = lib.types.nullOr lib.types.str;
-    default = null;
-    description = "Standalone `homeConfigurations` entry; null under NixOS or nix-darwin.";
+    default = null; # NixOS or nix-darwin
+    description = "Standalone `homeConfigurations` entry.";
   };
 
   config = {

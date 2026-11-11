@@ -26,12 +26,12 @@ let
   barIpc = "-${lib.getExe' pkgs.quickshell "qs"} -c bar ipc call bar";
 in
 {
-  options.desktop.omarchyBar.enable = lib.mkEnableOption "the Omarchy shell bar as an alternative to the quickshell bar";
+  options.desktop.omarchyBar.enable = lib.mkEnableOption "the Omarchy shell bar, which hides the quickshell bar while running";
 
   config = lib.mkIf (config.desktop.omarchyBar.enable && config.desktop.environment == "hyprland") {
     # Swap: `systemctl --user start omarchy-bar`; back: `systemctl --user stop omarchy-bar`.
     systemd.user.services.omarchy-bar = {
-      description = "Omarchy shell bar (experiment)";
+      description = "Omarchy shell bar";
       after = [
         "graphical-session.target"
         "quickshell.service"

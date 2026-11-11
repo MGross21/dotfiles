@@ -8,15 +8,22 @@ let
   themes = import ../../themes;
   data = themes.${config.theming.name};
   font =
-    package: name:
+    role: package: name:
     lib.mkOption {
       type = lib.types.submodule {
         options = {
-          package = lib.mkOption { type = lib.types.package; };
-          name = lib.mkOption { type = lib.types.str; };
+          package = lib.mkOption {
+            type = lib.types.package;
+            description = "Package providing the font.";
+          };
+          name = lib.mkOption {
+            type = lib.types.str;
+            description = "Font family name.";
+          };
         };
       };
       default = { inherit package name; };
+      description = "${role} font.";
     };
 in
 {
@@ -40,9 +47,9 @@ in
     };
 
     fonts = {
-      sansSerif = font pkgs.geist-font "Geist";
-      monospace = font pkgs.nerd-fonts.jetbrains-mono "JetBrainsMono Nerd Font";
-      serif = font pkgs.noto-fonts "Noto Serif";
+      sansSerif = font "Sans-serif" pkgs.geist-font "Geist";
+      monospace = font "Monospace" pkgs.nerd-fonts.jetbrains-mono "JetBrainsMono Nerd Font";
+      serif = font "Serif" pkgs.noto-fonts "Noto Serif";
     };
   };
 }
