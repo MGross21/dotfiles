@@ -200,9 +200,8 @@ in
         mono = config.stylix.fonts.monospace.name;
         margin = 96;
         at = x: y: "${toString x}, ${toString y}";
-        user = lib.head (lib.attrValues (lib.filterAttrs (_: u: u.isNormalUser) config.users.users));
-        firstName = lib.head (lib.splitString " " user.description);
         host = lib.toUpper config.networking.hostName;
+        fingerprint = config.services.fprintd.enable;
         caps = text: "<span font_family='${mono}' letter_spacing='3072'>${text}</span>";
         # Empty command output renders as "Sample Text".
         script =
@@ -218,32 +217,21 @@ in
             ${text}
           '';
         clock = script "clock" ''
-          echo "$(date +%-I:%M)<span font_family='${mono}' size='12%' letter_spacing='3072' rise='118pt' foreground='#${rm config.theming.accent}'> $(date +%p)</span>"
+          echo "$(date +%-I:%M)<span font_family='${mono}' size='12%' letter_spacing='3072'> $(date +%p)</span>"
         '';
         dateline = script "date" ''
           echo "${caps "$(date '+%A  ·  %d %B' | tr a-z A-Z)"}"
         '';
-        greeting = script "greeting" ''
-          hour=$(date +%-H)
-          if [ "$hour" -lt 5 ]; then g="Up late"
-          elif [ "$hour" -lt 12 ]; then g="Good morning"
-          elif [ "$hour" -lt 18 ]; then g="Good afternoon"
-          else g="Good evening"; fi
-          echo "$g, ${firstName}."
-        '';
         media = script "media" ''
-          status=$(playerctl status 2>/dev/null) || status=
-          case "$status" in
-            Playing) state="NOW PLAYING" ;;
-            Paused) state="PAUSED" ;;
+          case "$(playerctl status 2>/dev/null)" in
+            Playing) alpha=100% ;;
+            Paused) alpha=50% ;;
             *) echo " "; exit 0 ;;
           esac
           esc() { sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'; }
           title=$(playerctl metadata title 2>/dev/null | esc)
           artist=$(playerctl metadata artist 2>/dev/null | esc)
-          echo "<span size=\"70%\" foreground=\"#${rm config.theming.accent}\">${caps "$state"}</span>"
-          echo "<span font_weight=\"500\">$title</span>"
-          echo "<span foreground=\"#${rm c.brightBlack}\">$artist</span>"
+          echo "<span alpha=\"$alpha\">$title<span foreground=\"#${rm c.brightBlack}\">  ·  $artist</span></span>"
         '';
         status = script "status" ''
           parts="${host}"
@@ -271,12 +259,22 @@ in
           valign = "bottom";
           text_align = "right";
         };
+        input = {
+          height = 52;
+          gap = 28;
+        };
+        dateY = margin + input.height + input.gap;
       in
       inputs.home-manager.lib.hm.generators.toHyprconf {
+        importantPrefixes = [
+          "$"
+          "bezier"
+        ];
         attrs = {
           general = {
             hide_cursor = true;
             ignore_empty_input = true;
+            fail_timeout = 2500;
           };
 
           animations = {
@@ -293,32 +291,15 @@ in
           background = {
             monitor = "";
             path = toString data.wallpaper;
-            blur_passes = 3;
-            blur_size = 9;
-            brightness = 0.45;
+            blur_passes = 2;
+            blur_size = 8;
+            brightness = 0.6;
             contrast = 0.95;
             vibrancy = 0.2;
             noise = 0.015;
           };
 
-          shape = bottomLeft // {
-            size = at 28 3;
-            rounding = 2;
-            color = rgba config.theming.accent "ff";
-            position = at margin 500;
-          };
-
           label = [
-            {
-              inherit monitor;
-              text = "<span foreground='##${rm config.theming.accent}'>●</span>  ${caps "LOCKED"}";
-              font_family = mono;
-              font_size = 11;
-              color = rgba c.white "99";
-              halign = "left";
-              valign = "top";
-              position = at margin (-56);
-            }
             (
               bottomLeft
               // {
@@ -326,7 +307,7 @@ in
                 font_family = mono;
                 font_size = 12;
                 color = rgba config.theming.accent "e6";
-                position = at margin 460;
+                position = at margin dateY;
               }
             )
             (
@@ -336,27 +317,17 @@ in
                 font_family = "${sans} Thin";
                 font_size = 168;
                 color = rgba c.white "f2";
-                position = at (margin - 12) 200;
-              }
-            )
-            (
-              bottomLeft
-              // {
-                text = "cmd[update:60000] ${greeting}";
-                font_family = "${sans} Light";
-                font_size = 24;
-                color = rgba c.white "b3";
-                position = at margin 176;
+                position = at (margin - 12) (dateY + 24);
               }
             )
             (
               bottomRight
               // {
-                text = "cmd[update:2000] ${media}";
+                text = "cmd[update:5000] ${media}";
                 font_family = sans;
-                font_size = 17;
+                font_size = 14;
                 color = rgba c.white "e6";
-                position = at (-margin) 150;
+                position = at (-margin) (margin + 36);
               }
             )
             (
@@ -369,10 +340,20 @@ in
                 position = at (-margin) margin;
               }
             )
-          ];
+          ]
+          ++ lib.optional fingerprint (
+            bottomLeft
+            // {
+              text = "$FPRINTPROMPT";
+              font_family = sans;
+              font_size = 11;
+              color = rgba c.white "80";
+              position = at margin (margin - 32);
+            }
+          );
 
           input-field = bottomLeft // {
-            size = at 380 52;
+            size = at 380 input.height;
             position = at margin margin;
             rounding = 14;
             outline_thickness = 1;
@@ -381,10 +362,8 @@ in
             dots_spacing = 0.5;
             fade_on_empty = false;
             font_family = sans;
-            font_size = 14;
             placeholder_text = ''<span foreground="##${rm c.brightBlack}">${caps "PASSWORD"}</span>'';
-            fail_text = "$FAIL";
-            fail_timeout = 2500;
+            fail_text = "$FAIL  ·  $ATTEMPTS";
             inner_color = rgba c.white "0f";
             outer_color = rgba c.white "26";
             font_color = rgba c.white "f2";
@@ -392,6 +371,9 @@ in
             fail_color = rgba data.qs.urgent "e6";
             capslock_color = rgba data.qs.warn "cc";
           };
+        }
+        // lib.optionalAttrs fingerprint {
+          auth."fingerprint:enabled" = true;
         };
       };
   };
