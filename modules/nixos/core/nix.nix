@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 {
   nix.settings = {
     min-free = 10 * 1024 * 1024 * 1024;
@@ -20,6 +20,10 @@
 
   documentation.doc.enable = false;
   documentation.info.enable = false;
+  documentation.nixos.extraModules = [
+    (inputs.import-tree ../../shared)
+    (inputs.import-tree ../.)
+  ];
 
   environment.systemPackages = with pkgs; [
     nix-du

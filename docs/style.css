@@ -1,0 +1,105 @@
+:root, [data-md-color-scheme] {
+  --md-text-font-family: var(--md-text-font), system-ui, sans-serif;
+  --md-code-font-family: var(--md-code-font), ui-monospace, monospace;
+}
+
+[data-md-color-scheme] {
+  --md-default-bg-color: var(--bg);
+  --md-default-bg-color--light: color-mix(in oklab, var(--bg) 70%, transparent);
+  --md-default-fg-color: var(--fg);
+  --md-default-fg-color--light: color-mix(in oklab, var(--fg) 68%, var(--bg));
+  --md-default-fg-color--lighter: color-mix(in oklab, var(--fg) 40%, var(--bg));
+  --md-default-fg-color--lightest: color-mix(in oklab, var(--fg) 12%, var(--bg));
+  --md-primary-fg-color: var(--bg);
+  --md-primary-bg-color: var(--fg);
+  --md-accent-fg-color: var(--accent);
+  --md-accent-fg-color--transparent: color-mix(in oklab, var(--accent) 12%, transparent);
+  --md-accent-bg-color: var(--bg);
+  --md-typeset-a-color: var(--accent);
+  --md-code-bg-color: var(--surface);
+  --md-code-fg-color: var(--fg);
+  --md-footer-bg-color: var(--bg);
+  --md-footer-bg-color--dark: var(--bg);
+  --md-footer-fg-color: var(--fg);
+  --md-footer-fg-color--light: color-mix(in oklab, var(--fg) 68%, var(--bg));
+  --md-footer-fg-color--lighter: color-mix(in oklab, var(--fg) 40%, var(--bg));
+  --border: color-mix(in oklab, var(--fg) 14%, var(--bg));
+}
+
+[data-md-color-scheme="slate"] {
+  --bg: var(--d-bg);
+  --fg: var(--d-fg);
+  --surface: var(--d-surface);
+  --accent: var(--d-accent);
+  --color-foreground: var(--d-rgb-fg);
+  --color-background: var(--d-rgb-bg);
+  --color-background-subtle: var(--d-rgb-surface);
+  --color-backdrop: var(--d-rgb-bg);
+}
+
+[data-md-color-scheme="default"] {
+  --bg: var(--l-bg);
+  --fg: var(--l-fg);
+  --surface: color-mix(in oklab, var(--l-bg) 90%, var(--l-fg));
+  --accent: color-mix(in oklab, var(--d-accent) 55%, var(--l-fg));
+  --color-foreground: var(--l-rgb-fg);
+  --color-background: var(--l-rgb-bg);
+  --color-background-subtle: var(--l-rgb-surface);
+  --color-backdrop: var(--l-rgb-bg);
+}
+
+[data-md-color-scheme] :is(.md-typeset h1, .md-typeset h2, .md-typeset h3, .md-header__title) { color: var(--fg); }
+
+.md-header { border-bottom: 1px solid var(--border); box-shadow: none; }
+.md-footer { border-top: 1px solid var(--border); }
+
+.md-typeset h2 { font-family: var(--md-code-font-family); font-size: 1.05em; font-weight: 500; color: var(--md-default-fg-color--light); }
+
+.md-typeset .option {
+  margin: 0 0 0.9rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  transition: border-color 120ms;
+}
+.md-typeset .option:is(:hover, :has(:target)) { border-color: color-mix(in oklab, var(--accent) 60%, var(--border)); }
+.md-typeset .option[hidden] { display: none; }
+.md-typeset .option h3 { margin: 0 0 0.4rem; font-size: 0.85rem; font-weight: 600; }
+.md-typeset .option h3 code { background: none; padding: 0; overflow-wrap: anywhere; }
+.md-typeset .option > p { margin: 0 0 0.6rem; }
+
+.md-typeset .meta { display: grid; gap: 0.35rem; margin: 0; font-size: 0.7rem; }
+.md-typeset .meta > div { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); align-items: baseline; gap: 0.6rem; }
+.md-typeset .meta dt {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.md-typeset .meta dd { margin: 0; min-width: 0; display: flex; flex-wrap: wrap; gap: 0.2rem 0.6rem; }
+.md-typeset .meta dd > pre { flex: 1; margin: 0; }
+
+.md-typeset table.hosts { display: table; border: none; font-size: inherit; margin: 0; }
+.md-typeset table.hosts :is(th, td) { border: none; padding: 0.05rem 0.6rem 0.05rem 0; vertical-align: top; background: none; }
+.md-typeset table.hosts th { font-weight: 500; color: var(--md-default-fg-color--light); }
+
+.md-typeset .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem; margin: 0 0 1.2rem; }
+.md-typeset .filters .count { margin-left: auto; color: var(--md-default-fg-color--light); font-size: 0.65rem; }
+.md-typeset .chip {
+  font: inherit;
+  font-size: 0.65rem;
+  color: var(--md-default-fg-color--light);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+  cursor: pointer;
+}
+.md-typeset .chip:hover { color: var(--fg); }
+.md-typeset .chip[aria-pressed="true"] { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset .option { transition: none; }
+}
+.md-nav code { background: none; padding: 0; font-size: 0.95em; }
