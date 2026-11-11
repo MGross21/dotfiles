@@ -135,6 +135,7 @@ in
     "media.ffmpeg.vaapi.enabled" = true;
     "media.av1.enabled" = false;
   };
+  theming.firefoxProfile = "6tqysyny.default";
   environment.systemPackages = with pkgs; [
     libva
     libva-vdpau-driver

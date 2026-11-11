@@ -46,6 +46,12 @@ in
       description = "Accent color of the active theme.";
     };
 
+    firefoxProfile = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null; # unthemed
+      description = "Firefox profile directory, relative to the profiles root.";
+    };
+
     fonts = {
       sansSerif = font "Sans-serif" pkgs.geist-font "Geist";
       monospace = font "Monospace" pkgs.nerd-fonts.jetbrains-mono "JetBrainsMono Nerd Font";

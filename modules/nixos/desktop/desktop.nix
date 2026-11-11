@@ -43,14 +43,6 @@ in
 
     security.pam.services.ly.enableGnomeKeyring = true;
 
-    environment.sessionVariables = {
-      MOZ_DBUS_REMOTE = "1";
-      MOZ_GTK_TITLEBAR_DECORATION = "client";
-      MOZ_DISABLE_SPLASH = "1";
-    };
-
-    programs.firefox.enable = true;
-
     environment.systemPackages = with pkgs; [
       papirus-folders
 
