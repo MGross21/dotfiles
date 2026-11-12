@@ -271,6 +271,13 @@ in
       ];
     };
 
+    shellAliases = lib.genAttrs [
+      "nix"
+      "nh"
+      "home-manager"
+      (if pkgs.stdenv.hostPlatform.isDarwin then "darwin-rebuild" else "nixos-rebuild")
+    ] (cmd: "noglob ${cmd}");
+
     history = {
       path = "$HOME/.zsh_history";
       size = 50000;
