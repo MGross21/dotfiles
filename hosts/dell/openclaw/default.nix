@@ -141,6 +141,7 @@ in
           cleanupAfterResolve = true;
         };
       };
+      commands.ownerAllowFrom = [ "discord:${owner}" ];
       tools = {
         deny = [ "github_publish" ];
         exec = {
