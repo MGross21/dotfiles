@@ -7,13 +7,14 @@
 }:
 let
   inherit (config.dotfiles) dir homeConfiguration;
-  switch =
+  mode =
     if osConfig == null then
-      "nh home switch -c ${homeConfiguration}"
+      "home"
     else if pkgs.stdenv.hostPlatform.isDarwin then
-      "nh darwin switch"
+      "darwin"
     else
-      "nh os switch";
+      "os";
+  nh = cmd: "nh ${mode} ${cmd}" + lib.optionalString (mode == "home") " -c ${homeConfiguration}";
 in
 {
   options.dotfiles.homeConfiguration = lib.mkOption {
@@ -30,13 +31,23 @@ in
       flake = dir;
     };
 
-    home.shellAliases = {
-      update = "${switch} -u";
-      nixrebuild = switch;
-    }
-    // lib.optionalAttrs (osConfig != null && pkgs.stdenv.hostPlatform.isLinux) {
-      nixrollback = "nh os rollback";
-      nixgens = "nh os info";
-    };
+    home.shellAliases = lib.mkMerge [
+      {
+        nixrebuild = nh "switch";
+        update = "${nh "switch"} -u";
+        nixbuild = nh "build";
+        nixrepl = nh "repl";
+      }
+      (lib.mkIf (mode == "os") {
+        nixtest = nh "test";
+        nixrollback = nh "rollback";
+        nixgens = nh "info";
+      })
+      (lib.mkIf (mode == "darwin") {
+        nixrollback = "sudo darwin-rebuild --rollback";
+        nixgens = "darwin-rebuild --list-generations";
+      })
+      (lib.mkIf (mode == "home") { nixgens = "home-manager generations"; })
+    ];
   };
 }
