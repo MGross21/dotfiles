@@ -79,7 +79,7 @@
       flake = false;
     };
     omarchy = {
-      url = "github:omacom/omarchy/v4.5.0-rc2";
+      url = "github:omacom/omarchy/v4.5.0";
       flake = false;
     };
     mactahoe-gtk = {
