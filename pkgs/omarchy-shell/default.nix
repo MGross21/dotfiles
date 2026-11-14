@@ -40,5 +40,8 @@ stdenvNoCC.mkDerivation {
     bash ${./prune-bin.sh} $out ${lib.escapeShellArgs keepBins}
     substituteInPlace $out/shell/Commons/InputMethodState.qml \
       --replace-fail /usr/bin/python3 ${python3.interpreter}
+    substituteInPlace $out/shell/plugins/agents/Panel.qml \
+      --replace-fail 'if (!blankSlate) {' 'if (false) {' \
+      --replace-fail 'visible: root.addStage === "" && !root.blankSlate' 'visible: false'
   '';
 }
