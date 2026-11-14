@@ -31,6 +31,7 @@ in
     enable = true;
     environment = "hyprland";
     deskflow.enable = true;
+    sunshine.enable = true;
     airdrop.enable = true;
   };
 
@@ -92,6 +93,11 @@ in
   # GTX 1660 Ti Mobile (TU116M) + Intel UHD 630
   gpu.nvidia.enable = true;
   hardware.graphics.extraPackages = [ pkgs.intel-media-driver ];
+  services.sunshine.settings = {
+    encoder = "vaapi";
+    vaapi_quality = "speed";
+    adapter_name = "/dev/dri/by-path/pci-0000:00:02.0-render";
+  };
   boot.blacklistedKernelModules = [ "psmouse" ];
 
   hardware.nvidia = {
