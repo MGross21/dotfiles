@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "dotfiles.launcher",
+  "name": "Launcher",
+  "version": "1.0.0",
+  "author": "dotfiles",
+  "description": "App, file, window, calculator, emoji, clipboard and command launcher",
+  "kinds": ["overlay", "service"],
+  "keepLoaded": true,
+  "entryPoints": {
+    "overlay": "launcher/Launcher.qml",
+    "service": "Service.qml"
+  }
+}

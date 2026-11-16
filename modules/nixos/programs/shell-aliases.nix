@@ -45,7 +45,6 @@
         logout = "uwsm stop || hyprctl dispatch exit";
         paperreload = "systemctl --user restart hyprpaper";
         screenshot = "hyprshot -m region --clipboard-only";
-        barreload = "systemctl --user restart quickshell";
         fontreload = "fc-cache -f";
         fonts = "fc-list : family lang=en --format=\"%{family[0]}\\n\" | sort | uniq | less";
         wlr = "env | grep -i wl";

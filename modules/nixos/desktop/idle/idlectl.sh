@@ -13,10 +13,7 @@ on_ac() {
 case "${1:-}" in
   lock)
     pidof hyprlock >/dev/null && exit 0
-    paused=$(dunstctl is-paused 2>/dev/null || echo false)
-    dunstctl set-paused true 2>/dev/null || true
     "${lock_wrappers[@]}" hyprlock -c /etc/hypr/hyprlock.conf || true
-    dunstctl set-paused "$paused" 2>/dev/null || true
     ;;
   dim) brightnessctl -q -s set "$(($(brightnessctl get) * 3 / 10))" ;;
   undim) brightnessctl -q -r ;;

@@ -30,6 +30,7 @@ in
   desktop = {
     enable = true;
     environment = "hyprland";
+    omarchy.enable = true;
     deskflow.enable = true;
     sunshine.enable = true;
     airdrop.enable = true;

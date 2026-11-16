@@ -166,21 +166,6 @@ in
         glass_tint = lib.fromHexString "${rm c.bg}a0";
       };
 
-    environment.etc."quickshell/colors.json".text = builtins.toJSON {
-      base = c.bg;
-      fg = c.white;
-      fgDim = c.brightBlack;
-      hi = c.brightWhite;
-      fontSans = config.stylix.fonts.sansSerif.name;
-      fontMono = config.stylix.fonts.monospace.name;
-      inherit (config.theming) accent;
-      inherit (data.qs)
-        good
-        warn
-        urgent
-        ;
-    };
-
     environment.etc."hypr/hyprpaper.conf".text = ''
       preload = ${toString data.wallpaper}
 

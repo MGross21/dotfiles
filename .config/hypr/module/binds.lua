@@ -15,9 +15,9 @@ hl.bind(mainMod .. " + space", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("display-mode"))
 hl.bind(mainMod .. " + O", hl.dsp.layout("togglesplit"))
-hl.bind(mainMod .. " + B", hl.dsp.exec_cmd([[qs -c bar ipc call launcher open "#"]]))
+hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(vars.clipboard))
 hl.bind(mainMod .. " + semicolon", hl.dsp.exec_cmd("idlectl lock"))
-hl.bind(mainMod .. " + SHIFT + semicolon", hl.dsp.exec_cmd("qs -c bar ipc call caffeine toggle"))
+hl.bind(mainMod .. " + SHIFT + semicolon", hl.dsp.exec_cmd(vars.caffeine))
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(browser))
 
 -- Move focus with mainMod + vim motion keys
@@ -77,4 +77,4 @@ hl.bind(mainMod .. " + ALT + Print", hl.dsp.exec_cmd("record-toggle window"))
 hl.bind(mainMod .. " + ALT + SHIFT + Print", hl.dsp.exec_cmd("record-toggle region"))
 
 -- Bar toggle
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("qs -c bar ipc call bar toggle"))
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(vars.barToggle))

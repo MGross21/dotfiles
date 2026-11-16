@@ -1,26 +1,9 @@
 -- https://wiki.hypr.land/Configuring/Basics/Window-Rules/
 
--- ignore_alpha must stay below Theme.surfaceAlpha.
 hl.layer_rule({
-    name         = "lr-quickshell",
-    match        = { namespace = "quickshell-bar" },
-    blur         = true,
-    ignore_alpha = 0.05,
-    no_anim      = true,
-})
-
-hl.layer_rule({
-    name         = "lr-launcher",
-    match        = { namespace = "^quickshell-launcher(-light)?$" },
-    blur         = true,
-    ignore_alpha = 0.05,
-    animation    = "popin 92%",
-})
-
-hl.layer_rule({
-    name  = "lr-notifications",
-    match = { namespace = "notifications" },
-    blur  = true,
+    name    = "lr-bar",
+    match   = { namespace = "omarchy-bar" },
+    no_anim = true,
 })
 
 hl.window_rule({

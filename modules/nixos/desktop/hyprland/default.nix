@@ -121,80 +121,6 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
         settings.general.adjustment-method = "wayland";
       };
       services.hyprpolkitagent.enable = true;
-      services.dunst = {
-        enable = true;
-        settings =
-          let
-            c = config.theming.colors;
-          in
-          {
-            global = {
-              monitor = 0;
-              width = 280;
-              height = "(0, 80)";
-              origin = "top-right";
-              offset = "(15, 15)";
-              indicate_hidden = true;
-              shrink = true;
-              transparency = 0;
-              separator_height = 0;
-              padding = 14;
-              horizontal_padding = 18;
-              frame_width = 1;
-              frame_color = c.black;
-              separator_color = c.bg;
-              sort = true;
-              idle_threshold = 120;
-              font = "${config.theming.fonts.monospace.name} 9";
-              line_height = 0;
-              markup = "full";
-              format = "<b>%s</b>\\n%b";
-              alignment = "left";
-              vertical_alignment = "top";
-              show_age_threshold = 60;
-              word_wrap = true;
-              ellipsize = "end";
-              ignore_newline = false;
-              stack_duplicates = true;
-              hide_duplicate_count = false;
-              show_indicators = true;
-              icon_position = "left";
-              min_icon_size = 16;
-              max_icon_size = 32;
-              sticky_history = true;
-              history_length = 100;
-              title = "Dunst";
-              class = "Dunst";
-              corner_radius = 12;
-              always_run_script = true;
-              mouse_left_click = "close_current";
-              mouse_middle_click = "do_action";
-              mouse_right_click = "close_all";
-              close = "ctrl+shift+space";
-              close_all = "ctrl+shift+BackSpace";
-              history = "ctrl+shift+period";
-              context = "ctrl+shift+comma";
-            };
-            urgency_low = {
-              background = c.bg;
-              foreground = c.fg;
-              frame_color = c.black;
-              timeout = 3;
-            };
-            urgency_normal = {
-              background = c.black;
-              foreground = c.fg;
-              frame_color = c.brightBlack;
-              timeout = 5;
-            };
-            urgency_critical = {
-              background = c.black;
-              foreground = c.fg;
-              frame_color = c.red;
-              timeout = 0;
-            };
-          };
-      };
     }
   ];
 
@@ -211,8 +137,6 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
       hyprpicker
       hyprshot
 
-      quickshell
-      qt6.qtmultimedia
       brightnessctl
       playerctl
       gpu-screen-recorder-gtk
@@ -225,37 +149,6 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
       tela-circle-icon-theme
     ]
   );
-
-  systemd.user.services.quickshell = {
-    description = "Quickshell bar";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    partOf = [ "graphical-session.target" ];
-    # uwsm resolves launched entries' executables against this PATH.
-    path =
-      with pkgs;
-      [
-        bash
-        coreutils
-        gawk
-        gnused
-        systemd
-        networkmanager
-        qrencode
-        zbar
-        ghostty
-        uwsm
-        "/run/wrappers"
-        "/run/current-system/sw"
-      ]
-      ++ map (user: "/etc/profiles/per-user/${user}") (lib.attrNames config.home-manager.users);
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${lib.getExe' pkgs.quickshell "qs"} -c bar";
-      Restart = "on-failure";
-      RestartSec = "3";
-    };
-  };
 
   systemd.user.services.hyprpaper = {
     description = "Hyprpaper wallpaper daemon";

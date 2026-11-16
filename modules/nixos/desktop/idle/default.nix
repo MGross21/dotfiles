@@ -16,7 +16,6 @@ let
       config.programs.hyprlock.package
       brightnessctl
       coreutils
-      dunst
       gnugrep
       procps
       systemd

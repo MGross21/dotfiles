@@ -8,7 +8,6 @@ local hg = hl.plugin.hyprglass
 hg.config({
     default_theme = "dark",
     default_preset = "window",
-    layers = { enabled = true },
 })
 
 hg.preset("window", {
@@ -32,26 +31,3 @@ hg.preset("window", {
         vibrancy = 0.5,
     },
 })
-
-hg.preset("bar", {
-    blur_strength = 2.4,
-    blur_iterations = 3,
-    glass_opacity = 0.9,
-    refraction_strength = 0.35,
-    chromatic_aberration = 0.2,
-    fresnel_strength = 0.5,
-    specular_strength = 0.6,
-    lens_distortion = 0.15,
-    edge_thickness = 0.05,
-    dark = {
-        tint_color = THEME.glass_tint or 0x12080ca0,
-        brightness = 0.62,
-        contrast = 1.05,
-        adaptive_dim = 0.0,
-        adaptive_boost = 0.0,
-    },
-})
-
--- Namespaces match WlrLayershell.namespace; mask_threshold must stay below Theme.surfaceAlpha.
-hg.layer("quickshell-bar", { preset = "bar", mask_threshold = 0.05 })
-hg.layer("quickshell-launcher", { preset = "window", mask_threshold = 0.05 })

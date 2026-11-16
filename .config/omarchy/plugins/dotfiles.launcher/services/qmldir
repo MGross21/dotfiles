@@ -1,0 +1,3 @@
+singleton AppSearch 1.0 AppSearch.qml
+singleton Fuzzy 1.0 Fuzzy.qml
+singleton IdleInhibit 1.0 IdleInhibit.qml
