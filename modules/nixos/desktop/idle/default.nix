@@ -21,7 +21,10 @@ let
       procps
       systemd
     ];
-    text = builtins.readFile ./idlectl.sh;
+    text = ''
+      lock_wrappers=(${lib.escapeShellArgs config.desktop.idle.lockWrappers})
+    ''
+    + builtins.readFile ./idlectl.sh;
   };
 
   keepawake = pkgs.writeShellApplication {
@@ -59,6 +62,12 @@ let
   };
 in
 {
+  options.desktop.idle.lockWrappers = lib.mkOption {
+    type = lib.types.listOf lib.types.str;
+    default = [ ];
+    description = "Commands the screen locker runs under, outermost first; each executes its arguments.";
+  };
+
   options.desktop.idle.listeners = lib.mkOption {
     type = lib.types.listOf lib.types.attrs;
     default = [ ];
