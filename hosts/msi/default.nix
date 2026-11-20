@@ -10,9 +10,10 @@ let
   powerSourceSwitch = lib.getExe (
     pkgs.writeShellApplication {
       name = "power-source-switch";
+      inheritPath = false;
       runtimeInputs = [
         pkgs.coreutils
-        pkgs.hyprland
+        config.programs.hyprland.package
       ];
       text = builtins.readFile ./power-source-switch.sh;
     }

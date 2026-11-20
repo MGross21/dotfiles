@@ -9,21 +9,34 @@ let
   loginctl = lib.getExe' pkgs.systemd "loginctl";
   idle = cmd: "${lib.getExe idlectl} ${cmd}";
 
+  locker = pkgs.writeShellApplication {
+    name = "locker";
+    text = ''
+      exec ${
+        lib.escapeShellArgs (
+          config.desktop.idle.lockWrappers
+          ++ [
+            (lib.getExe config.programs.hyprlock.package)
+            "-c"
+            "/etc/hypr/hyprlock.conf"
+          ]
+        )
+      }
+    '';
+  };
+
   idlectl = pkgs.writeShellApplication {
     name = "idlectl";
     runtimeInputs = with pkgs; [
       config.programs.hyprland.package
-      config.programs.hyprlock.package
       brightnessctl
       coreutils
       gnugrep
       procps
       systemd
     ];
-    text = ''
-      lock_wrappers=(${lib.escapeShellArgs config.desktop.idle.lockWrappers})
-    ''
-    + builtins.readFile ./idlectl.sh;
+    runtimeEnv.LOCKER = lib.getExe locker;
+    text = builtins.readFile ./idlectl.sh;
   };
 
   keepawake = pkgs.writeShellApplication {

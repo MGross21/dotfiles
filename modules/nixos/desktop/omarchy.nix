@@ -31,24 +31,23 @@ let
     ];
   };
   defaults = lib.importJSON "${omarchy}/config/omarchy/shell.json";
-  wrap =
-    name:
-    pkgs.writeShellScriptBin name ''
-      export OMARCHY_PATH=${omarchy}
-      export PATH=${
-        lib.makeBinPath [
-          omarchy
-          pkgs.quickshell
-          pkgs.socat
-        ]
-      }:$PATH
-      exec ${omarchy}/bin/${name} "$@"
-    '';
-  wrapped = lib.genAttrs commands wrap;
+  wrapped = pkgs.runCommand "omarchy-shell-commands" { nativeBuildInputs = [ pkgs.makeWrapper ]; } (
+    lib.concatMapStrings (name: ''
+      makeWrapper ${lib.getExe' omarchy name} $out/bin/${name} \
+        --set OMARCHY_PATH ${omarchy} \
+        --prefix PATH : ${
+          lib.makeBinPath [
+            omarchy
+            pkgs.quickshell
+            pkgs.socat
+          ]
+        }
+    '') commands
+  );
 
   quietNotifications = pkgs.writeShellApplication {
     name = "omarchy-quiet-notifications";
-    runtimeInputs = [ wrapped.omarchy-shell ];
+    runtimeInputs = [ wrapped ];
     text = ''
       dnd=$(omarchy-shell -q notifications isDnd || true)
       [[ $dnd == on ]] || dnd=off
@@ -111,7 +110,7 @@ in
       }
     ];
 
-    environment.systemPackages = lib.attrValues wrapped;
+    environment.systemPackages = [ wrapped ];
 
     desktop.idle.lockWrappers = [ (lib.getExe quietNotifications) ];
 

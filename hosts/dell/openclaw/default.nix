@@ -71,17 +71,22 @@ in
       "-${tokenEnv}"
       "-${discordEnv}"
     ];
-    execStartPre = [
-      (toString (
-        pkgs.writeShellScript "openclaw-gateway-token" ''
-          [ -s ${tokenEnv} ] || echo "OPENCLAW_GATEWAY_TOKEN=$(${pkgs.openssl}/bin/openssl rand -hex 32)" > ${tokenEnv}
-        ''
-      ))
-      (toString (
-        pkgs.writeShellScript "openclaw-onnx-model" ''
-          [ -d ${gateway.stateDir}/models/onnx/${decisionModel} ] || ${gateway.package}/bin/openclaw onnx download ${decisionModel}
-        ''
-      ))
+    execStartPre = map lib.getExe [
+      (pkgs.writeShellApplication {
+        name = "openclaw-gateway-token";
+        inheritPath = false;
+        runtimeInputs = [ pkgs.openssl ];
+        text = ''
+          [ -s ${tokenEnv} ] || echo "OPENCLAW_GATEWAY_TOKEN=$(openssl rand -hex 32)" > ${tokenEnv}
+        '';
+      })
+      (pkgs.writeShellApplication {
+        name = "openclaw-onnx-model";
+        runtimeInputs = [ gateway.package ];
+        text = ''
+          [ -d ${gateway.stateDir}/models/onnx/${decisionModel} ] || openclaw onnx download ${decisionModel}
+        '';
+      })
     ];
     config = {
       gateway = {

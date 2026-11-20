@@ -191,21 +191,23 @@ in
         # Empty command output renders as "Sample Text".
         script =
           name: text:
-          pkgs.writeShellScript "hyprlock-${name}" ''
-            PATH=${
-              lib.makeBinPath [
-                pkgs.coreutils
-                pkgs.gnused
-                pkgs.playerctl
-              ]
+          lib.getExe (
+            pkgs.writeShellApplication {
+              name = "hyprlock-${name}";
+              inheritPath = false;
+              runtimeInputs = with pkgs; [
+                coreutils
+                gnused
+                playerctl
+              ];
+              inherit text;
             }
-            ${text}
-          '';
+          );
         clock = script "clock" ''
           echo "$(date +%-I:%M)<span font_family='${mono}' size='12%' letter_spacing='3072'> $(date +%p)</span>"
         '';
         dateline = script "date" ''
-          echo "${caps "$(date '+%A  ·  %d %B' | tr a-z A-Z)"}"
+          echo "${caps "$(date '+%A  ·  %d %B' | tr '[:lower:]' '[:upper:]')"}"
         '';
         media = script "media" ''
           case "$(playerctl status 2>/dev/null)" in
@@ -214,8 +216,8 @@ in
             *) echo " "; exit 0 ;;
           esac
           esc() { sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'; }
-          title=$(playerctl metadata title 2>/dev/null | esc)
-          artist=$(playerctl metadata artist 2>/dev/null | esc)
+          title=$(playerctl metadata title 2>/dev/null | esc || true)
+          artist=$(playerctl metadata artist 2>/dev/null | esc || true)
           echo "<span alpha=\"$alpha\">$title<span foreground=\"#${rm c.brightBlack}\">  ·  $artist</span></span>"
         '';
         status = script "status" ''

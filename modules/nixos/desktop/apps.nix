@@ -20,7 +20,7 @@ let
     in
     pkgs.runCommand "spotifast-${pkg.version}" { nativeBuildInputs = [ pkgs.makeWrapper ]; } ''
       mkdir -p $out/bin
-      makeWrapper ${pkg}/bin/spotifast $out/bin/spotifast \
+      makeWrapper ${lib.getExe' pkg "spotifast"} $out/bin/spotifast \
         --set __EGL_VENDOR_LIBRARY_FILENAMES ${mesa}/share/glvnd/egl_vendor.d/50_mesa.json \
         --prefix LD_LIBRARY_PATH : ${mesa}/lib
       ln -s $out/bin/spotifast $out/bin/spotify

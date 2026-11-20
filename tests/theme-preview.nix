@@ -45,6 +45,14 @@
       noise = pkgs.runCommand "preview-audio.wav" { nativeBuildInputs = [ pkgs.sox ]; } ''
         sox -n -r 48000 -c 2 $out synth 300 pinknoise synth brownnoise mix tremolo 2 60
       '';
+      app =
+        name: runtimeInputs: text:
+        pkgs.writeShellApplication { inherit name runtimeInputs text; };
+      asUser = app "as-user" [ pkgs.coreutils pkgs.util-linux ] ''
+        uid=$(id -u ${config.user.name})
+        exec runuser -u ${config.user.name} -- \
+          env XDG_RUNTIME_DIR="/run/user/$uid" DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$uid/bus" "$@"
+      '';
     in
     {
       imports = [
@@ -65,23 +73,19 @@
 
       environment.systemPackages = [
         pkgs.jq
-        (pkgs.writeShellScriptBin "as-user" ''
-          uid=$(id -u ${config.user.name})
-          exec ${pkgs.util-linux}/bin/runuser -u ${config.user.name} -- \
-            env XDG_RUNTIME_DIR=/run/user/$uid DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$uid/bus "$@"
-        '')
-        (pkgs.writeShellScriptBin "hypr" ''
+        asUser
+        (app "hypr" [ asUser ] ''
           exec as-user hyprctl -i 0 "$@"
         '')
-        (pkgs.writeShellScriptBin "preview-audio" ''
-          exec as-user ${pkgs.pipewire}/bin/pw-play ${noise}
+        (app "preview-audio" [ asUser pkgs.pipewire ] ''
+          exec as-user pw-play ${noise}
         '')
-        (pkgs.writeShellScriptBin "preview-files" ''
-          exec as-user ${pkgs.glib}/bin/gdbus call --session --dest org.freedesktop.FileManager1 \
+        (app "preview-files" [ asUser pkgs.glib ] ''
+          exec as-user gdbus call --session --dest org.freedesktop.FileManager1 \
             --object-path /org/freedesktop/FileManager1 --method org.freedesktop.FileManager1.ShowItems \
             "['file://${config.users.users.${config.user.name}.home}/Pictures/wallpapers/${wallpaper}']" ""
         '')
-        (pkgs.writeShellScriptBin "preview-cpu" ''
+        (app "preview-cpu" [ pkgs.coreutils pkgs.util-linux ] ''
           tail -n +2 /proc/stat > /run/stat-rest
           touch /run/stat
           mount --bind /run/stat /proc/stat
@@ -90,7 +94,7 @@
             sleep 1
           done
         '')
-        (pkgs.writeShellScriptBin "preview-fetch" ''
+        (app "preview-fetch" [ ] ''
           exec zsh -c "fastfetch -c ${fetchConfig}; touch /tmp/fetched; exec zsh -i"
         '')
       ];

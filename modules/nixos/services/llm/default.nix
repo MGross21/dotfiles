@@ -14,6 +14,7 @@ let
   };
   fetchModel = pkgs.writeShellApplication {
     name = "llm-fetch-model";
+    inheritPath = false;
     runtimeInputs = with pkgs; [
       coreutils
       curl
@@ -47,12 +48,13 @@ let
       no-op-offload = true;
     };
 
-  systemctl = "${pkgs.systemd}/bin/systemctl";
+  systemctl = lib.getExe' pkgs.systemd "systemctl";
   lendUnit = "llama-swap.service";
   idleTicksBeforeSuspend = 30;
 
   guard = pkgs.writeShellApplication {
     name = "llm-guard";
+    inheritPath = false;
     runtimeInputs = with pkgs; [
       coreutils
       curl
@@ -70,14 +72,23 @@ let
 
   wakeSocket = "/run/llm-wake.sock";
   borrowMac = config.hosts.${cfg.borrowFrom}.mac or null;
-  wake = pkgs.writeShellScriptBin "wake-${toString cfg.borrowFrom}" ''
-    exec ${lib.getExe pkgs.wakeonlan} ${toString borrowMac} >/dev/null
-  '';
-  wakeResponder = pkgs.writeShellScript "llm-wake-respond" ''
-    while IFS= read -r line && [ -n "''${line%$'\r'}" ]; do :; done
-    ${lib.getExe wake}
-    printf 'HTTP/1.1 503 Service Unavailable\r\nContent-Length: 0\r\nConnection: close\r\n\r\n'
-  '';
+  wake = pkgs.writeShellApplication {
+    name = "wake-${toString cfg.borrowFrom}";
+    inheritPath = false;
+    runtimeInputs = [ pkgs.wakeonlan ];
+    text = ''
+      exec wakeonlan ${toString borrowMac} >/dev/null
+    '';
+  };
+  wakeResponder = pkgs.writeShellApplication {
+    name = "llm-wake-respond";
+    inheritPath = false;
+    text = ''
+      while IFS= read -r line && [ -n "''${line%$'\r'}" ]; do :; done
+      ${lib.getExe wake}
+      printf 'HTTP/1.1 503 Service Unavailable\r\nContent-Length: 0\r\nConnection: close\r\n\r\n'
+    '';
+  };
 in
 {
   options.llm = {
@@ -294,7 +305,7 @@ in
       };
 
       systemd.services."llm-wake@".serviceConfig = {
-        ExecStart = wakeResponder;
+        ExecStart = lib.getExe wakeResponder;
         StandardInput = "socket";
         StandardOutput = "socket";
         DynamicUser = true;

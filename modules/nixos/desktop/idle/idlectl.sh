@@ -13,7 +13,7 @@ on_ac() {
 case "${1:-}" in
   lock)
     pidof hyprlock >/dev/null && exit 0
-    "${lock_wrappers[@]}" hyprlock -c /etc/hypr/hyprlock.conf || true
+    "$LOCKER" || true
     ;;
   dim) brightnessctl -q -s set "$(($(brightnessctl get) * 3 / 10))" ;;
   undim) brightnessctl -q -r ;;

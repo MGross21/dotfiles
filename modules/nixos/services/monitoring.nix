@@ -36,12 +36,17 @@ let
     }) names;
   };
 
-  grafanaSecrets = pkgs.writeShellScript "grafana-secrets" ''
-    umask 077
-    for f in secret_key admin_password; do
-      [ -s ${grafanaDir}/$f ] || ${lib.getExe pkgs.openssl} rand -hex 32 > ${grafanaDir}/$f
-    done
-  '';
+  grafanaSecrets = pkgs.writeShellApplication {
+    name = "grafana-secrets";
+    inheritPath = false;
+    runtimeInputs = [ pkgs.openssl ];
+    text = ''
+      umask 077
+      for f in secret_key admin_password; do
+        [ -s ${grafanaDir}/$f ] || openssl rand -hex 32 > ${grafanaDir}/$f
+      done
+    '';
+  };
 in
 {
   options.monitoring = {
@@ -127,7 +132,7 @@ in
         };
       };
 
-      systemd.services.grafana.serviceConfig.ExecStartPre = lib.mkBefore [ grafanaSecrets ];
+      systemd.services.grafana.serviceConfig.ExecStartPre = lib.mkBefore [ (lib.getExe grafanaSecrets) ];
 
       networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ grafana.http_port ];
 
