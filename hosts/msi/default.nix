@@ -188,25 +188,17 @@ in
   '';
 
   # AX210 (0x2725) enters D3cold on suspend and hard-crashes.
-  systemd.services.ax210-suspend = {
-    description = "Unload AX210 WiFi driver before suspend, reload after resume";
-    before = [ "sleep.target" ];
-    wantedBy = [ "sleep.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStart = pkgs.writeShellScript "ax210-pre-suspend" ''
-        echo 0 > /sys/bus/pci/devices/0000:3d:00.0/d3cold_allowed
-        ${modprobe} -r iwlmvm || true
-        ${modprobe} -r iwlwifi || true
-      '';
-      ExecStop = pkgs.writeShellScript "ax210-post-resume" ''
-        ${modprobe} iwlwifi
-        sleep 2
-        ${modprobe} iwlmvm
-        ${lib.getExe' pkgs.util-linux "rfkill"} unblock wifi
-      '';
-    };
+  powerManagement = {
+    powerDownCommands = ''
+      ${modprobe} -r iwlmvm || true
+      ${modprobe} -r iwlwifi || true
+    '';
+    resumeCommands = ''
+      ${modprobe} iwlwifi
+      sleep 2
+      ${modprobe} iwlmvm
+      ${lib.getExe' pkgs.util-linux "rfkill"} unblock wifi
+    '';
   };
 
   services.displayManager.ly.settings.battery_id = "BAT1";
