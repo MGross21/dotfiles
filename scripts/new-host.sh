@@ -1,9 +1,6 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
 usage() {
   cat <<'EOF'
-Usage: ./new_host_nix.sh [--host NAME] [--disk DEVICE] [--desktop] [--no-desktop] [--yes]
+Usage: nix run .#new-host -- [--host NAME] [--disk DEVICE] [--desktop] [--no-desktop] [--yes]
 
 Creates:
   hosts/<host>/default.nix
@@ -77,13 +74,8 @@ if [[ ! "$host" =~ ^[a-zA-Z0-9._-]+$ ]]; then
   exit 1
 fi
 
-repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-cd "$repo_root"
-
-if [[ ! -f "$repo_root/flake.nix" ]]; then
-  echo "flake.nix not found in $repo_root" >&2
-  exit 1
-fi
+repo_root=$PWD
+[[ -f "$repo_root/flake.nix" ]] || { echo "run from the repo root" >&2; exit 1; }
 
 host_dir="$repo_root/hosts/$host"
 default_file="$host_dir/default.nix"
