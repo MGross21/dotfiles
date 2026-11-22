@@ -39,10 +39,13 @@ in
 {
   flake.homeConfigurations =
     lib.mapAttrs'
-      (host: system: rec {
-        name = "${user}@${host}";
-        value = mkHome name system;
-      })
+      (
+        host: system:
+        let
+          name = "${user}@${host}";
+        in
+        lib.nameValuePair name (mkHome name system)
+      )
       {
         wsl = "x86_64-linux";
         wsl-arm = "aarch64-linux";
