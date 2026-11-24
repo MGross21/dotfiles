@@ -80,9 +80,34 @@ let
         default = null; # read-only
         description = "Directory under the user state directory the plugin may write.";
       };
+      barSection = lib.mkOption {
+        type = lib.types.nullOr (
+          lib.types.enum [
+            "left"
+            "centerBegin"
+            "center"
+            "centerEnd"
+            "right"
+          ]
+        );
+        default = null; # not on the bar
+        description = "Bar layout section the plugin's widget leads.";
+      };
     };
   };
   plugins = lib.attrValues cfg.plugins;
+
+  layout = defaults.bar.layout // {
+    left = builtins.filter (w: w.id != "omarchy.menu") defaults.bar.layout.left;
+    center = map (
+      w: if w.id == "omarchy.clock" then w // { format = "ddd d h:mm AP"; } else w
+    ) defaults.bar.layout.center;
+  };
+  barEntries =
+    section:
+    map (id: { inherit id; }) (
+      lib.attrNames (lib.filterAttrs (_: p: p.barSection == section) cfg.plugins)
+    );
 in
 {
   options.desktop.omarchy = {
@@ -196,10 +221,7 @@ in
               force = true;
               source = (pkgs.formats.json { }).generate "shell.json" (
                 lib.recursiveUpdate defaults {
-                  bar.layout.left = builtins.filter (w: w.id != "omarchy.menu") defaults.bar.layout.left;
-                  bar.layout.center = map (
-                    w: if w.id == "omarchy.clock" then w // { format = "ddd d h:mm AP"; } else w
-                  ) defaults.bar.layout.center;
+                  bar.layout = lib.mapAttrs (section: widgets: barEntries section ++ widgets) layout;
                   plugins = (defaults.plugins or [ ]) ++ map (id: { inherit id; }) (lib.attrNames cfg.plugins);
                   # Must stay installed: the startup cover waits until it is ready or disabled.
                   disabledPlugins = [ "omarchy.background" ];

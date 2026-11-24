@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "dotfiles.sysmon",
+  "name": "System monitor",
+  "version": "1.0.0",
+  "author": "dotfiles",
+  "description": "CPU, memory, temperature and GPU charts on demand",
+  "kinds": ["bar-widget"],
+  "entryPoints": {
+    "barWidget": "Widget.qml"
+  },
+  "barWidget": {
+    "displayName": "System monitor",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
