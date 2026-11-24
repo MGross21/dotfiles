@@ -12,6 +12,8 @@ let
     let
       system = pkgs.stdenv.hostPlatform.system;
       pkg = inputs.spotifast.packages.${system}.spotifast.overrideAttrs (old: {
+        doCheck = false;
+        buildNoDefaultFeatures = true;
         postPatch = (old.postPatch or "") + ''
           substituteInPlace src/app.rs --replace-fail "if self.settings.check_for_updates" "if false"
         '';

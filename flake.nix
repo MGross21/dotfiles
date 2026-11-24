@@ -60,9 +60,9 @@
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
     # Its prebuilt node segfaults against our nixpkgs; keep its own pin.
     openclaw.url = "github:openclaw/nix-openclaw";
-    spotifast.url = "github:crmne/spotifast/v0.12.0";
+    spotifast.url = "github:crmne/spotifast/v0.17.2";
     owly = {
-      url = "github:t4t5/owly/9a676e11d011c34ea32798a2541f2b1eeb66e731";
+      url = "github:t4t5/owly/v0.4.3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     rex = {
@@ -71,7 +71,7 @@
     };
     # Plugin ABI is tied to one Hyprland release; bump in lockstep with nixpkgs' hyprland.
     hyprglass = {
-      url = "github:hyprnux/hyprglass/v1.1.0";
+      url = "github:hyprnux/hyprglass/v1.2.0";
       flake = false;
     };
     xdph-remote = {

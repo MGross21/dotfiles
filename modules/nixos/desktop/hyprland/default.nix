@@ -8,7 +8,7 @@
 let
   hyprglass-plugin = pkgs.hyprlandPlugins.mkHyprlandPlugin {
     pluginName = "hyprglass";
-    version = "1.1.0";
+    version = "1.2.0";
     src = inputs.hyprglass;
 
     nativeBuildInputs = [ pkgs.wayland-scanner ];

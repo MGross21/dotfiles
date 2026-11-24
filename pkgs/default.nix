@@ -12,13 +12,6 @@ final: prev: {
 
   t3code = prev.t3code.override { enableCodex = false; };
 
-  pixi = prev.pixi.overrideAttrs (old: {
-    buildInputs = old.buildInputs ++ [
-      final.aws-lc
-      final.zstd
-    ];
-  });
-
   omarchy-shell = final.callPackage ./omarchy-shell { src = omarchy; };
 
   mactahoe-gtk-theme = final.callPackage ./mactahoe/gtk.nix { src = mactahoe-gtk; };
