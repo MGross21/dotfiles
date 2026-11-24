@@ -7,6 +7,7 @@
 let
   internal = "eDP-1";
   external = "n/^(DP|HDMI|USB)-";
+  plugin = "dotfiles.displays";
 
   hyprMonitor =
     args:
@@ -19,6 +20,10 @@ let
       pkgs.jq
       pkgs.shikane
     ];
+    runtimeEnv = {
+      INTERNAL = internal;
+      EXTERNAL = lib.removePrefix "n/" external;
+    };
     text = builtins.readFile ./display-mode.sh;
   };
 in
@@ -28,9 +33,18 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
     pkgs.wdisplays
   ];
 
+  desktop.omarchy.plugins.${plugin} = lib.mkIf config.desktop.omarchy.enable {
+    source = ".config/omarchy/plugins/${plugin}";
+    barSection = "right";
+    packages = [
+      displayMode
+      pkgs.wdisplays
+    ];
+  };
+
   home-manager.sharedModules = [
     {
-      # First matching profile wins on hotplug; `present` is only reached via display-mode.
+      # First matching profile wins on hotplug; later ones are only reached via display-mode.
       services.shikane = {
         enable = true;
         settings.profile = [
@@ -70,6 +84,34 @@ lib.mkIf (config.desktop.enable && config.desktop.environment == "hyprland") {
                 search = external;
                 enable = true;
                 exec = [ (hyprMonitor "position='auto',mirror='${internal}'") ];
+              }
+            ];
+          }
+          {
+            name = "internal";
+            output = [
+              {
+                search = "n=${internal}";
+                enable = true;
+                position = "0,0";
+              }
+              {
+                search = external;
+                enable = false;
+              }
+            ];
+          }
+          {
+            name = "external";
+            output = [
+              {
+                search = "n=${internal}";
+                enable = false;
+              }
+              {
+                search = external;
+                enable = true;
+                exec = [ (hyprMonitor "position='0x0',mirror=''") ];
               }
             ];
           }

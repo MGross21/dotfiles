@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "dotfiles.displays",
+  "name": "Displays",
+  "version": "1.0.0",
+  "author": "dotfiles",
+  "description": "Extend, mirror or single-screen modes for external displays",
+  "kinds": ["bar-widget"],
+  "entryPoints": {
+    "barWidget": "Widget.qml"
+  },
+  "barWidget": {
+    "displayName": "Displays",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}

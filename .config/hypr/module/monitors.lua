@@ -1,5 +1,5 @@
 -- https://wiki.hypr.land/Configuring/Basics/Monitors/
--- Hotplug layout (extend/present) is owned by shikane; see modules/nixos/desktop/displays.nix.
+-- Hotplug layout (extend/present) is owned by shikane; see modules/nixos/desktop/hyprland/displays.nix.
 
 hl.monitor({
     output = "eDP-1",
