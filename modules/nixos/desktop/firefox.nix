@@ -12,7 +12,6 @@ in
   config = lib.mkIf config.desktop.enable {
     environment.sessionVariables = {
       MOZ_DBUS_REMOTE = "1";
-      MOZ_GTK_TITLEBAR_DECORATION = "client";
       MOZ_DISABLE_SPLASH = "1";
     };
 
@@ -55,6 +54,7 @@ in
             "browser.newtabpage.activity-stream.telemetry" = false;
             "browser.newtabpage.activity-stream.feeds.telemetry" = false;
             "browser.discovery.enabled" = false;
+            "browser.tabs.inTitlebar" = 0;
             "browser.toolbars.bookmarks.visibility" = "always";
             "general.autoScroll" = true;
             "accessibility.typeaheadfind.flashBar" = 0;
