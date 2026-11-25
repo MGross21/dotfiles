@@ -28,6 +28,34 @@ let
       ln -s $out/bin/spotifast $out/bin/spotify
       ln -s ${pkg}/share $out/share
     '';
+  withLocalModules =
+    discord:
+    discord.override {
+      unwrappedDiscord = discord.unwrappedDiscord.overrideAttrs (old: {
+        nativeBuildInputs = old.nativeBuildInputs ++ [ pkgs.jq ];
+        postInstall = (old.postInstall or "") + ''
+          for app in $out/opt/*/; do
+            jq --arg root "''${app}modules" '. + { disableUpdater: true, localModulesRoot: $root }' \
+              "$app/resources/build_info.json" > build_info.json
+            install -m444 build_info.json "$app/resources/build_info.json"
+          done
+        '';
+      });
+    };
+  withStableBranding =
+    discord:
+    discord.override {
+      unwrappedDiscord = discord.unwrappedDiscord.overrideAttrs (old: {
+        desktopItem = old.desktopItem.override {
+          desktopName = "Discord";
+          icon = "discord";
+        };
+        postInstall = (old.postInstall or "") + ''
+          install -m444 ${pkgs.discord.unwrappedDiscord}/opt/Discord/discord.png $out/opt/*/discord.png
+          ln -s $out/opt/*/discord.png $out/share/icons/hicolor/256x256/apps/discord.png
+        '';
+      });
+    };
 in
 {
   options.apps = {
@@ -64,6 +92,8 @@ in
         spotifast
         gthumb
       ]
-      ++ lib.optional (cfg.gaming.enable && isX86_64) discord;
+      ++ lib.optional (cfg.gaming.enable && isX86_64) (
+        withStableBranding (withLocalModules discord-canary)
+      );
   };
 }
