@@ -7,14 +7,21 @@
 let
   accentHex = lib.removePrefix "#" config.theming.accent;
   modprobe = lib.getExe' pkgs.kmod "modprobe";
+  mesaEgl = "${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json";
   powerSourceSwitch = lib.getExe (
     pkgs.writeShellApplication {
       name = "power-source-switch";
       inheritPath = false;
       runtimeInputs = [
         pkgs.coreutils
+        pkgs.systemd
         config.programs.hyprland.package
+        config.services.tailscale.package
       ];
+      runtimeEnv = {
+        SUNSHINE = lib.boolToString config.services.sunshine.enable;
+        TAILSCALE = lib.boolToString config.services.tailscale.enable;
+      };
       text = builtins.readFile ./power-source-switch.sh;
     }
   );
@@ -104,6 +111,7 @@ in
 
   hardware.nvidia = {
     powerManagement.enable = true;
+    powerManagement.finegrained = true;
     prime = {
       offload.enable = true;
       offload.enableOffloadCmd = true;
@@ -137,16 +145,14 @@ in
   # RT main thread gets SIGKILLed by RLIMIT_RTTIME on any >200ms stall.
   environment.sessionVariables.HYPRLAND_NO_RT = "1";
   # Mesa-only EGL keeps hyprpaper on the iGPU.
-  systemd.user.services.hyprpaper.environment.__EGL_VENDOR_LIBRARY_FILENAMES =
-    "${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json";
+  systemd.user.services.hyprpaper.environment.__EGL_VENDOR_LIBRARY_FILENAMES = mesaEgl;
   programs.firefox.preferences = {
     "media.ffmpeg.vaapi.enabled" = true;
     "media.av1.enabled" = false;
   };
   theming.firefoxProfile = "6tqysyny.default";
   environment.systemPackages = with pkgs; [
-    libva
-    libva-vdpau-driver
+    libva-utils
     libvdpau-va-gl
     msi-perkeyrgb
     mcontrolcenter
@@ -158,7 +164,10 @@ in
       "multi-user.target"
       "post-resume.target"
     ];
-    after = [ "post-resume.target" ];
+    after = [
+      "post-resume.target"
+      "tailscaled.service"
+    ];
     serviceConfig = {
       Type = "oneshot";
       ExecStart = powerSourceSwitch;
@@ -264,6 +273,11 @@ in
   };
 
   home-manager.sharedModules = [
+    {
+      systemd.user.services.hyprpolkitagent.Service.Environment = [
+        "__EGL_VENDOR_LIBRARY_FILENAMES=${mesaEgl}"
+      ];
+    }
     { home.shellAliases.keycolor = "msi-perkeyrgb --model GS65 --id 1038:1122 -s"; }
   ];
 
