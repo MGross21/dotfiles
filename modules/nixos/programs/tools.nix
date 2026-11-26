@@ -1,9 +1,6 @@
 { lib, pkgs, ... }:
 {
-  environment.extraOutputsToInstall = lib.mkForce [
-    "man"
-    "info"
-  ];
+  environment.extraOutputsToInstall = lib.mkForce [ "man" ];
 
   environment.systemPackages = with pkgs; [
     openvpn
@@ -12,12 +9,14 @@
 
     # Hardware and system TUIs
     powertop
-    impala
     bluetui
     efibootmgr
     usbutils
     pciutils
     psmisc
+    lsof
+    smartmontools
+    lm_sensors
     inetutils
     fbcat
 

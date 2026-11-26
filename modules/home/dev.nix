@@ -88,5 +88,6 @@ in
   config.home.sessionVariables = lib.mkIf cfg.rust.enable {
     RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
     RUSTC_WRAPPER = "sccache";
+    SCCACHE_CACHE_SIZE = "4G";
   };
 }

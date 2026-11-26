@@ -2,6 +2,12 @@
 {
   programs.gh.enable = true;
 
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+    options.navigate = true;
+  };
+
   programs.git = {
     enable = true;
     settings = {

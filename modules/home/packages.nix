@@ -1,9 +1,6 @@
 { lib, pkgs, ... }:
 {
-  home.extraOutputsToInstall = [
-    "man"
-    "info"
-  ];
+  home.extraOutputsToInstall = [ "man" ];
 
   home.packages = lib.filter (lib.meta.availableOn pkgs.stdenv.hostPlatform) (
     with pkgs;
@@ -21,10 +18,10 @@
       tldr
       ncdu
       dust
-      htop
       btop
       gitui
       speedtest-cli
+      hyperfine
       nix-search-tv
       poppler
       poppler_data

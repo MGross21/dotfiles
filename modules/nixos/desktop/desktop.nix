@@ -40,6 +40,7 @@ in
     services.udisks2.enable = true;
     services.gvfs.enable = true;
     services.printing.enable = true;
+    services.speechd.enable = false;
 
     security.pam.services.ly.enableGnomeKeyring = true;
 

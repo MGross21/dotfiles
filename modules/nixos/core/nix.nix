@@ -7,7 +7,6 @@
     download-buffer-size = 67108864;
 
     http-connections = 50;
-    narinfo-cache-negative-ttl = 0;
 
     trusted-users = [
       "root"
@@ -26,7 +25,6 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    nix-du
     nix-heuristic-gc
     nix-tree
   ];
