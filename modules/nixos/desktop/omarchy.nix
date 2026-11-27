@@ -91,7 +91,15 @@ let
           ]
         );
         default = null; # not on the bar
-        description = "Bar layout section the plugin's widget leads.";
+        description = "Bar layout section of the plugin's widget.";
+      };
+      barPosition = lib.mkOption {
+        type = lib.types.enum [
+          "first"
+          "last"
+        ];
+        default = "first";
+        description = "End of the bar section the plugin's widget sits at.";
       };
     };
   };
@@ -104,9 +112,11 @@ let
     ) defaults.bar.layout.center;
   };
   barEntries =
-    section:
+    section: position:
     map (id: { inherit id; }) (
-      lib.attrNames (lib.filterAttrs (_: p: p.barSection == section) cfg.plugins)
+      lib.attrNames (
+        lib.filterAttrs (_: p: p.barSection == section && p.barPosition == position) cfg.plugins
+      )
     );
 in
 {
@@ -221,7 +231,9 @@ in
               force = true;
               source = (pkgs.formats.json { }).generate "shell.json" (
                 lib.recursiveUpdate defaults {
-                  bar.layout = lib.mapAttrs (section: widgets: barEntries section ++ widgets) layout;
+                  bar.layout = lib.mapAttrs (
+                    section: widgets: barEntries section "first" ++ widgets ++ barEntries section "last"
+                  ) layout;
                   plugins = (defaults.plugins or [ ]) ++ map (id: { inherit id; }) (lib.attrNames cfg.plugins);
                   # Must stay installed: the startup cover waits until it is ready or disabled.
                   disabledPlugins = [ "omarchy.background" ];

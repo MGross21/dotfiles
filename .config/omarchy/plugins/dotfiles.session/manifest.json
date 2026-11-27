@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "dotfiles.session",
+  "name": "Session",
+  "version": "1.0.0",
+  "author": "dotfiles",
+  "description": "Lock, suspend, log out, reboot and shut down",
+  "kinds": ["bar-widget"],
+  "entryPoints": {
+    "barWidget": "Widget.qml"
+  },
+  "barWidget": {
+    "displayName": "Session",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
